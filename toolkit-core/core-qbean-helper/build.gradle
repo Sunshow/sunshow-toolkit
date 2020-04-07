@@ -1,0 +1,13 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    api(project(':core-qbean-api'))
+    implementation('commons-beanutils:commons-beanutils:1.9.4')
+    implementation('org.apache.commons:commons-lang3:3.10')
+}

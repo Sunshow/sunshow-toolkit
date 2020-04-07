@@ -1,6 +1,7 @@
 package net.sunshow.toolkit.core.qbean.sample.bean;
 
-import net.sunshow.toolkit.core.qbean.annotation.*;
+import net.sunshow.toolkit.core.qbean.api.annotation.*;
+import net.sunshow.toolkit.core.qbean.api.bean.AbstractQBean;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @QBean
 @QBeanCreator
 @QBeanUpdater
-public class FooBar {
+public class FooBar extends AbstractQBean {
     /**
      * 主键
      */

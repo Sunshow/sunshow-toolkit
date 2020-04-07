@@ -2,7 +2,10 @@ plugins {
     id 'java'
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 dependencies {
-    implementation(project(':core-qbean'))
+    implementation(project(':core-qbean-api'))
     annotationProcessor(project(':core-qbean-processor'))
 }

@@ -1,1 +1,1 @@
-net.sunshow.toolkit.core.qbean.annotation.processor.QBeanProcessor
+net.sunshow.toolkit.core.qbean.api.annotation.processor.QBeanProcessor
