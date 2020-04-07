@@ -1,0 +1,13 @@
+.DS_Store
+*.swp
+.idea/
+*.iws
+**/out/
+.idea_modules/
+*.iml
+target/
+.gradle
+build/
+**/build/
+!gradle-wrapper.jar
+.gradletasknamecache
