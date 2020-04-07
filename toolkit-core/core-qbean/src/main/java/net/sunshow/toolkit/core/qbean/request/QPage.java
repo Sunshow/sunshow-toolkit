@@ -17,6 +17,11 @@ public class QPage implements Serializable {
     private int pageSize = 10;
 
     /**
+     * 避免翻页慢查询, 指定上次查询的有序ID
+     */
+    private Long limitId;
+
+    /**
      * 默认就不生成 count query
      */
     private boolean withoutCountQuery = true;
@@ -47,6 +52,11 @@ public class QPage implements Serializable {
         return this;
     }
 
+    public QPage limitId(long limitId) {
+        this.limitId = limitId;
+        return this;
+    }
+
     public QPage withoutCountQuery(boolean withoutCountQuery) {
         this.withoutCountQuery = withoutCountQuery;
         return this;
@@ -70,6 +80,10 @@ public class QPage implements Serializable {
 
     public int getPageSize() {
         return pageSize;
+    }
+
+    public Long getLimitId() {
+        return limitId;
     }
 
     public boolean isWithoutCountQuery() {
