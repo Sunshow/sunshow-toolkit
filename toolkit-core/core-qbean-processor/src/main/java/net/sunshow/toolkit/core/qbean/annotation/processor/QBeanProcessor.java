@@ -2,6 +2,8 @@ package net.sunshow.toolkit.core.qbean.annotation.processor;
 
 import com.squareup.javapoet.*;
 import net.sunshow.toolkit.core.qbean.annotation.*;
+import net.sunshow.toolkit.core.qbean.bean.BaseQBeanCreator;
+import net.sunshow.toolkit.core.qbean.bean.BaseQBeanUpdater;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -156,7 +158,7 @@ public class QBeanProcessor extends AbstractProcessor {
         // 开始组装类
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(creatorClassSimpleName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addSuperinterface(QBeanCreator.class);
+                .addSuperinterface(BaseQBeanCreator.class);
 
         ClassName builderClassName = creatorClassName.nestedClass(TYPE_BUILDER);
         // 内部 Builder 类
@@ -326,7 +328,7 @@ public class QBeanProcessor extends AbstractProcessor {
         // 开始组装类
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(updaterClassSimpleName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addSuperinterface(QBeanUpdater.class);
+                .addSuperinterface(BaseQBeanUpdater.class);
 
         ClassName builderClassName = updaterClassName.nestedClass(TYPE_BUILDER);
         // 内部 Builder 类
