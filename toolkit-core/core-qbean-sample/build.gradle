@@ -2,15 +2,6 @@ plugins {
     id 'java'
 }
 
-group 'net.sunshow.toolkit'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(':core-qbean'))
     annotationProcessor(project(':core-qbean-processor'))
