@@ -2,23 +2,13 @@ plugins {
     kotlin("jvm")
 }
 
-group = "net.sunshow.toolkit"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(project(":core-base"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.1")
+    testImplementation("ch.qos.logback:logback-classic:1.2.3")
 }
 
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
