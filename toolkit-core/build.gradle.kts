@@ -18,6 +18,7 @@ allprojects {
     version = "1.0-SNAPSHOT"
 
     repositories {
+        maven(url = "http://maven.aliyun.com/nexus/content/groups/public/")
         mavenCentral()
     }
 }
