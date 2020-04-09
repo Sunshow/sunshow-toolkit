@@ -1,9 +1,6 @@
 package net.sunshow.code.generator.template.qbean;
 
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import net.sunshow.code.generator.util.GenerateUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -57,6 +54,27 @@ public class QBeanEntityGenerator {
             FieldSpec.Builder builder = FieldSpec.builder(QBeanTemplate.ClassNameLocalDateTime, QBeanTemplate.FieldNameUpdatedTime, Modifier.PRIVATE)
                     .addAnnotation(columnAnnotationSpec);
             typeSpecBuilder.addField(builder.build());
+        }
+
+        // 添加默认方法
+        {
+            MethodSpec.Builder builder = MethodSpec.methodBuilder("onCreate")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addAnnotation(QBeanTemplate.ClassNameJpaPrePersist)
+                    .beginControlFlow("if (this.$L() == null)", GenerateUtils.lowerCamelToGetter(QBeanTemplate.FieldNameCreatedTime))
+                    .addStatement("$L = LocalDateTime.now()", QBeanTemplate.FieldNameCreatedTime)
+                    .endControlFlow()
+                    .beginControlFlow("if (this.$L() == null)", GenerateUtils.lowerCamelToGetter(QBeanTemplate.FieldNameUpdatedTime))
+                    .addStatement("$L = LocalDateTime.now()", QBeanTemplate.FieldNameUpdatedTime)
+                    .endControlFlow();
+            typeSpecBuilder.addMethod(builder.build());
+        }
+        {
+            MethodSpec.Builder builder = MethodSpec.methodBuilder("onUpdate")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addAnnotation(QBeanTemplate.ClassNameJpaPreUpdate)
+                    .addStatement("$L = LocalDateTime.now()", QBeanTemplate.FieldNameUpdatedTime);
+            typeSpecBuilder.addMethod(builder.build());
         }
 
         JavaFile javaFile = JavaFile.builder(template.getEntityPackagePath(), typeSpecBuilder.build()).indent(GenerateUtils.INTENT).skipJavaLangImports(true).build();

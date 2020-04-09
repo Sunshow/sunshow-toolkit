@@ -56,6 +56,10 @@ public class GenerateUtils {
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, lowerCamel);
     }
 
+    public static String lowerCamelToGetter(String lowerCamel) {
+        return "get" + lowerCamelToUpperCamel(lowerCamel);
+    }
+
     public static String combinePackagePath(String basePackagePath, String subPackage, String moduleName) {
         if (StringUtils.isBlank(moduleName)) {
             return Joiner.on('.').join(basePackagePath, subPackage);

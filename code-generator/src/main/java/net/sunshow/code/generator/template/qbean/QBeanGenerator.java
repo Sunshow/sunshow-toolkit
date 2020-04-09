@@ -47,7 +47,8 @@ public class QBeanGenerator {
         }
         {
             FieldSpec.Builder builder = FieldSpec.builder(QBeanTemplate.ClassNameLocalDateTime, QBeanTemplate.FieldNameUpdatedTime, Modifier.PRIVATE)
-                    .addAnnotation(QBeanTemplate.ClassNameQBeanCreatorIgnore);
+                    .addAnnotation(QBeanTemplate.ClassNameQBeanCreatorIgnore)
+                    .addAnnotation(QBeanTemplate.ClassNameQBeanUpdaterIgnore);
             typeSpecBuilder.addField(builder.build());
         }
 

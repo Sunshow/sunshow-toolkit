@@ -17,6 +17,8 @@ public class QBeanTemplate {
     public static final ClassName ClassNameJpaColumn = ClassName.get("javax.persistence", "Column");
     public static final ClassName ClassNameJpaGeneratedValue = ClassName.get("javax.persistence", "GeneratedValue");
     public static final ClassName ClassNameJpaGenerationType = ClassName.get("javax.persistence", "GenerationType");
+    public static final ClassName ClassNameJpaPrePersist = ClassName.get("javax.persistence", "PrePersist");
+    public static final ClassName ClassNameJpaPreUpdate = ClassName.get("javax.persistence", "PreUpdate");
 
     public static final ClassName ClassNameHibernateDynamicInsert = ClassName.get("org.hibernate.annotations", "DynamicInsert");
     public static final ClassName ClassNameHibernateDynamicUpdate = ClassName.get("org.hibernate.annotations", "DynamicUpdate");
