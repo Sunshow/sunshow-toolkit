@@ -40,6 +40,10 @@ public class GenerateUtils {
         return createSetterBuilder(typeName, fieldName, visibility).build();
     }
 
+    public static String lowerCamelToLowerUnderScore(String upperCamel) {
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, upperCamel);
+    }
+
     public static String upperCamelToLowerUnderScore(String upperCamel) {
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, upperCamel);
     }

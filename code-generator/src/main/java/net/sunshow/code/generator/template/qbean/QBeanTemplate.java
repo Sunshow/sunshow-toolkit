@@ -11,6 +11,16 @@ public class QBeanTemplate {
 
     public static final ClassName ClassNameLocalDateTime = ClassName.get("java.time", "LocalDateTime");
 
+    public static final ClassName ClassNameJpaTable = ClassName.get("javax.persistence", "Table");
+    public static final ClassName ClassNameJpaEntity = ClassName.get("javax.persistence", "Entity");
+    public static final ClassName ClassNameJpaId = ClassName.get("javax.persistence", "Id");
+    public static final ClassName ClassNameJpaColumn = ClassName.get("javax.persistence", "Column");
+    public static final ClassName ClassNameJpaGeneratedValue = ClassName.get("javax.persistence", "GeneratedValue");
+    public static final ClassName ClassNameJpaGenerationType = ClassName.get("javax.persistence", "GenerationType");
+
+    public static final ClassName ClassNameHibernateDynamicInsert = ClassName.get("org.hibernate.annotations", "DynamicInsert");
+    public static final ClassName ClassNameHibernateDynamicUpdate = ClassName.get("org.hibernate.annotations", "DynamicUpdate");
+
     public static final ClassName ClassNameAbstractQBean = ClassName.get("net.sunshow.toolkit.core.qbean.api.bean", "AbstractQBean");
     public static final ClassName ClassNameQBean = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QBean");
     public static final ClassName ClassNameQBeanCreator = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QBeanCreator");
@@ -18,6 +28,7 @@ public class QBeanTemplate {
     public static final ClassName ClassNameQBeanID = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QBeanID");
     public static final ClassName ClassNameQBeanCreatorIgnore = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QBeanCreatorIgnore");
     public static final ClassName ClassNameQBeanUpdaterIgnore = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QBeanUpdaterIgnore");
+    public static final ClassName ClassNameBaseEntity = ClassName.get("net.sunshow.toolkit.core.qbean.helper.entity", "BaseEntity");
 
     public static final ClassName ClassNameLombokSetter = ClassName.get("lombok", "Setter");
     public static final ClassName ClassNameLombokGetter = ClassName.get("lombok", "Getter");
@@ -26,9 +37,6 @@ public class QBeanTemplate {
     public static final String FieldNameUpdatedTime = "updatedTime";
 
     private boolean lombok = true;
-
-    // 基础输出路径, 即文件要最终生成的目标项目根目录
-    private String outputPathPrefix;
 
     // 基础包路径, 生成代码的上级包路径, 在此路径下分包输出
     private String packagePathPrefix;
@@ -48,7 +56,7 @@ public class QBeanTemplate {
     // 主键 id 类型
     private ClassName idClassName = ClassName.get(Long.class);
 
-    // 输出路径, 最终输出为: outputPathPrefix + "/" + outputPath
+    // 输出路径
     private String outputPath = "";
 
     // Bean 相关配置

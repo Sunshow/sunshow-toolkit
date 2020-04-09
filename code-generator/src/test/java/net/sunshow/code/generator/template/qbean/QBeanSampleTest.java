@@ -13,5 +13,6 @@ public class QBeanSampleTest {
         template.setBeanName("Bar");
 
         QBeanGenerator.generate(template);
+        QBeanEntityGenerator.generate(template);
     }
 }
