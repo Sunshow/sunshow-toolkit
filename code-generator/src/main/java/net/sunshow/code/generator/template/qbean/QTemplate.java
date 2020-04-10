@@ -7,7 +7,7 @@ import net.sunshow.code.generator.util.GenerateUtils;
 
 @Setter
 @Getter
-public class QBeanTemplate {
+public class QTemplate {
 
     public static final ClassName ClassNameRuntimeException = ClassName.get("java.lang", "RuntimeException");
 
@@ -22,6 +22,10 @@ public class QBeanTemplate {
     public static final ClassName ClassNameJpaPrePersist = ClassName.get("javax.persistence", "PrePersist");
     public static final ClassName ClassNameJpaPreUpdate = ClassName.get("javax.persistence", "PreUpdate");
 
+    public static final ClassName ClassNameJpaPageable = ClassName.get("org.springframework.data.domain", "Pageable");
+    public static final ClassName ClassNameJpaPage = ClassName.get("org.springframework.data.domain", "Page");
+    public static final ClassName ClassNameJpaSpecification = ClassName.get("org.springframework.data.jpa.domain", "Specification");
+
     public static final ClassName ClassNameHibernateDynamicInsert = ClassName.get("org.hibernate.annotations", "DynamicInsert");
     public static final ClassName ClassNameHibernateDynamicUpdate = ClassName.get("org.hibernate.annotations", "DynamicUpdate");
 
@@ -34,6 +38,9 @@ public class QBeanTemplate {
     public static final ClassName ClassNameQBeanUpdaterIgnore = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QBeanUpdaterIgnore");
     public static final ClassName ClassNameBaseEntity = ClassName.get("net.sunshow.toolkit.core.qbean.helper.entity", "BaseEntity");
     public static final ClassName ClassNameBaseRepository = ClassName.get("net.sunshow.toolkit.core.qbean.helper.repository", "BaseRepository");
+    public static final ClassName ClassNameQResponse = ClassName.get("net.sunshow.toolkit.core.qbean.api.response", "QResponse");
+    public static final ClassName ClassNameQRequest = ClassName.get("net.sunshow.toolkit.core.qbean.api.request", "QRequest");
+    public static final ClassName ClassNameQPage = ClassName.get("net.sunshow.toolkit.core.qbean.api.request", "QPage");
 
     public static final ClassName ClassNameLombokSetter = ClassName.get("lombok", "Setter");
     public static final ClassName ClassNameLombokGetter = ClassName.get("lombok", "Getter");
@@ -107,7 +114,7 @@ public class QBeanTemplate {
     }
 
     // exception 类型
-    public ClassName exceptionClassName() {
+    public ClassName getExceptionClassName() {
         return ClassName.get(getExceptionPackagePath(), getExceptionName());
     }
 

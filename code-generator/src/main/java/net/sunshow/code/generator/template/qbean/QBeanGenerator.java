@@ -10,44 +10,44 @@ import java.io.File;
 
 public class QBeanGenerator {
 
-    public static void generate(QBeanTemplate template) throws Exception {
+    public static void generate(QTemplate template) throws Exception {
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getBeanName())
                 .addModifiers(Modifier.PUBLIC)
-                .superclass(QBeanTemplate.ClassNameAbstractQBean);
+                .superclass(QTemplate.ClassNameAbstractQBean);
 
         if (template.isLombok()) {
             typeSpecBuilder
-                    .addAnnotation(QBeanTemplate.ClassNameLombokGetter)
-                    .addAnnotation(QBeanTemplate.ClassNameLombokSetter);
+                    .addAnnotation(QTemplate.ClassNameLombokGetter)
+                    .addAnnotation(QTemplate.ClassNameLombokSetter);
         }
 
-        typeSpecBuilder.addAnnotation(QBeanTemplate.ClassNameQBean);
+        typeSpecBuilder.addAnnotation(QTemplate.ClassNameQBean);
 
         if (template.isBeanCreator()) {
-            typeSpecBuilder.addAnnotation(QBeanTemplate.ClassNameQBeanCreator);
+            typeSpecBuilder.addAnnotation(QTemplate.ClassNameQBeanCreator);
         }
         if (template.isBeanUpdater()) {
-            typeSpecBuilder.addAnnotation(QBeanTemplate.ClassNameQBeanUpdater);
+            typeSpecBuilder.addAnnotation(QTemplate.ClassNameQBeanUpdater);
         }
 
         // 添加ID
         if (StringUtils.isNotBlank(template.getIdName())) {
             FieldSpec.Builder builder = FieldSpec.builder(template.getIdClassName(), template.getIdName(), Modifier.PRIVATE)
-                    .addAnnotation(QBeanTemplate.ClassNameQBeanID)
-                    .addAnnotation(QBeanTemplate.ClassNameQBeanCreatorIgnore);
+                    .addAnnotation(QTemplate.ClassNameQBeanID)
+                    .addAnnotation(QTemplate.ClassNameQBeanCreatorIgnore);
             typeSpecBuilder.addField(builder.build());
         }
 
         // 添加默认字段
         {
-            FieldSpec.Builder builder = FieldSpec.builder(QBeanTemplate.ClassNameLocalDateTime, QBeanTemplate.FieldNameCreatedTime, Modifier.PRIVATE)
-                    .addAnnotation(QBeanTemplate.ClassNameQBeanUpdaterIgnore);
+            FieldSpec.Builder builder = FieldSpec.builder(QTemplate.ClassNameLocalDateTime, QTemplate.FieldNameCreatedTime, Modifier.PRIVATE)
+                    .addAnnotation(QTemplate.ClassNameQBeanUpdaterIgnore);
             typeSpecBuilder.addField(builder.build());
         }
         {
-            FieldSpec.Builder builder = FieldSpec.builder(QBeanTemplate.ClassNameLocalDateTime, QBeanTemplate.FieldNameUpdatedTime, Modifier.PRIVATE)
-                    .addAnnotation(QBeanTemplate.ClassNameQBeanCreatorIgnore)
-                    .addAnnotation(QBeanTemplate.ClassNameQBeanUpdaterIgnore);
+            FieldSpec.Builder builder = FieldSpec.builder(QTemplate.ClassNameLocalDateTime, QTemplate.FieldNameUpdatedTime, Modifier.PRIVATE)
+                    .addAnnotation(QTemplate.ClassNameQBeanCreatorIgnore)
+                    .addAnnotation(QTemplate.ClassNameQBeanUpdaterIgnore);
             typeSpecBuilder.addField(builder.build());
         }
 

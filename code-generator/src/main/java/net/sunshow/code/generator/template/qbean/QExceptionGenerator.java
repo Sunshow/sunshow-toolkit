@@ -7,12 +7,12 @@ import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
 import java.io.File;
 
-public class QBeanExceptionGenerator {
+public class QExceptionGenerator {
 
-    public static void generate(QBeanTemplate template) throws Exception {
+    public static void generate(QTemplate template) throws Exception {
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getExceptionName())
                 .addModifiers(Modifier.PUBLIC)
-                .superclass(QBeanTemplate.ClassNameRuntimeException);
+                .superclass(QTemplate.ClassNameRuntimeException);
 
         // 添加构造函数
         {

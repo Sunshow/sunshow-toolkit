@@ -8,10 +8,10 @@ import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
 import java.io.File;
 
-public class QBeanRepositoryGenerator {
+public class QRepositoryGenerator {
 
-    public static void generate(QBeanTemplate template) throws Exception {
-        TypeName baseRepositoryTypeName = ParameterizedTypeName.get(QBeanTemplate.ClassNameBaseRepository, template.getEntityClassName(), template.getIdClassName());
+    public static void generate(QTemplate template) throws Exception {
+        TypeName baseRepositoryTypeName = ParameterizedTypeName.get(QTemplate.ClassNameBaseRepository, template.getEntityClassName(), template.getIdClassName());
 
         TypeSpec.Builder typeSpecBuilder = TypeSpec.interfaceBuilder(template.getRepositoryName())
                 .addModifiers(Modifier.PUBLIC)
