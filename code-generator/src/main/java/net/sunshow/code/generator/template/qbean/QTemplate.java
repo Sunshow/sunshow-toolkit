@@ -10,8 +10,8 @@ import net.sunshow.code.generator.util.GenerateUtils;
 public class QTemplate {
 
     public static final ClassName ClassNameRuntimeException = ClassName.get("java.lang", "RuntimeException");
-
     public static final ClassName ClassNameLocalDateTime = ClassName.get("java.time", "LocalDateTime");
+    public static final ClassName ClassNameSupplier = ClassName.get("java.util.function", "Supplier");
 
     public static final ClassName ClassNameJpaTable = ClassName.get("javax.persistence", "Table");
     public static final ClassName ClassNameJpaEntity = ClassName.get("javax.persistence", "Entity");
@@ -26,6 +26,10 @@ public class QTemplate {
     public static final ClassName ClassNameJpaPage = ClassName.get("org.springframework.data.domain", "Page");
     public static final ClassName ClassNameJpaSpecification = ClassName.get("org.springframework.data.jpa.domain", "Specification");
 
+    public static final ClassName ClassNameSpringAutowired = ClassName.get("org.springframework.beans.factory.annotation", "Autowired");
+    public static final ClassName ClassNameSpringService = ClassName.get("org.springframework.stereotype", "Service");
+    public static final ClassName ClassNameSpringTransactional = ClassName.get("org.springframework.transaction.annotation", "Transactional");
+
     public static final ClassName ClassNameHibernateDynamicInsert = ClassName.get("org.hibernate.annotations", "DynamicInsert");
     public static final ClassName ClassNameHibernateDynamicUpdate = ClassName.get("org.hibernate.annotations", "DynamicUpdate");
 
@@ -38,9 +42,15 @@ public class QTemplate {
     public static final ClassName ClassNameQBeanUpdaterIgnore = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QBeanUpdaterIgnore");
     public static final ClassName ClassNameBaseEntity = ClassName.get("net.sunshow.toolkit.core.qbean.helper.entity", "BaseEntity");
     public static final ClassName ClassNameBaseRepository = ClassName.get("net.sunshow.toolkit.core.qbean.helper.repository", "BaseRepository");
+    public static final ClassName ClassNameAbstractQServiceImpl = ClassName.get("net.sunshow.toolkit.core.qbean.helper.service.impl", "AbstractQServiceImpl");
     public static final ClassName ClassNameQResponse = ClassName.get("net.sunshow.toolkit.core.qbean.api.response", "QResponse");
     public static final ClassName ClassNameQRequest = ClassName.get("net.sunshow.toolkit.core.qbean.api.request", "QRequest");
     public static final ClassName ClassNameQPage = ClassName.get("net.sunshow.toolkit.core.qbean.api.request", "QPage");
+
+    public static final ClassName ClassNameBeanMapper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.mapper", "BeanMapper");
+    public static final ClassName ClassNameQBeanCreatorHelper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.request", "QBeanCreatorHelper");
+    public static final ClassName ClassNameQBeanUpdaterHelper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.request", "QBeanUpdaterHelper");
+
 
     public static final ClassName ClassNameLombokSetter = ClassName.get("lombok", "Setter");
     public static final ClassName ClassNameLombokGetter = ClassName.get("lombok", "Getter");

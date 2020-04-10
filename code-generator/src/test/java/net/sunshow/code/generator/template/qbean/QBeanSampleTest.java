@@ -17,5 +17,6 @@ public class QBeanSampleTest {
         QRepositoryGenerator.generate(template);
         QExceptionGenerator.generate(template);
         QServiceGenerator.generate(template);
+        QServiceImplGenerator.generate(template);
     }
 }

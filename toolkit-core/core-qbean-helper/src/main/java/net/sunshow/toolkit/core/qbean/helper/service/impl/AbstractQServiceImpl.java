@@ -1,5 +1,6 @@
 package net.sunshow.toolkit.core.qbean.helper.service.impl;
 
+import net.sunshow.toolkit.core.qbean.api.bean.BaseQBean;
 import net.sunshow.toolkit.core.qbean.api.enums.Operator;
 import net.sunshow.toolkit.core.qbean.api.request.QFilter;
 import net.sunshow.toolkit.core.qbean.api.request.QPage;
@@ -8,6 +9,8 @@ import net.sunshow.toolkit.core.qbean.api.request.QSort;
 import net.sunshow.toolkit.core.qbean.api.response.QResponse;
 import net.sunshow.toolkit.core.qbean.helper.bean.jpa.QPageRequest;
 import net.sunshow.toolkit.core.qbean.helper.component.mapper.BeanMapper;
+import net.sunshow.toolkit.core.qbean.helper.entity.BaseEntity;
+import net.sunshow.toolkit.core.qbean.helper.repository.BaseRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +22,37 @@ import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * 预留基础服务实现
  * Created by sunshow.
  */
-public abstract class AbstractQServiceImpl {
+public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @SuppressWarnings("unchecked")
+    protected Class<Q> getActualType() {
+        ParameterizedType paramType = (ParameterizedType) this.getClass().getGenericSuperclass();
+
+        return (Class<Q>) paramType.getActualTypeArguments()[0];
+    }
+
+    protected Supplier<? extends RuntimeException> getExceptionSupplier(String message, Throwable cause) {
+        return () -> new RuntimeException(message, cause);
+    }
+
+    protected <Entity extends BaseEntity, ID extends Serializable, Rep extends BaseRepository<Entity, ID>> Entity getEntityWithNullCheckForUpdate(ID id, Rep repository) {
+        Entity entity = repository.findOne(id).orElseThrow(getExceptionSupplier(String.format("未获取到Entity记录, id=%s", id), null));
+        repository.detach(entity);
+        // 重新锁行获取
+        return repository.findOneForUpdate(id);
+    }
 
     protected Sort convertSort(QPage requestPage) {
         if (requestPage.getSortList() != null && !requestPage.getSortList().isEmpty()) {
@@ -167,5 +191,13 @@ public abstract class AbstractQServiceImpl {
         apiResponse.setPagedData(BeanMapper.mapList(page.getContent(), c));
 
         return apiResponse;
+    }
+
+    protected <T> QResponse<Q> convertQResponse(Page<T> page) {
+        return convertQResponse(page, getActualType());
+    }
+
+    protected <T> Q convertQBean(T object) {
+        return BeanMapper.map(object, getActualType());
     }
 }
