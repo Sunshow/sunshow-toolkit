@@ -1,4 +1,4 @@
-package net.sunshow.toolkit.core.qbean.helper.dao;
+package net.sunshow.toolkit.core.qbean.helper.repository;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -9,5 +9,5 @@ import java.io.Serializable;
  * @author qatang
  */
 @NoRepositoryBean
-public interface BaseDAO<T, ID extends Serializable> extends BaseExtDAO<T, ID>, JpaSpecificationExecutor<T> {
+public interface BaseRepository<T, ID extends Serializable> extends BaseExtRepository<T, ID>, JpaSpecificationExecutor<T> {
 }

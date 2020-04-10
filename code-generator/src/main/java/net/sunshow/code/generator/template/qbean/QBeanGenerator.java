@@ -3,7 +3,6 @@ package net.sunshow.code.generator.template.qbean;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
-import net.sunshow.code.generator.util.GenerateUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Modifier;
@@ -53,7 +52,7 @@ public class QBeanGenerator {
         }
 
 
-        JavaFile javaFile = JavaFile.builder(template.getBeanPackagePath(), typeSpecBuilder.build()).indent(GenerateUtils.INTENT).skipJavaLangImports(true).build();
+        JavaFile javaFile = JavaFile.builder(template.getBeanPackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
 
         javaFile.writeTo(new File(template.getOutputPath()));
     }

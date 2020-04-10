@@ -1,4 +1,4 @@
-package net.sunshow.toolkit.core.qbean.helper.dao;
+package net.sunshow.toolkit.core.qbean.helper.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author qatang
  */
 @NoRepositoryBean
-public interface BaseExtDAO<T, ID extends Serializable> extends PagingAndSortingRepository<T, ID> {
+public interface BaseExtRepository<T, ID extends Serializable> extends PagingAndSortingRepository<T, ID> {
 
     void flush();
 

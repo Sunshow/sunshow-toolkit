@@ -1,6 +1,6 @@
-package net.sunshow.toolkit.core.qbean.helper.dao;
+package net.sunshow.toolkit.core.qbean.helper.repository;
 
-import net.sunshow.toolkit.core.qbean.helper.dao.impl.BaseExtDAOImpl;
+import net.sunshow.toolkit.core.qbean.helper.repository.impl.BaseExtRepositoryImpl;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
@@ -33,7 +33,7 @@ public class BaseRepositoryFactoryBean<R extends JpaRepository<T, I>, T,
 
         @Override
         protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
-            return BaseExtDAOImpl.class;
+            return BaseExtRepositoryImpl.class;
         }
     }
 

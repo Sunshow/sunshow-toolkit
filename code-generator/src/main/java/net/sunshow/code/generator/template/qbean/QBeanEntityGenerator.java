@@ -77,7 +77,7 @@ public class QBeanEntityGenerator {
             typeSpecBuilder.addMethod(builder.build());
         }
 
-        JavaFile javaFile = JavaFile.builder(template.getEntityPackagePath(), typeSpecBuilder.build()).indent(GenerateUtils.INTENT).skipJavaLangImports(true).build();
+        JavaFile javaFile = JavaFile.builder(template.getEntityPackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
 
         javaFile.writeTo(new File(template.getOutputPath()));
     }

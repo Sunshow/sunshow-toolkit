@@ -1,7 +1,7 @@
-package net.sunshow.toolkit.core.qbean.helper.dao.impl;
+package net.sunshow.toolkit.core.qbean.helper.repository.impl;
 
 import net.sunshow.toolkit.core.qbean.helper.bean.jpa.QPageRequest;
-import net.sunshow.toolkit.core.qbean.helper.dao.BaseExtDAO;
+import net.sunshow.toolkit.core.qbean.helper.repository.BaseExtRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -19,15 +19,15 @@ import java.util.List;
 /**
  * @author qatang
  */
-public class BaseExtDAOImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements BaseExtDAO<T, ID> {
+public class BaseExtRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements BaseExtRepository<T, ID> {
     private final EntityManager entityManager;
 
-    public BaseExtDAOImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager em) {
+    public BaseExtRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager em) {
         super(entityInformation, em);
         this.entityManager = em;
     }
 
-    public BaseExtDAOImpl(Class<T> domainClass, EntityManager em) {
+    public BaseExtRepositoryImpl(Class<T> domainClass, EntityManager em) {
         super(domainClass, em);
         this.entityManager = em;
     }

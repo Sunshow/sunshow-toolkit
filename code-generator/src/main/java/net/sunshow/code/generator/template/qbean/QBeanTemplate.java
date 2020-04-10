@@ -9,6 +9,8 @@ import net.sunshow.code.generator.util.GenerateUtils;
 @Getter
 public class QBeanTemplate {
 
+    public static final ClassName ClassNameRuntimeException = ClassName.get("java.lang", "RuntimeException");
+
     public static final ClassName ClassNameLocalDateTime = ClassName.get("java.time", "LocalDateTime");
 
     public static final ClassName ClassNameJpaTable = ClassName.get("javax.persistence", "Table");
@@ -31,6 +33,7 @@ public class QBeanTemplate {
     public static final ClassName ClassNameQBeanCreatorIgnore = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QBeanCreatorIgnore");
     public static final ClassName ClassNameQBeanUpdaterIgnore = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QBeanUpdaterIgnore");
     public static final ClassName ClassNameBaseEntity = ClassName.get("net.sunshow.toolkit.core.qbean.helper.entity", "BaseEntity");
+    public static final ClassName ClassNameBaseRepository = ClassName.get("net.sunshow.toolkit.core.qbean.helper.repository", "BaseRepository");
 
     public static final ClassName ClassNameLombokSetter = ClassName.get("lombok", "Setter");
     public static final ClassName ClassNameLombokGetter = ClassName.get("lombok", "Getter");
@@ -39,6 +42,8 @@ public class QBeanTemplate {
     public static final String FieldNameUpdatedTime = "updatedTime";
 
     private boolean lombok = true;
+
+    private String indent = "    ";
 
     // 基础包路径, 生成代码的上级包路径, 在此路径下分包输出
     private String packagePathPrefix;

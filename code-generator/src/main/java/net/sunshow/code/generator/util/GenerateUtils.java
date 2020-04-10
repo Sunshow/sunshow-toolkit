@@ -9,8 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import javax.lang.model.element.Modifier;
 
 public class GenerateUtils {
-    public final static String INTENT = "    ";
-
     public static MethodSpec.Builder createGetterBuilder(TypeName typeName, String fieldName, Modifier visibility) {
         String prefix = "get";
         if (typeName.equals(TypeName.get(boolean.class))) {
