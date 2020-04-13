@@ -1,8 +1,8 @@
 rootProject.name = "toolkit-core"
-include ':core-qbean-api'
-include ':core-qbean-helper'
-include ':core-qbean-processor'
-include ':core-qbean-sample'
+include 'core-qbean-api'
+include 'core-qbean-helper'
+include 'core-qbean-processor'
+include 'core-qbean-sample'
 include 'core-base-enums'
 include 'core-base-enums-converter'
 
