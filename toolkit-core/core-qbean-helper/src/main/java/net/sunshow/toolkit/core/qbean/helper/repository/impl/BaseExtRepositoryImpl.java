@@ -33,7 +33,7 @@ public class BaseExtRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
     }
 
     @Override
-    public T findOneForUpdate(ID id) {
+    public T findByIdForUpdate(ID id) {
         return entityManager.find(this.getDomainClass(), id, LockModeType.PESSIMISTIC_WRITE);
     }
 

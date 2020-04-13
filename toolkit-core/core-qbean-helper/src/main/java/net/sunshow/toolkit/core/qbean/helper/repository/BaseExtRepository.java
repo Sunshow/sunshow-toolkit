@@ -24,7 +24,7 @@ public interface BaseExtRepository<T, ID extends Serializable> extends PagingAnd
      * @param id 对象ID
      * @return 对应的对象
      */
-    T findOneForUpdate(ID id);
+    T findByIdForUpdate(ID id);
 
     /**
      * 不带 count 执行分页查询, 此时返回的 total 数即本次查询结果数量

@@ -48,10 +48,10 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
     }
 
     protected <Entity extends BaseEntity, ID extends Serializable, Rep extends BaseRepository<Entity, ID>> Entity getEntityWithNullCheckForUpdate(ID id, Rep repository) {
-        Entity entity = repository.findOne(id).orElseThrow(getExceptionSupplier(String.format("未获取到Entity记录, id=%s", id), null));
+        Entity entity = repository.findById(id).orElseThrow(getExceptionSupplier(String.format("未获取到Entity记录, id=%s", id), null));
         repository.detach(entity);
         // 重新锁行获取
-        return repository.findOneForUpdate(id);
+        return repository.findByIdForUpdate(id);
     }
 
     protected Sort convertSort(QPage requestPage) {
