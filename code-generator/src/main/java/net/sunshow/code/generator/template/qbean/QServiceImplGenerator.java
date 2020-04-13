@@ -36,7 +36,7 @@ public class QServiceImplGenerator {
                     .returns(optionalTypeName)
                     .addParameter(template.getIdClassName(), template.getIdName())
                     .addAnnotation(Override.class)
-                    .addStatement("return $N.findOne(id).map(this::convertQBean)", repositoryInstance)
+                    .addStatement("return $N.findById(id).map(this::convertQBean)", repositoryInstance)
                     .build();
             typeSpecBuilder.addMethod(methodSpec);
         }
