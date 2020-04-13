@@ -1,4 +1,4 @@
 rootProject.name = "toolkit-kotlin"
-include("core-base")
-include("core-enums")
+include("kotlin-base")
+include("kotlin-base-enums")
 
