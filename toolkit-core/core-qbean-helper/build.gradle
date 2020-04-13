@@ -1,13 +1,12 @@
 plugins {
     id 'java'
-    id 'java-library'
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    api(project(':core-qbean-api'))
+    implementation(project(':core-qbean-api'))
     implementation('commons-beanutils:commons-beanutils:1.9.4')
     implementation('org.apache.commons:commons-lang3:3.10')
     compileOnly('org.springframework.data:spring-data-jpa:2.2.6.RELEASE')

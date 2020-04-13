@@ -1,11 +1,10 @@
 plugins {
     id 'java'
-    id 'java-library'
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    api("org.slf4j:slf4j-api:1.7.30")
+    implementation("org.slf4j:slf4j-api:1.7.30")
 }
