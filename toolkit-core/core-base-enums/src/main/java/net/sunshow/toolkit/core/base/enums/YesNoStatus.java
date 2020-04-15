@@ -54,6 +54,11 @@ public enum YesNoStatus {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public static YesNoStatus get(int value) {
         try {
             return _MAP.get(value);
