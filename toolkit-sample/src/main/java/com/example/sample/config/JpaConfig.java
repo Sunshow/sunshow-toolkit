@@ -1,6 +1,6 @@
 package com.example.sample.config;
 
-import net.sunshow.toolkit.core.qbean.helper.dao.BaseRepositoryFactoryBean;
+import net.sunshow.toolkit.core.qbean.helper.repository.BaseRepositoryFactoryBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
