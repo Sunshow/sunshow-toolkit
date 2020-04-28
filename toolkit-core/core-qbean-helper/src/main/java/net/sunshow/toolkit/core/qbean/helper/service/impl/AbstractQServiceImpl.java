@@ -27,6 +27,8 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 预留基础服务实现
@@ -199,5 +201,9 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
 
     protected <T> Q convertQBean(T object) {
         return BeanMapper.map(object, getActualType());
+    }
+
+    protected <T> List<Q> convertStreamQBeanToList(Stream<T> stream) {
+        return stream.map(this::convertQBean).collect(Collectors.toList());
     }
 }

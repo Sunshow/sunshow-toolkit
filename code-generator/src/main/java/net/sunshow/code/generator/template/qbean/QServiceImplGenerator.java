@@ -5,6 +5,8 @@ import net.sunshow.code.generator.util.GenerateUtils;
 
 import javax.lang.model.element.Modifier;
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public class QServiceImplGenerator {
@@ -37,6 +39,21 @@ public class QServiceImplGenerator {
                     .addParameter(template.getIdClassName(), template.getIdName())
                     .addAnnotation(Override.class)
                     .addStatement("return $N.findById(id).map(this::convertQBean)", repositoryInstance)
+                    .build();
+            typeSpecBuilder.addMethod(methodSpec);
+        }
+        // 按ID批量获取
+        {
+            TypeName listTypeName = ParameterizedTypeName.get(ClassName.get(List.class), template.getBeanClassName());
+            TypeName idCollectionTypeName = ParameterizedTypeName.get(ClassName.get(Collection.class), template.getIdClassName());
+            MethodSpec methodSpec = MethodSpec.methodBuilder("findBy" + GenerateUtils.lowerCamelToUpperCamel(template.getIdName()) + "Collection")
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(listTypeName)
+                    .addParameter(idCollectionTypeName, template.getIdName() + "Collection")
+                    .addAnnotation(Override.class)
+                    .addStatement(String.format("return convertStreamQBeanToList($N.findBy%sInOrderBy%sDesc(%sCollection).stream())",
+                            GenerateUtils.lowerCamelToUpperCamel(template.getIdName()), GenerateUtils.lowerCamelToUpperCamel(template.getIdName()), template.getIdName()),
+                            repositoryInstance)
                     .build();
             typeSpecBuilder.addMethod(methodSpec);
         }
