@@ -28,6 +28,16 @@ public class QServiceGenerator {
             typeSpecBuilder.addMethod(methodSpec);
         }
 
+        // 按ID确认获取
+        {
+            MethodSpec methodSpec = MethodSpec.methodBuilder("getBy" + GenerateUtils.lowerCamelToUpperCamel(template.getIdName()) + "Ensure")
+                    .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+                    .returns(template.getBeanClassName())
+                    .addParameter(template.getIdClassName(), template.getIdName())
+                    .build();
+            typeSpecBuilder.addMethod(methodSpec);
+        }
+
         // 按ID批量获取
         {
             TypeName listTypeName = ParameterizedTypeName.get(ClassName.get(List.class), template.getBeanClassName());

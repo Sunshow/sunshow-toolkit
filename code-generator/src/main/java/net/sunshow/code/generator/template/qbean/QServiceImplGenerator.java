@@ -38,7 +38,19 @@ public class QServiceImplGenerator {
                     .returns(optionalTypeName)
                     .addParameter(template.getIdClassName(), template.getIdName())
                     .addAnnotation(Override.class)
-                    .addStatement("return $N.findById(id).map(this::convertQBean)", repositoryInstance)
+                    .addStatement(String.format("return $N.findBy%s(%s).map(this::convertQBean)", GenerateUtils.lowerCamelToUpperCamel(template.getIdName()), template.getIdName()), repositoryInstance)
+                    .build();
+            typeSpecBuilder.addMethod(methodSpec);
+        }
+        // 按ID确认获取
+        {
+            MethodSpec methodSpec = MethodSpec.methodBuilder("getBy" + GenerateUtils.lowerCamelToUpperCamel(template.getIdName()) + "Ensure")
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(template.getBeanClassName())
+                    .addParameter(template.getIdClassName(), template.getIdName())
+                    .addAnnotation(Override.class)
+                    .addStatement(String.format("return getBy%s(%s).orElseThrow(this.getExceptionSupplier(\"未找到数据, %s=\" + %s, null))",
+                            GenerateUtils.lowerCamelToUpperCamel(template.getIdName()), template.getIdName(), template.getIdName(), template.getIdName()), repositoryInstance)
                     .build();
             typeSpecBuilder.addMethod(methodSpec);
         }
