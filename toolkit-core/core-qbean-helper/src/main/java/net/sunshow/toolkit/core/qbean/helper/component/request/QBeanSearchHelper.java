@@ -2,12 +2,15 @@ package net.sunshow.toolkit.core.qbean.helper.component.request;
 
 import net.sunshow.toolkit.core.qbean.api.annotation.QField;
 import net.sunshow.toolkit.core.qbean.api.enums.Operator;
+import net.sunshow.toolkit.core.qbean.api.request.QFieldDef;
 import net.sunshow.toolkit.core.qbean.api.request.QRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * author: sunshow.
@@ -41,8 +44,8 @@ public final class QBeanSearchHelper {
             if (annotation == null) {
                 annotation = classAnnotation;
             } else {
-                if (StringUtils.isNotEmpty(annotation.fieldName())) {
-                    fieldName = annotation.fieldName();
+                if (StringUtils.isNotEmpty(annotation.name())) {
+                    fieldName = annotation.name();
                 }
             }
 
@@ -82,4 +85,39 @@ public final class QBeanSearchHelper {
         }
         return request;
     }
+
+    public static List<QFieldDef> convertQFieldDefList(Class<?> clazz) {
+        List<QFieldDef> defList = new ArrayList<>();
+
+        // 先看类上有没有注解
+        QField classAnnotation = clazz.getAnnotation(QField.class);
+
+        // 反射每个属性逐个处理
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+
+            // 看属性上有没有注解 有则优先使用属性上的
+            QField annotation = field.getAnnotation(QField.class);
+            if (annotation == null) {
+                annotation = classAnnotation;
+            }
+
+            if (annotation == null) {
+                continue;
+            }
+
+            QFieldDef def = new QFieldDef();
+            def.setName(field.getName());
+            def.setControl(annotation.control());
+            def.setLabel(annotation.label());
+            def.setPlaceholder(annotation.placeholder());
+            def.setRef(annotation.ref());
+
+            defList.add(def);
+        }
+
+        return defList;
+    }
+
 }
