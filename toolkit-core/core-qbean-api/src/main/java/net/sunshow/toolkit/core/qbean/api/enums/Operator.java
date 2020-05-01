@@ -38,7 +38,7 @@ public enum Operator {
     }
 
     public static boolean isUnary(Operator operator) {
-        return operator == EQUAL || operator == NOT_EQUAL || operator == LESS_EQUAL || operator == GREATER_EQUAL || operator == LESS_THAN || operator == GREATER_THAN;
+        return operator == EQUAL || operator == NOT_EQUAL || operator == LESS_EQUAL || operator == GREATER_EQUAL || operator == LESS_THAN || operator == GREATER_THAN || operator == LIKE;
     }
 
     public static boolean isBinary(Operator operator) {
