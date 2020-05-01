@@ -64,7 +64,7 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
             }
             return Sort.by(orderList);
         }
-        return null;
+        return Sort.unsorted();
     }
 
     private Sort.Order convertSort(QSort requestSort) {
