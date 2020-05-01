@@ -22,6 +22,7 @@ public enum Operator {
     NOT_IN,
 
     LIKE,
+    LIKE_ESCAPE,
 
     IS_NULL,
     NOT_NULL,
@@ -41,7 +42,7 @@ public enum Operator {
     }
 
     public static boolean isBinary(Operator operator) {
-        return operator == BETWEEN;
+        return operator == BETWEEN || operator == LIKE_ESCAPE;
     }
 
     public static boolean isCollection(Operator operator) {

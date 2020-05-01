@@ -119,8 +119,12 @@ public class QRequest implements Serializable {
         return this.filter(Operator.IN, field, StreamSupport.stream(valueList.spliterator(), false).toArray(Object[]::new));
     }
 
-    public QRequest filterLike(String field, Object value) {
+    public QRequest filterLike(String field, String value) {
         return this.filter(Operator.LIKE, field, value);
+    }
+
+    public QRequest filterLike(String field, String value, char escapeChar) {
+        return this.filter(Operator.LIKE_ESCAPE, field, value, escapeChar);
     }
 
     public QRequest filterNotNull(String field) {

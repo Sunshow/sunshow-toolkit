@@ -1,6 +1,7 @@
 package net.sunshow.toolkit.core.qbean.api.annotation;
 
 import net.sunshow.toolkit.core.qbean.api.enums.Operator;
+import net.sunshow.toolkit.core.qbean.api.enums.Wildcard;
 
 import java.lang.annotation.*;
 
@@ -19,4 +20,6 @@ public @interface QField {
 
     Operator operator() default Operator.EQUAL;
 
+    // 仅在操作符是 Like 时有效
+    Wildcard wildcard() default Wildcard.BOTH;
 }
