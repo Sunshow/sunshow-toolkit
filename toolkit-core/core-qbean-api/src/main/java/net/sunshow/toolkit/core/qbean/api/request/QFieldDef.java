@@ -17,6 +17,8 @@ public class QFieldDef {
 
     private String ref;
 
+    private String template;
+
     public String getName() {
         return name;
     }
@@ -56,5 +58,12 @@ public class QFieldDef {
     public void setRef(String ref) {
         this.ref = ref;
     }
-    
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
+    }
 }

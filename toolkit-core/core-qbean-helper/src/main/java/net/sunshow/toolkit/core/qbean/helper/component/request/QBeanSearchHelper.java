@@ -113,6 +113,7 @@ public final class QBeanSearchHelper {
             def.setLabel(annotation.label());
             def.setPlaceholder(annotation.placeholder());
             def.setRef(annotation.ref());
+            def.setTemplate(annotation.template());
 
             defList.add(def);
         }

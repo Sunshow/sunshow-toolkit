@@ -32,4 +32,5 @@ public @interface QField {
 
     String ref() default "";
 
+    String template() default "";
 }
