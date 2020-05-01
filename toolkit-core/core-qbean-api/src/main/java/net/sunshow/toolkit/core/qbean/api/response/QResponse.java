@@ -38,7 +38,7 @@ public class QResponse<E> implements Serializable {
     }
 
     public QResponse(QPage requestPage) {
-        this(requestPage.getPage(), requestPage.getPageSize());
+        this(requestPage.getPageIndex(), requestPage.getPageSize());
     }
 
     public QResponse() {

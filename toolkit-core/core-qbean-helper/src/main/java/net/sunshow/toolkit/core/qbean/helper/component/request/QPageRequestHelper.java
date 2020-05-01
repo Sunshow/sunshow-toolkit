@@ -32,7 +32,7 @@ public class QPageRequestHelper {
 
             requestPage.pagingNext();
 
-            if (maxPagingCount > 0 && requestPage.getPage() >= maxPagingCount) {
+            if (maxPagingCount > 0 && requestPage.getPageIndex() >= maxPagingCount) {
                 // 达到最大翻页次数
                 break;
             }

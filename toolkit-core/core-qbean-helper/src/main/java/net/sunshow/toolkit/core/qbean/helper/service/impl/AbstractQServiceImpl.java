@@ -78,7 +78,7 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
     }
 
     protected Pageable convertPageable(QPage requestPage) {
-        QPageRequest pageRequest = new QPageRequest(requestPage.getPage(), requestPage.getPageSize(), this.convertSort(requestPage));
+        QPageRequest pageRequest = new QPageRequest(requestPage.getPageIndex(), requestPage.getPageSize(), this.convertSort(requestPage));
         pageRequest.setWithoutCountQuery(requestPage.isWithoutCountQuery());
         return pageRequest;
     }

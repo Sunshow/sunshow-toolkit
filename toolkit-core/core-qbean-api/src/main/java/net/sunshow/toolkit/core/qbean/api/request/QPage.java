@@ -13,7 +13,7 @@ public class QPage implements Serializable {
 
     private List<QSort> sortList;
 
-    private int page = 0;
+    private int pageIndex = 0;
     private int pageSize = 10;
 
     /**
@@ -46,8 +46,8 @@ public class QPage implements Serializable {
         return this;
     }
 
-    public QPage paging(int page, int pageSize) {
-        this.page = page;
+    public QPage paging(int pageIndex, int pageSize) {
+        this.pageIndex = pageIndex;
         this.pageSize = pageSize;
         return this;
     }
@@ -66,7 +66,7 @@ public class QPage implements Serializable {
      * 下一页继续查找
      */
     public QPage pagingNext() {
-        this.page++;
+        this.pageIndex++;
         return this;
     }
 
@@ -74,16 +74,36 @@ public class QPage implements Serializable {
         return sortList;
     }
 
-    public int getPage() {
-        return page;
+    public void setSortList(List<QSort> sortList) {
+        this.sortList = sortList;
+    }
+
+    public int getPageIndex() {
+        return pageIndex;
+    }
+
+    public void setPageIndex(int pageIndex) {
+        this.pageIndex = pageIndex;
     }
 
     public int getPageSize() {
         return pageSize;
     }
 
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
     public Long getLimitId() {
         return limitId;
+    }
+
+    public void setLimitId(Long limitId) {
+        this.limitId = limitId;
+    }
+
+    public void setWithoutCountQuery(boolean withoutCountQuery) {
+        this.withoutCountQuery = withoutCountQuery;
     }
 
     public boolean isWithoutCountQuery() {
