@@ -59,6 +59,9 @@ public final class QBeanSearchHelper {
                     // 将来如果要支持 null 值的查询可以在 QField 注解上进行扩展
                     continue;
                 }
+                if (annotation.emptyAsNull() && value.equals("")) {
+                    continue;
+                }
 
                 // 对 LIKE 进行预处理
                 if (annotation.operator() == Operator.LIKE || annotation.operator() == Operator.LIKE_ESCAPE) {

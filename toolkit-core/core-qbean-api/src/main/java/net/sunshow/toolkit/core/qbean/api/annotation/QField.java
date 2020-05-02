@@ -26,6 +26,8 @@ public @interface QField {
 
     Control control() default Control.INPUT;
 
+    boolean emptyAsNull() default true;
+
     String label() default "";
 
     String placeholder() default "";
