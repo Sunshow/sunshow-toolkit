@@ -126,6 +126,7 @@ public final class QBeanSearchHelper {
             def.setPlaceholder(annotation.placeholder());
             def.setRef(annotation.ref());
             def.setTemplate(annotation.template());
+            def.setOrder(annotation.order());
 
             if (StringUtils.isEmpty(def.getLabel()) && StringUtils.isNotEmpty(def.getPlaceholder())) {
                 def.setLabel(def.getPlaceholder());

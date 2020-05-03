@@ -39,4 +39,6 @@ public @interface QField {
     String ref() default "";
 
     String template() default "";
+
+    String order() default "ASC";
 }
