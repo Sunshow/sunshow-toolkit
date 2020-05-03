@@ -16,6 +16,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface QField {
 
+    boolean searchable() default true;
+
+    boolean sortable() default false;
+
     // 仅在标记在属性上时有效
     String name() default "";
 

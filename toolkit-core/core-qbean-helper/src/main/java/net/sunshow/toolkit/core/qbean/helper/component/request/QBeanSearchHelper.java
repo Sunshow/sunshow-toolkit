@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * author: sunshow.
@@ -53,6 +54,10 @@ public final class QBeanSearchHelper {
                 continue;
             }
 
+            if (!annotation.searchable()) {
+                continue;
+            }
+
             try {
                 Object value = field.get(object);
                 if (value == null) {
@@ -89,7 +94,7 @@ public final class QBeanSearchHelper {
         return request;
     }
 
-    public static List<QFieldDef> convertQFieldDefList(Class<?> clazz) {
+    private static List<QFieldDef> convertQFieldDefList(Class<?> clazz, Predicate<QField> predicate) {
         List<QFieldDef> defList = new ArrayList<>();
 
         // 先看类上有没有注解
@@ -110,6 +115,10 @@ public final class QBeanSearchHelper {
                 continue;
             }
 
+            if (!predicate.test(annotation)) {
+                continue;
+            }
+
             QFieldDef def = new QFieldDef();
             def.setName(field.getName());
             def.setControl(annotation.control());
@@ -118,10 +127,22 @@ public final class QBeanSearchHelper {
             def.setRef(annotation.ref());
             def.setTemplate(annotation.template());
 
+            if (StringUtils.isEmpty(def.getLabel()) && StringUtils.isNotEmpty(def.getPlaceholder())) {
+                def.setLabel(def.getPlaceholder());
+            }
+
             defList.add(def);
         }
 
         return defList;
+    }
+
+    public static List<QFieldDef> convertSearchQFieldDefList(Class<?> clazz) {
+        return convertQFieldDefList(clazz, QField::searchable);
+    }
+
+    public static List<QFieldDef> convertSortQFieldDefList(Class<?> clazz) {
+        return convertQFieldDefList(clazz, QField::sortable);
     }
 
 }
