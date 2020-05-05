@@ -103,7 +103,7 @@ public class QCRUDControllerGenerator {
                     .addStatement("$T.Builder builder = $T.builder()", template.getBeanCreatorClassName(), template.getBeanCreatorClassName())
                     .addStatement("$T.copyPropertiesToCreatorBuilder(builder, $T.class, fo)", QTemplate.ClassNameQBeanCreatorHelper, template.getBeanCreatorClassName())
                     .addStatement("$N.save(builder.build())", serviceInstance)
-                    .addStatement("return $S", "redirect:/" + template.getTemplatePrefix() + "/list");
+                    .addStatement("return $S", "redirect:/" + template.getRequestMappingPrefix() + "/list");
 
             if (template.getShiroResource() != null) {
                 AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameShiroRequiresPermissions).addMember("value", "$S", template.getShiroResource() + ":create").build();
@@ -152,7 +152,7 @@ public class QCRUDControllerGenerator {
                     .addAnnotation(QTemplate.ClassNameJavaxValid)
                     .build();
 
-            MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder("create")
+            MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder("update")
                     .addModifiers(Modifier.PUBLIC)
                     .returns(String.class)
                     .addParameter(foParameterSpec)
@@ -160,7 +160,7 @@ public class QCRUDControllerGenerator {
                     .addStatement("$T.Builder builder = $T.builder(fo.get$N())", template.getBeanUpdaterClassName(), template.getBeanUpdaterClassName(), GenerateUtils.lowerCamelToUpperCamel(template.getIdName()))
                     .addStatement("$T.copyPropertiesToUpdateBuilder(builder, $T.class, fo)", QTemplate.ClassNameQBeanUpdaterHelper, template.getBeanUpdaterClassName())
                     .addStatement("$N.update(builder.build())", serviceInstance)
-                    .addStatement("return $S", "redirect:/" + template.getTemplatePrefix() + "/list");
+                    .addStatement("return $S", "redirect:/" + template.getRequestMappingPrefix() + "/list");
 
             if (template.getShiroResource() != null) {
                 AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameShiroRequiresPermissions).addMember("value", "$S", template.getShiroResource() + ":update").build();
