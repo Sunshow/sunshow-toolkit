@@ -18,6 +18,7 @@ public class QBeanSampleTest {
         template.setControllerModuleName("foo2");
         template.setTemplatePrefix("admin/foobar");
         template.setShiroResource("foobar");
+        template.setRequestMappingPrefix("/admin/foobar");
     }
 
     @Test

@@ -50,10 +50,10 @@ public class QCRUDControllerGenerator {
                     .addStatement("$T request = $T.convertQRequest(search)", QTemplate.ClassNameQRequest, QTemplate.ClassNameQBeanSearchHelper)
                     .addCode("\n")
                     .beginControlFlow("if (sort.getSortFields() == null)")
-                    .addStatement("sort.setSortFields(new String[]{Q$N.$N + \"|\" + $T.Order.DESC.name()})", template.getBeanName(), template.getIdName(), QTemplate.ClassNameQSort)
+                    .addStatement("sort.setSortFields(new String[]{$T.$N + \"|\" + $T.Order.DESC.name()})", ClassName.get(template.getBeanPackagePath(), "Q" + template.getBeanName()), template.getIdName(), QTemplate.ClassNameQSort)
                     .endControlFlow()
                     .addCode("\n")
-                    .addStatement("$T.addAttributes(modelMap, $N.findAll(request, page.toQPage(sort.toQSortList())), search, sort)", QTemplate.ClassNameQBeanSearchHelper, serviceInstance)
+                    .addStatement("$T.addAttributes(modelMap, $N.findAll(request, page.toQPage(sort.toQSortList())), search, sort)", QTemplate.ClassNameQSearchModelHelper, serviceInstance)
                     .addCode("\n")
                     .addStatement("return $S", template.getTemplatePrefix() + "/list");
 
@@ -62,7 +62,7 @@ public class QCRUDControllerGenerator {
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
             {
-                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringRequestMapping).addMember("value", "/list").build();
+                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringRequestMapping).addMember("value", "$S", "/list").build();
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
 
@@ -82,7 +82,7 @@ public class QCRUDControllerGenerator {
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
             {
-                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringGetMapping).addMember("value", "/create").build();
+                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringGetMapping).addMember("value", "$S", "/create").build();
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
 
@@ -110,7 +110,7 @@ public class QCRUDControllerGenerator {
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
             {
-                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringPostMapping).addMember("value", "/create").build();
+                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringPostMapping).addMember("value", "$S", "/create").build();
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
 
@@ -139,7 +139,7 @@ public class QCRUDControllerGenerator {
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
             {
-                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringGetMapping).addMember("value", "/update").build();
+                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringGetMapping).addMember("value", "$S", "/update").build();
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
 
@@ -167,7 +167,7 @@ public class QCRUDControllerGenerator {
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
             {
-                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringPostMapping).addMember("value", "/update").build();
+                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringPostMapping).addMember("value", "$S", "/update").build();
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
 
@@ -195,14 +195,14 @@ public class QCRUDControllerGenerator {
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
             {
-                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringGetMapping).addMember("value", "/delete").build();
+                AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringGetMapping).addMember("value", "$S", "/delete").build();
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
 
             typeSpecBuilder.addMethod(methodSpecBuilder.build());
         }
 
-        JavaFile javaFile = JavaFile.builder(template.getUpdateFOPackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
+        JavaFile javaFile = JavaFile.builder(template.getControllerPackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
 
         javaFile.writeTo(new File(template.getOutputPath()));
     }
