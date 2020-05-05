@@ -37,11 +37,16 @@ public class QUpdateFOGenerator {
                 continue;
             }
             // 忽略掉 QBeanUpdaterIgnore
+            boolean ignore = false;
             for (JavaAnnotation annotation : field.getAnnotations()) {
                 JavaClass annotationType = annotation.getType();
-                if ((annotationType.getPackageName() + "." + annotationType.getName()).equals(QTemplate.ClassNameQBeanUpdaterIgnore.toString())) {
-                    continue;
+                if (annotationType.getName().equals(QTemplate.ClassNameQBeanUpdaterIgnore.simpleName())) {
+                    ignore = true;
+                    break;
                 }
+            }
+            if (ignore) {
+                continue;
             }
             // 添加 Field
             JavaClass fieldType = field.getType();

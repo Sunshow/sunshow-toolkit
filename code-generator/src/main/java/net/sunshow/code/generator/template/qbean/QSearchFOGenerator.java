@@ -49,7 +49,7 @@ public class QSearchFOGenerator {
                 // ID 自动允许排序
                 for (JavaAnnotation annotation : field.getAnnotations()) {
                     JavaClass annotationType = annotation.getType();
-                    if ((annotationType.getPackageName() + "." + annotationType.getName()).equals(QTemplate.ClassNameQBeanID.toString())) {
+                    if (annotationType.getName().equals(QTemplate.ClassNameQBeanID.simpleName())) {
                         sortable = true;
                         break;
                     }
@@ -61,9 +61,18 @@ public class QSearchFOGenerator {
 
             // 从评论中读取 placeholder
             String comment = field.getComment();
-            if (comment != null && !comment.isEmpty()) {
-                fieldAnnotationSpecBuilder.addMember("placeholder", "$S", comment);
+            if (comment == null || comment.isEmpty()) {
+                if (field.getName().equalsIgnoreCase(template.getIdName())) {
+                    comment = "ID";
+                } else if (field.getName().equalsIgnoreCase(QTemplate.FieldNameCreatedTime)) {
+                    comment = "创建时间";
+                } else if (field.getName().equalsIgnoreCase(QTemplate.FieldNameUpdatedTime)) {
+                    comment = "更新时间";
+                } else {
+                    comment = GenerateUtils.lowerCamelToUpperCamel(field.getName());
+                }
             }
+            fieldAnnotationSpecBuilder.addMember("placeholder", "$S", comment);
 
             // 添加 Field
             JavaClass fieldType = field.getType();

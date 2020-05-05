@@ -97,6 +97,9 @@ public class QTemplate {
     // 是否支持软删除, 只在 Entity 生成
     private boolean softDelete = true;
 
+    // fo 的模块目录
+    private String foModuleName;
+
     // bean 包路径
     public String getBeanPackagePath() {
         return GenerateUtils.combinePackagePath(packagePathPrefix, "vo", moduleName);
@@ -195,6 +198,13 @@ public class QTemplate {
         return GenerateUtils.combinePackagePath(getServicePackagePath(), "impl", moduleName);
     }
 
+    public String getFoModuleName() {
+        if (foModuleName == null) {
+            return moduleName;
+        }
+        return foModuleName;
+    }
+
     // FO 相关配置
     public String getCreateFOName() {
         return beanName + "CreateFO";
@@ -202,7 +212,7 @@ public class QTemplate {
 
     // 包路径
     public String getCreateFOPackagePath() {
-        return GenerateUtils.combinePackagePath(packagePathPrefix, "fo", moduleName);
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "fo", getFoModuleName());
     }
 
     // 类型
@@ -217,7 +227,7 @@ public class QTemplate {
 
     // 包路径
     public String getUpdateFOPackagePath() {
-        return GenerateUtils.combinePackagePath(packagePathPrefix, "fo", moduleName);
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "fo", getFoModuleName());
     }
 
     // 类型
@@ -232,7 +242,7 @@ public class QTemplate {
 
     // 包路径
     public String getSearchFOPackagePath() {
-        return GenerateUtils.combinePackagePath(packagePathPrefix, "fo", moduleName);
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "fo", getFoModuleName());
     }
 
     // 类型

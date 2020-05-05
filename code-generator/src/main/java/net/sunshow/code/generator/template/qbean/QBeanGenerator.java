@@ -41,6 +41,7 @@ public class QBeanGenerator {
         // 添加默认字段
         {
             FieldSpec.Builder builder = FieldSpec.builder(QTemplate.ClassNameLocalDateTime, QTemplate.FieldNameCreatedTime, Modifier.PRIVATE)
+                    .addAnnotation(QTemplate.ClassNameQBeanCreatorIgnore)
                     .addAnnotation(QTemplate.ClassNameQBeanUpdaterIgnore);
             typeSpecBuilder.addField(builder.build());
         }
