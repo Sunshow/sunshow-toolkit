@@ -30,6 +30,16 @@ public class QTemplate {
     public static final ClassName ClassNameSpringAutowired = ClassName.get("org.springframework.beans.factory.annotation", "Autowired");
     public static final ClassName ClassNameSpringService = ClassName.get("org.springframework.stereotype", "Service");
     public static final ClassName ClassNameSpringTransactional = ClassName.get("org.springframework.transaction.annotation", "Transactional");
+    public static final ClassName ClassNameSpringController = ClassName.get("org.springframework.stereotype", "Controller");
+    public static final ClassName ClassNameSpringRequestMapping = ClassName.get("org.springframework.web.bind.annotation", "RequestMapping");
+    public static final ClassName ClassNameSpringGetMapping = ClassName.get("org.springframework.web.bind.annotation", "GetMapping");
+    public static final ClassName ClassNameSpringPostMapping = ClassName.get("org.springframework.web.bind.annotation", "PostMapping");
+    public static final ClassName ClassNameSpringRequestParam = ClassName.get("org.springframework.web.bind.annotation", "RequestParam");
+    public static final ClassName ClassNameSpringResponseBody = ClassName.get("org.springframework.web.bind.annotation", "ResponseBody");
+    public static final ClassName ClassNameSpringModelMap = ClassName.get("org.springframework.ui", "ModelMap");
+
+    public static final ClassName ClassNameJavaxValid = ClassName.get("javax.validation", "Valid");
+    public static final ClassName ClassNameJavaxNotNull = ClassName.get("javax.validation.constraints", "NotNull");
 
     public static final ClassName ClassNameHibernateDynamicInsert = ClassName.get("org.hibernate.annotations", "DynamicInsert");
     public static final ClassName ClassNameHibernateDynamicUpdate = ClassName.get("org.hibernate.annotations", "DynamicUpdate");
@@ -47,17 +57,25 @@ public class QTemplate {
     public static final ClassName ClassNameQResponse = ClassName.get("net.sunshow.toolkit.core.qbean.api.response", "QResponse");
     public static final ClassName ClassNameQRequest = ClassName.get("net.sunshow.toolkit.core.qbean.api.request", "QRequest");
     public static final ClassName ClassNameQPage = ClassName.get("net.sunshow.toolkit.core.qbean.api.request", "QPage");
+    public static final ClassName ClassNameQSort = ClassName.get("net.sunshow.toolkit.core.qbean.api.request", "QSort");
     public static final ClassName ClassNameQField = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QField");
     public static final ClassName ClassNameQFieldControl = ClassName.get("net.sunshow.toolkit.core.qbean.api.enums", "Control");
 
     public static final ClassName ClassNameBeanMapper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.mapper", "BeanMapper");
     public static final ClassName ClassNameQBeanCreatorHelper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.request", "QBeanCreatorHelper");
     public static final ClassName ClassNameQBeanUpdaterHelper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.request", "QBeanUpdaterHelper");
+    public static final ClassName ClassNameQBeanSearchHelper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.request", "QBeanSearchHelper");
 
+    public static final ClassName ClassNamePageFO = ClassName.get("net.sunshow.cms.module.admin.fo", "PageFO");
+    public static final ClassName ClassNameSortFO = ClassName.get("net.sunshow.cms.module.admin.fo", "SortFO");
+    public static final ClassName ClassNameResponseFO = ClassName.get("net.sunshow.cms.module.admin.fo", "ResponseFO");
+
+    public static final ClassName ClassNameShiroRequiresPermissions = ClassName.get("org.apache.shiro.authz.annotation", "RequiresPermissions");
 
     public static final ClassName ClassNameLombokData = ClassName.get("lombok", "Data");
     public static final ClassName ClassNameLombokSetter = ClassName.get("lombok", "Setter");
     public static final ClassName ClassNameLombokGetter = ClassName.get("lombok", "Getter");
+    public static final ClassName ClassNameLombokSlf4j = ClassName.get("lombok.extern.slf4j", "Slf4j");
 
     public static final String FieldNameDeletedTime = "deletedTime";
     public static final String FieldNameCreatedTime = "createdTime";
@@ -99,6 +117,20 @@ public class QTemplate {
 
     // fo 的模块目录
     private String foModuleName;
+
+    // controller 相关
+    private String controllerModuleName;
+
+    private String requestMappingPrefix;
+
+    private boolean controllerDelete = true;
+
+    // 是否使用 shiro
+    private boolean shiro = true;
+
+    private String shiroResource;
+
+    private String templatePrefix;
 
     // bean 包路径
     public String getBeanPackagePath() {
@@ -248,5 +280,22 @@ public class QTemplate {
     // 类型
     public ClassName getSearchFOClassName() {
         return ClassName.get(getSearchFOPackagePath(), getSearchFOName());
+    }
+
+    // Controller 相关配置
+    public String getControllerModuleName() {
+        if (controllerModuleName == null) {
+            return moduleName;
+        }
+        return controllerModuleName;
+    }
+
+    public String getControllerName() {
+        return beanName + "Controller";
+    }
+
+    // 包路径
+    public String getControllerPackagePath() {
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "controller", getControllerModuleName());
     }
 }

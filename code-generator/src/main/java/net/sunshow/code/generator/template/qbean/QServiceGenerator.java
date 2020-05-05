@@ -85,6 +85,17 @@ public class QServiceGenerator {
             typeSpecBuilder.addMethod(methodSpec);
         }
 
+        // 删除
+        {
+            MethodSpec methodSpec = MethodSpec.methodBuilder("deleteBy" + GenerateUtils.lowerCamelToUpperCamel(template.getIdName()))
+                    .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+                    .returns(Void.class)
+                    .addParameter(template.getIdClassName(), template.getIdName())
+                    .addException(template.getExceptionClassName())
+                    .build();
+            typeSpecBuilder.addMethod(methodSpec);
+        }
+
         JavaFile javaFile = JavaFile.builder(template.getServicePackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
 
         javaFile.writeTo(new File(template.getOutputPath()));

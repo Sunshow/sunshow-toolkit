@@ -137,6 +137,29 @@ public class QServiceImplGenerator {
             typeSpecBuilder.addMethod(methodSpec);
         }
 
+        // 删除
+        {
+            MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder("deleteBy" + GenerateUtils.lowerCamelToUpperCamel(template.getIdName()))
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(Void.class)
+                    .addParameter(template.getIdClassName(), template.getIdName())
+                    .addException(template.getExceptionClassName())
+                    .addAnnotation(Override.class)
+                    .addAnnotation(QTemplate.ClassNameSpringTransactional);
+
+            if (template.isSoftDelete()) {
+                methodSpecBuilder
+                        .addStatement("$T $N = getEntityWithNullCheckForUpdate($N, $N)", template.getEntityClassName(), entityInstance, template.getIdName(), repositoryInstance)
+                        .addStatement("$N.setDeletedTime(System.currentTimeMillis())", entityInstance);
+            } else {
+                methodSpecBuilder
+                        .addStatement("$T $N = getEntityWithNullCheckForUpdate($N, $N)", template.getEntityClassName(), entityInstance, template.getIdName(), repositoryInstance)
+                        .addStatement("$N.delete($N)", repositoryInstance, entityInstance);
+            }
+
+            typeSpecBuilder.addMethod(methodSpecBuilder.build());
+        }
+
         // 异常提供
         {
             WildcardTypeName wildcardExceptionType = WildcardTypeName.subtypeOf(RuntimeException.class);

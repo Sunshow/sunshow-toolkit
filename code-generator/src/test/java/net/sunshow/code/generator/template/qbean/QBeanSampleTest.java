@@ -14,6 +14,10 @@ public class QBeanSampleTest {
         template.setPackagePathPrefix("net.sunshow.code.sample");
         template.setModuleName("foo");
         template.setBeanName("Bar");
+        template.setFoModuleName("foo1");
+        template.setControllerModuleName("foo2");
+        template.setTemplatePrefix("admin/foobar");
+        template.setShiroResource("foobar");
     }
 
     @Test
@@ -31,5 +35,6 @@ public class QBeanSampleTest {
         QCreateFOGenerator.generate(template);
         QUpdateFOGenerator.generate(template);
         QSearchFOGenerator.generate(template);
+        QCRUDControllerGenerator.generate(template);
     }
 }
