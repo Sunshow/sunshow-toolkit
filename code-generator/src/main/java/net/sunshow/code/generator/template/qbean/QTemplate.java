@@ -21,6 +21,7 @@ public class QTemplate {
     public static final ClassName ClassNameJpaGenerationType = ClassName.get("javax.persistence", "GenerationType");
     public static final ClassName ClassNameJpaPrePersist = ClassName.get("javax.persistence", "PrePersist");
     public static final ClassName ClassNameJpaPreUpdate = ClassName.get("javax.persistence", "PreUpdate");
+    public static final ClassName ClassNameHibernateWhere = ClassName.get("org.hibernate.annotations", "Where");
 
     public static final ClassName ClassNameJpaPageable = ClassName.get("org.springframework.data.domain", "Pageable");
     public static final ClassName ClassNameJpaPage = ClassName.get("org.springframework.data.domain", "Page");
@@ -55,6 +56,7 @@ public class QTemplate {
     public static final ClassName ClassNameLombokSetter = ClassName.get("lombok", "Setter");
     public static final ClassName ClassNameLombokGetter = ClassName.get("lombok", "Getter");
 
+    public static final String FieldNameDeletedTime = "deletedTime";
     public static final String FieldNameCreatedTime = "createdTime";
     public static final String FieldNameUpdatedTime = "updatedTime";
 
@@ -88,6 +90,9 @@ public class QTemplate {
     private boolean beanCreator = true;
     // 是否生成 updater
     private boolean beanUpdater = true;
+
+    // 是否支持软删除, 只在 Entity 生成
+    private boolean softDelete = true;
 
     // bean 包路径
     public String getBeanPackagePath() {

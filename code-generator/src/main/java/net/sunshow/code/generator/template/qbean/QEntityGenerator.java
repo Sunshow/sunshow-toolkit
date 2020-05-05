@@ -19,6 +19,13 @@ public class QEntityGenerator {
                 .addAnnotation(QTemplate.ClassNameHibernateDynamicInsert)
                 .addAnnotation(QTemplate.ClassNameHibernateDynamicUpdate);
 
+        // 是否支持软删除
+        if (template.isSoftDelete()) {
+            AnnotationSpec whereAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameHibernateWhere)
+                    .addMember("clause", "$N = 0", GenerateUtils.lowerCamelToLowerUnderScore(QTemplate.FieldNameDeletedTime)).build();
+            typeSpecBuilder.addAnnotation(whereAnnotationSpec);
+        }
+
         if (template.isLombok()) {
             typeSpecBuilder
                     .addAnnotation(QTemplate.ClassNameLombokGetter)
@@ -36,6 +43,14 @@ public class QEntityGenerator {
         }
 
         // 添加默认字段
+        if (template.isSoftDelete()) {
+            AnnotationSpec columnAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameJpaColumn)
+                    .addMember("name", "$S", GenerateUtils.lowerCamelToLowerUnderScore(QTemplate.FieldNameDeletedTime))
+                    .build();
+            FieldSpec.Builder builder = FieldSpec.builder(Long.class, QTemplate.FieldNameDeletedTime, Modifier.PRIVATE)
+                    .addAnnotation(columnAnnotationSpec);
+            typeSpecBuilder.addField(builder.build());
+        }
         {
             AnnotationSpec columnAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameJpaColumn)
                     .addMember("name", "$S", GenerateUtils.lowerCamelToLowerUnderScore(QTemplate.FieldNameCreatedTime))
