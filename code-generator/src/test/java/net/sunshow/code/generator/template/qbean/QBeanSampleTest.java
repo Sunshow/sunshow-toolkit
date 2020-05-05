@@ -25,4 +25,11 @@ public class QBeanSampleTest {
         QServiceGenerator.generate(template);
         QServiceImplGenerator.generate(template);
     }
+
+    @Test
+    public void testGenerateByQBeanFields() throws Exception {
+        QCreateFOGenerator.generate(template);
+        QUpdateFOGenerator.generate(template);
+        QSearchFOGenerator.generate(template);
+    }
 }

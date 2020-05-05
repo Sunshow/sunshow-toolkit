@@ -7,6 +7,7 @@ import com.squareup.javapoet.TypeName;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Modifier;
+import java.nio.file.Path;
 
 public class GenerateUtils {
     public static MethodSpec.Builder createGetterBuilder(TypeName typeName, String fieldName, Modifier visibility) {
@@ -64,5 +65,15 @@ public class GenerateUtils {
         } else {
             return Joiner.on('.').join(basePackagePath, subPackage, moduleName);
         }
+    }
+
+    public static Path packageNameToPath(Path directory, String packageName) {
+        Path outputDirectory = directory;
+        if (!packageName.isEmpty()) {
+            for (String packageComponent : packageName.split("\\.")) {
+                outputDirectory = outputDirectory.resolve(packageComponent);
+            }
+        }
+        return outputDirectory;
     }
 }

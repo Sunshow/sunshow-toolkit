@@ -32,6 +32,7 @@ public class QDoxTest {
                 System.out.println(javaField.getName());
                 System.out.println(javaField.isPrivate());
                 System.out.println(javaField.isStatic());
+                System.out.println(javaField.getComment());
             }
         }
     }

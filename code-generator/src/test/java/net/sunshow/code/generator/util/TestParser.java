@@ -8,8 +8,12 @@ import org.junit.jupiter.api.Disabled;
 @Disabled
 public class TestParser {
 
+    // 这是评论格式1
     private String name;
 
+    /**
+     * 这是评论格式2
+     */
     @Deprecated
     private Long deletedTime;
 

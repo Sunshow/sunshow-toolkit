@@ -47,12 +47,15 @@ public class QTemplate {
     public static final ClassName ClassNameQResponse = ClassName.get("net.sunshow.toolkit.core.qbean.api.response", "QResponse");
     public static final ClassName ClassNameQRequest = ClassName.get("net.sunshow.toolkit.core.qbean.api.request", "QRequest");
     public static final ClassName ClassNameQPage = ClassName.get("net.sunshow.toolkit.core.qbean.api.request", "QPage");
+    public static final ClassName ClassNameQField = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QField");
+    public static final ClassName ClassNameQFieldControl = ClassName.get("net.sunshow.toolkit.core.qbean.api.enums", "Control");
 
     public static final ClassName ClassNameBeanMapper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.mapper", "BeanMapper");
     public static final ClassName ClassNameQBeanCreatorHelper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.request", "QBeanCreatorHelper");
     public static final ClassName ClassNameQBeanUpdaterHelper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.request", "QBeanUpdaterHelper");
 
 
+    public static final ClassName ClassNameLombokData = ClassName.get("lombok", "Data");
     public static final ClassName ClassNameLombokSetter = ClassName.get("lombok", "Setter");
     public static final ClassName ClassNameLombokGetter = ClassName.get("lombok", "Getter");
 
@@ -192,4 +195,48 @@ public class QTemplate {
         return GenerateUtils.combinePackagePath(getServicePackagePath(), "impl", moduleName);
     }
 
+    // FO 相关配置
+    public String getCreateFOName() {
+        return beanName + "CreateFO";
+    }
+
+    // 包路径
+    public String getCreateFOPackagePath() {
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "fo", moduleName);
+    }
+
+    // 类型
+    public ClassName getCreateFOClassName() {
+        return ClassName.get(getCreateFOPackagePath(), getCreateFOName());
+    }
+
+    // FO 相关配置
+    public String getUpdateFOName() {
+        return beanName + "UpdateFO";
+    }
+
+    // 包路径
+    public String getUpdateFOPackagePath() {
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "fo", moduleName);
+    }
+
+    // 类型
+    public ClassName getUpdateFOClassName() {
+        return ClassName.get(getUpdateFOPackagePath(), getUpdateFOName());
+    }
+
+    // FO 相关配置
+    public String getSearchFOName() {
+        return beanName + "SearchFO";
+    }
+
+    // 包路径
+    public String getSearchFOPackagePath() {
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "fo", moduleName);
+    }
+
+    // 类型
+    public ClassName getSearchFOClassName() {
+        return ClassName.get(getSearchFOPackagePath(), getSearchFOName());
+    }
 }
