@@ -22,6 +22,7 @@ public class LombokBuilderUtils {
     public static <Builder, Dest, PropertiesSource> void copyPropertiesToBuilder(Builder builder, Class<Dest> destClass, PropertiesSource source) {
         Field[] fields = destClass.getDeclaredFields();
         Class<?> builderClass = builder.getClass();
+        Class<?> sourceClass = source.getClass();
         Map<String, Method> methodMap = StreamSupport.stream(Arrays.spliterator(builderClass.getDeclaredMethods()), false).collect(Collectors.toMap(Method::getName, Function.identity()));
         for (Field field : fields) {
             field.setAccessible(true);
@@ -29,10 +30,14 @@ public class LombokBuilderUtils {
             if (Modifier.isPrivate(modifiers) && !Modifier.isStatic(modifiers)) {
                 if (methodMap.containsKey(field.getName())) {
                     try {
-                        Object val = field.get(source);
+                        Field srcField = sourceClass.getDeclaredField(field.getName());
+                        srcField.setAccessible(true);
+                        Object val = srcField.get(source);
                         if (val != null) {
                             methodMap.get(field.getName()).invoke(builder, val);
                         }
+                    } catch (NoSuchFieldException e) {
+                        // src 没有这个属性直接忽略 也不打日志
                     } catch (Exception e) {
                         logger.error("复制属性出错, field=" + field.getName(), e);
                     }
