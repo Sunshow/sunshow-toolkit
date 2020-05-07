@@ -198,6 +198,7 @@ public class QCRUDControllerGenerator {
                 AnnotationSpec annotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringPostMapping).addMember("value", "$S", "/delete").build();
                 methodSpecBuilder.addAnnotation(annotationSpec);
             }
+            methodSpecBuilder.addAnnotation(QTemplate.ClassNameSpringResponseBody);
 
             typeSpecBuilder.addMethod(methodSpecBuilder.build());
         }
