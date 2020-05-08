@@ -37,10 +37,12 @@ public class QBeanSampleTest {
         QEntityGenerator.generate(template);
         QRepositoryGenerator.generate(template);
         QServiceImplGenerator.generate(template);
-        
+
         QCreateFOGenerator.generate(template);
         QUpdateFOGenerator.generate(template);
         QSearchFOGenerator.generate(template);
         QCRUDControllerGenerator.generate(template);
+
+        QMySQLTableGenerator.generate(template);
     }
 }
