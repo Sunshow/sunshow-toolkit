@@ -1,11 +1,15 @@
 package net.sunshow.code.generator.template.qbean;
 
 import com.squareup.javapoet.*;
+import com.thoughtworks.qdox.JavaProjectBuilder;
+import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaField;
+import com.thoughtworks.qdox.model.JavaSource;
 import net.sunshow.code.generator.util.GenerateUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Modifier;
 import java.io.File;
+import java.io.FileReader;
 
 public class QEntityGenerator {
 
@@ -33,12 +37,45 @@ public class QEntityGenerator {
         }
 
         // 添加ID
-        if (StringUtils.isNotBlank(template.getIdName())) {
+        {
             AnnotationSpec generatedValueAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameJpaGeneratedValue)
                     .addMember("strategy", "$T.IDENTITY", QTemplate.ClassNameJpaGenerationType).build();
             FieldSpec.Builder builder = FieldSpec.builder(template.getIdClassName(), template.getIdName(), Modifier.PRIVATE)
                     .addAnnotation(QTemplate.ClassNameJpaId)
                     .addAnnotation(generatedValueAnnotationSpec);
+            typeSpecBuilder.addField(builder.build());
+        }
+
+        // 根据 QBean 属性生成代码
+        JavaSource src = new JavaProjectBuilder().addSource(new FileReader(
+                String.format("%s/%s.java", GenerateUtils.packageNameToPath(new File(template.getOutputPath()).toPath(), template.getBeanPackagePath()), template.getBeanName())));
+
+        JavaClass beanClass = src.getClasses().get(0);
+        for (JavaField field : beanClass.getFields()) {
+            // 只处理 private 非 static
+            if (!field.isPrivate() || field.isStatic()) {
+                continue;
+            }
+
+            String fieldName = field.getName();
+            // 跳过已经做了默认处理的字段
+            if (fieldName.equals(template.getIdName()) ||
+                    fieldName.equals(QTemplate.FieldNameCreatedTime) ||
+                    fieldName.equals(QTemplate.FieldNameUpdatedTime)) {
+                continue;
+            }
+
+            // 添加属性
+            JavaClass fieldType = field.getType();
+            FieldSpec.Builder builder = FieldSpec.builder(ClassName.get(fieldType.getPackageName(), fieldType.getName()), fieldName, Modifier.PRIVATE);
+            // 如果有驼峰 加入 Column 注解指定字段名
+            if (fieldName.chars().anyMatch(Character::isUpperCase)) {
+                AnnotationSpec columnAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameJpaColumn)
+                        .addMember("name", "$S", GenerateUtils.lowerCamelToLowerUnderScore(fieldName))
+                        .build();
+                builder.addAnnotation(columnAnnotationSpec);
+            }
+
             typeSpecBuilder.addField(builder.build());
         }
 
