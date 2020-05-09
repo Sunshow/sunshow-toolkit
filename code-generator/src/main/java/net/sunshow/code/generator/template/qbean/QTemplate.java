@@ -40,6 +40,7 @@ public class QTemplate {
 
     public static final ClassName ClassNameJavaxValid = ClassName.get("javax.validation", "Valid");
     public static final ClassName ClassNameJavaxNotNull = ClassName.get("javax.validation.constraints", "NotNull");
+    public static final ClassName ClassNameJavaxNotBlank = ClassName.get("javax.validation.constraints", "NotBlank");
 
     public static final ClassName ClassNameHibernateDynamicInsert = ClassName.get("org.hibernate.annotations", "DynamicInsert");
     public static final ClassName ClassNameHibernateDynamicUpdate = ClassName.get("org.hibernate.annotations", "DynamicUpdate");

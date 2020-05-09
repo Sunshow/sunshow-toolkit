@@ -1,9 +1,7 @@
 package net.sunshow.code.generator.template.qbean;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeSpec;
+import com.google.common.base.MoreObjects;
+import com.squareup.javapoet.*;
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -50,7 +48,16 @@ public class QCreateFOGenerator {
             }
             // 添加 Field
             JavaClass fieldType = field.getType();
-            FieldSpec.Builder fieldBuilder = FieldSpec.builder(ClassName.get(fieldType.getPackageName(), fieldType.getName()), field.getName(), Modifier.PRIVATE);
+
+            // 默认添加 NotNull 验证, String 添加 NotBlank 验证
+            ClassName validateClassName = QTemplate.ClassNameJavaxNotNull;
+            if (fieldType.getName().equals("String")) {
+                validateClassName = QTemplate.ClassNameJavaxNotBlank;
+            }
+            AnnotationSpec.Builder fieldAnnotationSpecBuilder = AnnotationSpec.builder(validateClassName);
+            fieldAnnotationSpecBuilder.addMember("message", "$S", String.format("%s不能为空", MoreObjects.firstNonNull(field.getComment(), field.getName())));
+            FieldSpec.Builder fieldBuilder = FieldSpec.builder(ClassName.get(fieldType.getPackageName(), fieldType.getName()), field.getName(), Modifier.PRIVATE)
+                    .addAnnotation(fieldAnnotationSpecBuilder.build());
             typeSpecBuilder.addField(fieldBuilder.build());
         }
 
