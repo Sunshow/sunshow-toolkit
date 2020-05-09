@@ -76,4 +76,16 @@ public class GenerateUtils {
         }
         return outputDirectory;
     }
+
+    public static boolean classTypeWildEquals(String type1, String type2) {
+        String v1 = type1;
+        String v2 = type2;
+        if (StringUtils.contains(v1, ".")) {
+            v1 = StringUtils.substringAfterLast(type1, ".");
+        }
+        if (StringUtils.contains(v2, ".")) {
+            v2 = StringUtils.substringAfterLast(type2, ".");
+        }
+        return StringUtils.equals(v1, v2);
+    }
 }

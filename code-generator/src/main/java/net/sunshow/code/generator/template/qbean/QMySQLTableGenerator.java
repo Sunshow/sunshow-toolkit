@@ -41,7 +41,7 @@ public class QMySQLTableGenerator {
 
         String tableName = jcl.getAnnotations()
                 .stream()
-                .filter(an -> an.getType().getName().equals("Table"))
+                .filter(an -> GenerateUtils.classTypeWildEquals(an.getType().getName(), "Table"))
                 .filter(an -> an.getPropertyMap().containsKey("name"))
                 .map(an -> StringUtils.replace(an.getProperty("name").toString(), "\"", ""))
                 .findAny()
@@ -55,14 +55,14 @@ public class QMySQLTableGenerator {
 
         JavaField idField = jcl.getFields()
                 .stream()
-                .filter(field -> field.getAnnotations().stream().anyMatch(an -> an.getType().getName().equals("Id")))
+                .filter(field -> field.getAnnotations().stream().anyMatch(an -> GenerateUtils.classTypeWildEquals(an.getType().getName(), "Id")))
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
 
         String idName = idField.getName();
         boolean autoincrement = idField.getAnnotations()
                 .stream()
-                .filter(an -> an.getType().getName().equals("GeneratedValue"))
+                .filter(an -> GenerateUtils.classTypeWildEquals(an.getType().getName(), "GeneratedValue"))
                 .filter(an -> an.getPropertyMap().containsKey("strategy"))
                 .map(an -> an.getProperty("strategy").toString())
                 .anyMatch(s -> s.equals("GenerationType.IDENTITY"));
@@ -87,7 +87,7 @@ public class QMySQLTableGenerator {
 
             String columnName = field.getAnnotations()
                     .stream()
-                    .filter(an -> an.getType().getName().equals("Column"))
+                    .filter(an -> GenerateUtils.classTypeWildEquals(an.getType().getName(), "Column"))
                     .filter(an -> an.getPropertyMap().containsKey("name"))
                     .findAny()
                     .map(an -> StringUtils.replace(an.getProperty("name").toString(), "\"", ""))
@@ -96,7 +96,7 @@ public class QMySQLTableGenerator {
             String columnType = field.getType().getName();
             boolean hasConverter = field.getAnnotations()
                     .stream()
-                    .anyMatch(an -> an.getType().getName().equals("Convert"));
+                    .anyMatch(an -> GenerateUtils.classTypeWildEquals(an.getType().getName(), "Convert"));
             if (hasConverter) {
                 // 如果指定了 Convert 没办法知道具体类型 使用固定值
                 columnType = "Convert";
