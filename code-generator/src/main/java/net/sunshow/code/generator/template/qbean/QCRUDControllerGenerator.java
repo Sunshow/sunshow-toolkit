@@ -11,6 +11,8 @@ public class QCRUDControllerGenerator {
     public static void generate(QTemplate template) throws Exception {
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getControllerName())
                 .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(QTemplate.ClassNameLombokSlf4j)
+                .addAnnotation(QTemplate.ClassNameLombokRequiredArgsConstructor)
                 .addAnnotation(QTemplate.ClassNameSpringController);
 
         if (template.getRequestMappingPrefix() != null) {
@@ -18,18 +20,12 @@ public class QCRUDControllerGenerator {
             typeSpecBuilder.addAnnotation(annotationSpec);
         }
 
-        if (template.isLombok()) {
-            typeSpecBuilder
-                    .addAnnotation(QTemplate.ClassNameLombokSlf4j);
-        }
-
         String serviceInstance = GenerateUtils.upperCamelToLowerCamel(template.getServiceName());
         String beanInstance = GenerateUtils.upperCamelToLowerCamel(template.getBeanName());
 
         // autowire service
         {
-            FieldSpec fieldSpec = FieldSpec.builder(template.getServiceClassName(), serviceInstance, Modifier.PRIVATE)
-                    .addAnnotation(QTemplate.ClassNameSpringAutowired)
+            FieldSpec fieldSpec = FieldSpec.builder(template.getServiceClassName(), serviceInstance, Modifier.PRIVATE, Modifier.FINAL)
                     .build();
             typeSpecBuilder.addField(fieldSpec);
         }

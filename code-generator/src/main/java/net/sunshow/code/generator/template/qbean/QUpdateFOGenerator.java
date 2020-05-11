@@ -17,11 +17,8 @@ public class QUpdateFOGenerator {
 
     public static void generate(QTemplate template) throws Exception {
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getUpdateFOName())
-                .addModifiers(Modifier.PUBLIC);
-        if (template.isLombok()) {
-            typeSpecBuilder
-                    .addAnnotation(QTemplate.ClassNameLombokData);
-        }
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(QTemplate.ClassNameLombokData);
 
         // 解析 QBean 生成
         JavaProjectBuilder builder = new JavaProjectBuilder();

@@ -77,13 +77,12 @@ public class QTemplate {
     public static final ClassName ClassNameLombokData = ClassName.get("lombok", "Data");
     public static final ClassName ClassNameLombokSetter = ClassName.get("lombok", "Setter");
     public static final ClassName ClassNameLombokGetter = ClassName.get("lombok", "Getter");
+    public static final ClassName ClassNameLombokRequiredArgsConstructor = ClassName.get("lombok", "RequiredArgsConstructor");
     public static final ClassName ClassNameLombokSlf4j = ClassName.get("lombok.extern.slf4j", "Slf4j");
 
     public static final String FieldNameDeletedTime = "deletedTime";
     public static final String FieldNameCreatedTime = "createdTime";
     public static final String FieldNameUpdatedTime = "updatedTime";
-
-    private boolean lombok = true;
 
     private String indent = "    ";
 

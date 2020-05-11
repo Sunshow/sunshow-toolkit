@@ -20,6 +20,8 @@ public class QEntityGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(QTemplate.ClassNameBaseEntity)
                 .addAnnotation(tableAnnotationSpec)
+                .addAnnotation(QTemplate.ClassNameLombokGetter)
+                .addAnnotation(QTemplate.ClassNameLombokSetter)
                 .addAnnotation(QTemplate.ClassNameJpaEntity)
                 .addAnnotation(QTemplate.ClassNameHibernateDynamicInsert)
                 .addAnnotation(QTemplate.ClassNameHibernateDynamicUpdate);
@@ -29,12 +31,6 @@ public class QEntityGenerator {
             AnnotationSpec whereAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameHibernateWhere)
                     .addMember("clause", "$S", String.format("%s = 0", GenerateUtils.lowerCamelToLowerUnderScore(QTemplate.FieldNameDeletedTime))).build();
             typeSpecBuilder.addAnnotation(whereAnnotationSpec);
-        }
-
-        if (template.isLombok()) {
-            typeSpecBuilder
-                    .addAnnotation(QTemplate.ClassNameLombokGetter)
-                    .addAnnotation(QTemplate.ClassNameLombokSetter);
         }
 
         // 添加ID

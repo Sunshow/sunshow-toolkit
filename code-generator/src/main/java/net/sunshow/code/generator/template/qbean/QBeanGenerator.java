@@ -13,13 +13,9 @@ public class QBeanGenerator {
     public static void generate(QTemplate template) throws Exception {
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getBeanName())
                 .addModifiers(Modifier.PUBLIC)
-                .superclass(QTemplate.ClassNameAbstractQBean);
-
-        if (template.isLombok()) {
-            typeSpecBuilder
-                    .addAnnotation(QTemplate.ClassNameLombokGetter)
-                    .addAnnotation(QTemplate.ClassNameLombokSetter);
-        }
+                .superclass(QTemplate.ClassNameAbstractQBean)
+                .addAnnotation(QTemplate.ClassNameLombokGetter)
+                .addAnnotation(QTemplate.ClassNameLombokSetter);
 
         typeSpecBuilder.addAnnotation(QTemplate.ClassNameQBean);
 

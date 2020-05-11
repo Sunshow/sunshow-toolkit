@@ -17,11 +17,8 @@ public class QSearchFOGenerator {
     public static void generate(QTemplate template) throws Exception {
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getSearchFOName())
                 .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(QTemplate.ClassNameLombokData)
                 .addAnnotation(QTemplate.ClassNameQField);
-        if (template.isLombok()) {
-            typeSpecBuilder
-                    .addAnnotation(QTemplate.ClassNameLombokData);
-        }
 
         // 解析 QBean 生成
         JavaProjectBuilder builder = new JavaProjectBuilder();

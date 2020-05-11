@@ -18,6 +18,7 @@ public class QServiceImplGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(template.getServiceClassName())
                 .superclass(abstractServiceImplTypeName)
+                .addAnnotation(QTemplate.ClassNameLombokRequiredArgsConstructor)
                 .addAnnotation(QTemplate.ClassNameSpringService);
 
         String repositoryInstance = GenerateUtils.upperCamelToLowerCamel(template.getRepositoryName());
@@ -25,7 +26,7 @@ public class QServiceImplGenerator {
 
         // 添加 repository
         {
-            FieldSpec fieldSpec = FieldSpec.builder(template.getRepositoryClassName(), repositoryInstance, Modifier.PRIVATE).build();
+            FieldSpec fieldSpec = FieldSpec.builder(template.getRepositoryClassName(), repositoryInstance, Modifier.PRIVATE, Modifier.FINAL).build();
             typeSpecBuilder.addField(fieldSpec);
         }
 
@@ -177,12 +178,14 @@ public class QServiceImplGenerator {
         }
 
         // repository setter
+        /*
         {
             MethodSpec methodSpec = GenerateUtils.createSetterBuilder(template.getRepositoryClassName(), repositoryInstance, Modifier.PUBLIC)
                     .addAnnotation(QTemplate.ClassNameSpringAutowired)
                     .build();
             typeSpecBuilder.addMethod(methodSpec);
         }
+        */
 
         JavaFile javaFile = JavaFile.builder(template.getServiceImplPackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
 
