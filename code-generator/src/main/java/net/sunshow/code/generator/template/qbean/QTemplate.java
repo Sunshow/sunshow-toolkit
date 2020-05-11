@@ -68,9 +68,9 @@ public class QTemplate {
     public static final ClassName ClassNameQBeanSearchHelper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.request", "QBeanSearchHelper");
     public static final ClassName ClassNameQSearchModelHelper = ClassName.get("net.sunshow.cms.module.admin.component.qbean", "QSearchModelHelper");
 
-    public static final ClassName ClassNamePageFO = ClassName.get("net.sunshow.cms.module.admin.fo", "PageFO");
-    public static final ClassName ClassNameSortFO = ClassName.get("net.sunshow.cms.module.admin.fo", "SortFO");
-    public static final ClassName ClassNameResponseFO = ClassName.get("net.sunshow.cms.module.admin.fo", "ResponseFO");
+    public static final ClassName ClassNamePageFO = ClassName.get("net.sunshow.cms.module.common.fo", "PageFO");
+    public static final ClassName ClassNameSortFO = ClassName.get("net.sunshow.cms.module.common.fo", "SortFO");
+    public static final ClassName ClassNameResponseFO = ClassName.get("net.sunshow.cms.module.common.fo", "ResponseFO");
 
     public static final ClassName ClassNameShiroRequiresPermissions = ClassName.get("org.apache.shiro.authz.annotation", "RequiresPermissions");
 
