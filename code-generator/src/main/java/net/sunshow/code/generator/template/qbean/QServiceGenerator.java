@@ -89,7 +89,7 @@ public class QServiceGenerator {
         {
             MethodSpec methodSpec = MethodSpec.methodBuilder("deleteBy" + GenerateUtils.lowerCamelToUpperCamel(template.getIdName()))
                     .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-                    .returns(Void.class)
+                    .returns(void.class)
                     .addParameter(template.getIdClassName(), template.getIdName())
                     .addException(template.getExceptionClassName())
                     .build();

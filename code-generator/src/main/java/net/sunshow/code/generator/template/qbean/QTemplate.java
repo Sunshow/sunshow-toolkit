@@ -123,6 +123,8 @@ public class QTemplate {
     // controller 相关
     private String controllerModuleName;
 
+    private String controllerName;
+
     private String requestMappingPrefix;
 
     private boolean controllerDelete = true;
@@ -293,7 +295,10 @@ public class QTemplate {
     }
 
     public String getControllerName() {
-        return beanName + "Controller";
+        if (controllerName == null) {
+            return beanName + "Controller";
+        }
+        return controllerName;
     }
 
     // 包路径

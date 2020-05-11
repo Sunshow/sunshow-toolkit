@@ -6,6 +6,7 @@ import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaSource;
 import net.sunshow.code.generator.util.GenerateUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Modifier;
 import java.io.File;
@@ -26,7 +27,7 @@ public class QEntityGenerator {
         // 是否支持软删除
         if (template.isSoftDelete()) {
             AnnotationSpec whereAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameHibernateWhere)
-                    .addMember("clause", "$N = 0", GenerateUtils.lowerCamelToLowerUnderScore(QTemplate.FieldNameDeletedTime)).build();
+                    .addMember("clause", "$S", String.format("%s = 0", GenerateUtils.lowerCamelToLowerUnderScore(QTemplate.FieldNameDeletedTime))).build();
             typeSpecBuilder.addAnnotation(whereAnnotationSpec);
         }
 
@@ -51,6 +52,11 @@ public class QEntityGenerator {
                 String.format("%s/%s.java", GenerateUtils.packageNameToPath(new File(template.getOutputPath()).toPath(), template.getBeanPackagePath()), template.getBeanName())));
 
         JavaClass beanClass = src.getClasses().get(0);
+
+        if (StringUtils.isNotEmpty(beanClass.getComment())) {
+            typeSpecBuilder.addJavadoc(beanClass.getComment());
+        }
+
         for (JavaField field : beanClass.getFields()) {
             // 只处理 private 非 static
             if (!field.isPrivate() || field.isStatic()) {
@@ -74,6 +80,10 @@ public class QEntityGenerator {
                         .addMember("name", "$S", GenerateUtils.lowerCamelToLowerUnderScore(fieldName))
                         .build();
                 builder.addAnnotation(columnAnnotationSpec);
+            }
+
+            if (StringUtils.isNotEmpty(field.getComment())) {
+                builder.addJavadoc(field.getComment());
             }
 
             typeSpecBuilder.addField(builder.build());

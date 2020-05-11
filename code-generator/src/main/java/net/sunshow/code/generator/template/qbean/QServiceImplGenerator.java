@@ -141,7 +141,7 @@ public class QServiceImplGenerator {
         {
             MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder("deleteBy" + GenerateUtils.lowerCamelToUpperCamel(template.getIdName()))
                     .addModifiers(Modifier.PUBLIC)
-                    .returns(Void.class)
+                    .returns(void.class)
                     .addParameter(template.getIdClassName(), template.getIdName())
                     .addException(template.getExceptionClassName())
                     .addAnnotation(Override.class)
