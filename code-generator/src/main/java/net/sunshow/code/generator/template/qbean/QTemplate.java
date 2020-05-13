@@ -61,6 +61,7 @@ public class QTemplate {
     public static final ClassName ClassNameQSort = ClassName.get("net.sunshow.toolkit.core.qbean.api.request", "QSort");
     public static final ClassName ClassNameQField = ClassName.get("net.sunshow.toolkit.core.qbean.api.annotation", "QField");
     public static final ClassName ClassNameQFieldControl = ClassName.get("net.sunshow.toolkit.core.qbean.api.enums", "Control");
+    public static final ClassName ClassNameQOperator = ClassName.get("net.sunshow.toolkit.core.qbean.api.enums", "Operator");
 
     public static final ClassName ClassNameBeanMapper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.mapper", "BeanMapper");
     public static final ClassName ClassNameQBeanCreatorHelper = ClassName.get("net.sunshow.toolkit.core.qbean.helper.component.request", "QBeanCreatorHelper");

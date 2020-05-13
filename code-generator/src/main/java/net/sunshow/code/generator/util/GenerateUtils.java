@@ -8,8 +8,23 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Modifier;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GenerateUtils {
+
+    private static Set<String> baseClassSimpleName = new HashSet<>();
+
+    static {
+        baseClassSimpleName.add("String");
+        baseClassSimpleName.add("Long");
+        baseClassSimpleName.add("Integer");
+        baseClassSimpleName.add("Boolean");
+        baseClassSimpleName.add("long");
+        baseClassSimpleName.add("int");
+        baseClassSimpleName.add("boolean");
+    }
+
     public static MethodSpec.Builder createGetterBuilder(TypeName typeName, String fieldName, Modifier visibility) {
         String prefix = "get";
         if (typeName.equals(TypeName.get(boolean.class))) {
@@ -78,14 +93,22 @@ public class GenerateUtils {
     }
 
     public static boolean classTypeWildEquals(String type1, String type2) {
-        String v1 = type1;
-        String v2 = type2;
-        if (StringUtils.contains(v1, ".")) {
-            v1 = StringUtils.substringAfterLast(type1, ".");
+        return StringUtils.equals(classSimpleName(type1), classSimpleName(type2));
+    }
+
+    public static String classSimpleName(String className) {
+        if (StringUtils.contains(className, ".")) {
+            return StringUtils.substringAfterLast(className, ".");
         }
-        if (StringUtils.contains(v2, ".")) {
-            v2 = StringUtils.substringAfterLast(type2, ".");
-        }
-        return StringUtils.equals(v1, v2);
+        return className;
+    }
+
+    public static boolean isBaseClassType(String className) {
+        return baseClassSimpleName.contains(classSimpleName(className));
+    }
+
+    public static boolean isCustomEnumClassType(String className) {
+        String simpleName = classSimpleName(className);
+        return simpleName.endsWith("Type") || simpleName.endsWith("Status");
     }
 }

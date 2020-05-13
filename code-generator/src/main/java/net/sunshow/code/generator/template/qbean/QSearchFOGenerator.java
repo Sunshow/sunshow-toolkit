@@ -71,6 +71,18 @@ public class QSearchFOGenerator {
             }
             fieldAnnotationSpecBuilder.addMember("placeholder", "$S", comment);
 
+            // 如果是 String 默认 Like
+            if (GenerateUtils.classSimpleName(field.getType().getName()).equals("String")) {
+                fieldAnnotationSpecBuilder.addMember("operator", "$T.LIKE", QTemplate.ClassNameQOperator);
+            }
+            if (GenerateUtils.isCustomEnumClassType(field.getType().getName())) {
+                // 自定义枚举 生成下拉框
+                fieldAnnotationSpecBuilder
+                        .addMember("control", "$T.SELECT", QTemplate.ClassNameQFieldControl)
+                        .addMember("ref", "$S", GenerateUtils.upperCamelToLowerCamel(GenerateUtils.classSimpleName(field.getType().getName())) + "List")
+                        .addMember("template", "$S", "enum");
+            }
+
             // 添加 Field
             JavaClass fieldType = field.getType();
             FieldSpec.Builder fieldBuilder = FieldSpec.builder(ClassName.get(fieldType.getPackageName(), fieldType.getName()), field.getName(), Modifier.PRIVATE)
