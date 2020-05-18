@@ -9,6 +9,17 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType(Test) {
+    systemProperty "file.encoding", "UTF-8"
+}
+
 repositories {
     maven {
         url 'http://maven.aliyun.com/nexus/content/groups/public/'
