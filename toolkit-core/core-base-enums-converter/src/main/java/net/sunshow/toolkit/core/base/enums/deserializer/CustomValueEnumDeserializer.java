@@ -44,7 +44,7 @@ public abstract class CustomValueEnumDeserializer<T> extends JsonDeserializer<T>
         }
 
         if (value != null) {
-            Method getMethod = ReflectionUtils.findMethod(this.getActualType(), "get", int.class);
+            Method getMethod = ReflectionUtils.findMethod(this.getActualType(), reflectValueMethodName(), int.class);
             if (getMethod == null) {
                 logger.error("未找到反序列化方法");
                 return null;
@@ -53,5 +53,9 @@ public abstract class CustomValueEnumDeserializer<T> extends JsonDeserializer<T>
         }
 
         return null;
+    }
+
+    public String reflectValueMethodName() {
+        return "get";
     }
 }
