@@ -125,6 +125,8 @@ public final class QBeanSearchHelper {
             def.setLabel(annotation.label());
             def.setPlaceholder(annotation.placeholder());
             def.setRef(annotation.ref());
+            def.setRefId(annotation.refId());
+            def.setRefName(annotation.refName());
             def.setTemplate(annotation.template());
             def.setOrder(annotation.order());
 

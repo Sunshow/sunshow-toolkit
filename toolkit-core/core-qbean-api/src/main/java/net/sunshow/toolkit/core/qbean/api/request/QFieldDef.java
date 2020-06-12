@@ -17,6 +17,10 @@ public class QFieldDef {
 
     private String ref;
 
+    private String refId;
+
+    private String refName;
+
     private String template;
 
     private String order;
@@ -75,5 +79,21 @@ public class QFieldDef {
 
     public void setOrder(String order) {
         this.order = order;
+    }
+
+    public String getRefId() {
+        return refId;
+    }
+
+    public void setRefId(String refId) {
+        this.refId = refId;
+    }
+
+    public String getRefName() {
+        return refName;
+    }
+
+    public void setRefName(String refName) {
+        this.refName = refName;
     }
 }

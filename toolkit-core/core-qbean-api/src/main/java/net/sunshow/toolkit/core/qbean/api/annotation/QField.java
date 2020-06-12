@@ -38,6 +38,10 @@ public @interface QField {
 
     String ref() default "";
 
+    String refId() default "id";
+
+    String refName() default "name";
+
     String template() default "";
 
     String order() default "ASC";
