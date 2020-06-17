@@ -27,6 +27,21 @@ public class BaseEnumHelper {
     }
 
     /**
+     * 根据枚举名称获取枚举对象
+     *
+     * @param name  枚举名称
+     * @param enums 枚举数组
+     * @param <T>   泛型
+     * @return 枚举对象
+     */
+    public static <T extends BaseEnum> T getByName(String name, T[] enums) {
+        return Arrays.stream(enums)
+                .filter(e -> e.getName().equals(name))
+                .findAny()
+                .orElseThrow(InvalidEnumValueException::new);
+    }
+
+    /**
      * 获取全部枚举对象列表
      *
      * @param enums 枚举数组
