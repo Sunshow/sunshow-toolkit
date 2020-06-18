@@ -38,7 +38,7 @@ public class BaseEnumHelper {
         return Arrays.stream(enums)
                 .filter(e -> e.getName().equals(name))
                 .findAny()
-                .orElseThrow(InvalidEnumValueException::new);
+                .orElseThrow(() -> new InvalidEnumValueException("未找到对应的枚举值, name=" + name));
     }
 
     /**
