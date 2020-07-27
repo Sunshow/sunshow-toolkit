@@ -187,18 +187,14 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
         };
     }
 
-    protected <T, E> QResponse<E> convertQResponse(Page<T> page, Class<E> c) {
-        QResponse<E> apiResponse = new QResponse<>();
+    protected <T> QResponse<Q> convertQResponse(Page<T> page) {
+        QResponse<Q> apiResponse = new QResponse<>();
         apiResponse.setPage(page.getNumber());
         apiResponse.setPageSize(page.getSize());
         apiResponse.setTotal(page.getTotalElements());
-        apiResponse.setPagedData(BeanMapper.mapList(page.getContent(), c));
+        apiResponse.setPagedData(convertStreamQBeanToList(page.getContent().stream()));
 
         return apiResponse;
-    }
-
-    protected <T> QResponse<Q> convertQResponse(Page<T> page) {
-        return convertQResponse(page, getActualType());
     }
 
     protected <T> Q convertQBean(T object) {
