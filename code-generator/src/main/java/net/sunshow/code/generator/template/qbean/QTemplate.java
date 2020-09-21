@@ -9,6 +9,7 @@ import net.sunshow.code.generator.util.GenerateUtils;
 @Getter
 public class QTemplate {
 
+    public static final ClassName ClassNameString = ClassName.get("java.lang", "String");
     public static final ClassName ClassNameRuntimeException = ClassName.get("java.lang", "RuntimeException");
     public static final ClassName ClassNameLocalDateTime = ClassName.get("java.time", "LocalDateTime");
     public static final ClassName ClassNameSupplier = ClassName.get("java.util.function", "Supplier");

@@ -22,35 +22,35 @@ public class Retrofit1ResponseGenerator {
         if (methodDef.getResponseSchemaRef() == null) {
             return;
         }
+        ObjectNode schemaNode = (ObjectNode) parser.getSchemas().get(methodDef.getResponseSchemaRef());
+        if (!schemaNode.has("properties")) {
+            return;
+        }
 
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(def.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(QTemplate.ClassNameLombokData)
                 .addAnnotation(QTemplate.ClassNameLombokNoArgsConstructor);
 
-        ObjectNode schemaNode = (ObjectNode) parser.getSchemas().get(methodDef.getResponseSchemaRef());
-        if (schemaNode.has("properties")) {
-            // 有属性 创建构造函数
-            typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokAllArgsConstructor);
+        typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokAllArgsConstructor);
 
-            // 创建属性
-            ObjectNode propertiesNode = (ObjectNode) schemaNode.get("properties");
+        // 创建属性
+        ObjectNode propertiesNode = (ObjectNode) schemaNode.get("properties");
 
-            propertiesNode.fieldNames().forEachRemaining(field -> {
-                ObjectNode node = (ObjectNode) propertiesNode.get(field);
-                TypeName typeName = OpenApiUtils.generateTypeName(node);
-                String title = null;
-                if (node.has("title")) {
-                    title = node.get("title").asText();
-                }
+        propertiesNode.fieldNames().forEachRemaining(field -> {
+            ObjectNode node = (ObjectNode) propertiesNode.get(field);
+            TypeName typeName = OpenApiUtils.generateTypeName(node);
+            String title = null;
+            if (node.has("title")) {
+                title = node.get("title").asText();
+            }
 
-                FieldSpec.Builder builder = FieldSpec.builder(typeName, field, Modifier.PRIVATE);
-                if (title != null) {
-                    builder.addJavadoc(title);
-                }
-                typeSpecBuilder.addField(builder.build());
-            });
-        }
+            FieldSpec.Builder builder = FieldSpec.builder(typeName, field, Modifier.PRIVATE);
+            if (title != null) {
+                builder.addJavadoc(title);
+            }
+            typeSpecBuilder.addField(builder.build());
+        });
 
         JavaFile javaFile = JavaFile.builder(template.getResponsePackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
 

@@ -34,11 +34,13 @@ public class Retrofit1ControllerGenerator {
         }
 
         {
+            String mappingName = GenerateUtils.upperCamelToLowerCamel(StringUtils.substringAfter(def.getNamePrefix(), GenerateUtils.lowerCamelToUpperCamel(def.getSubModule())));
+
             AnnotationSpec methodRequestMappingAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringPostMapping)
-                    .addMember("value", "$S", String.format("/%s", GenerateUtils.upperCamelToLowerCamel(StringUtils.substringAfter(def.getNamePrefix(), GenerateUtils.lowerCamelToUpperCamel(def.getSubModule())))))
+                    .addMember("value", "$S", String.format("/%s", mappingName))
                     .build();
 
-            MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()))
+            MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(mappingName)
                     .addAnnotation(methodRequestMappingAnnotationSpec)
                     .addModifiers(Modifier.PUBLIC)
                     .addException(Exception.class)
@@ -64,7 +66,7 @@ public class Retrofit1ControllerGenerator {
                 methodSpecBuilder.addStatement("$T request = new $T()", requestClassName, requestClassName);
             }
             // 要响应体
-            if (methodDef.getResponseSchemaRef() != null) {
+            if (methodDef.getResponseSchemaRef() != null && parser.getSchemas().get(methodDef.getResponseSchemaRef()).has("properties")) {
                 ClassName responseClassName = ClassName.get(template.getResponsePackagePath(), def.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()));
                 methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N(request).execute().body()", template.getResponseWrapperClassName(), responseClassName, endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()));
                 methodSpecBuilder.addStatement("$T response = $T.assertWrapperSuccess(responseWrapper)", responseClassName, template.getResponseHelperClassName());
@@ -72,7 +74,7 @@ public class Retrofit1ControllerGenerator {
             } else {
                 methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N(request).execute().body()", template.getResponseWrapperClassName(), TypeName.VOID.box(), endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()));
                 methodSpecBuilder.addStatement("$T.assertWrapperSuccess(responseWrapper)", template.getResponseHelperClassName());
-                methodSpecBuilder.addStatement("return $T.ok()");
+                methodSpecBuilder.addStatement("return $T.ok()", template.getControllerRespFOClassName());
             }
 
 

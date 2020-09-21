@@ -20,7 +20,7 @@ public class Retrofit1InterfaceGenerator {
                 .addMember("value", "$S", def.getEndpoint().startsWith("/") ? def.getEndpoint().substring(1) : def.getEndpoint())
                 .build();
         TypeName responseClassName;
-        if (methodDef.getResponseSchemaRef() == null) {
+        if (methodDef.getResponseSchemaRef() == null || !parser.getSchemas().get(methodDef.getResponseSchemaRef()).has("properties")) {
             // 如果没有响应体
             responseClassName = ParameterizedTypeName.get(template.getResponseWrapperClassName(), TypeName.VOID.box());
         } else {
