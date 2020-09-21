@@ -1,5 +1,6 @@
 package net.sunshow.code.generator.template.openapi.retrofit1;
 
+import com.squareup.javapoet.ClassName;
 import lombok.Getter;
 import lombok.Setter;
 import net.sunshow.code.generator.util.GenerateUtils;
@@ -7,6 +8,10 @@ import net.sunshow.code.generator.util.GenerateUtils;
 @Setter
 @Getter
 public class Retrofit1Template {
+
+    public static final ClassName ClassNameRetrofitPost = ClassName.get("retrofit2.http", "POST");
+    public static final ClassName ClassNameRetrofitBody = ClassName.get("retrofit2.http", "Body");
+    public static final ClassName ClassNameRetrofitCall = ClassName.get("retrofit2", "Call");
 
     private String indent = "    ";
 
@@ -23,11 +28,19 @@ public class Retrofit1Template {
 
     private String responseSuffix = "response";
 
+    private String apiSuffix = "api";
+
+    private ClassName responseWrapperClassName = ClassName.get("tech.xiaoman.nplus6.merchant.api.response", "NSixResponseWrapper");
+
     public String getRequestPackagePath() {
         return GenerateUtils.combinePackagePath(packagePathPrefix, requestSuffix, moduleName);
     }
 
     public String getResponsePackagePath() {
         return GenerateUtils.combinePackagePath(packagePathPrefix, responseSuffix, moduleName);
+    }
+
+    public String getApiPackagePath() {
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "endpoint", "");
     }
 }

@@ -9,13 +9,15 @@ import java.util.List;
 @NoArgsConstructor
 public class EndpointDef {
 
+    private String endpoint;
+
     private List<EndpointMethodDef> methodDefList;
 
     private String module;
 
     private String subModule;
 
-    private String modulePrefix;
+    private String apiName;
 
     private String namePrefix;
 

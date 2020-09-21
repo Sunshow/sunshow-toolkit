@@ -1,5 +1,6 @@
 package net.sunshow.code.generator.template.openapi;
 
+import net.sunshow.code.generator.template.openapi.retrofit1.Retrofit1InterfaceGenerator;
 import net.sunshow.code.generator.template.openapi.retrofit1.Retrofit1RequestGenerator;
 import net.sunshow.code.generator.template.openapi.retrofit1.Retrofit1ResponseGenerator;
 import net.sunshow.code.generator.template.openapi.retrofit1.Retrofit1Template;
@@ -16,6 +17,8 @@ public class OpenApiRetrofit1SampleTest {
 
     String module = "merchant";
 
+    String subModule = "employee";
+
     @BeforeEach
     public void testInit() {
         parser = new OpenApiParser(openApiDoc);
@@ -29,9 +32,10 @@ public class OpenApiRetrofit1SampleTest {
     @Test
     public void testGenerate() throws Exception {
         String endpoint = "/merchant/employee/is_bind";
-        EndpointDef def = parser.parse(endpoint, module, null);
+        EndpointDef def = parser.parse(endpoint, module, subModule);
 
         Retrofit1RequestGenerator.generate(template, parser, def);
         Retrofit1ResponseGenerator.generate(template, parser, def);
+        Retrofit1InterfaceGenerator.generate(template, parser, def);
     }
 }

@@ -31,42 +31,36 @@ public class OpenApiParser {
 
     public EndpointDef parse(String endpoint, String module, String subModule) {
         EndpointDef def = new EndpointDef();
+        def.setEndpoint(endpoint);
         def.setModule(module);
         def.setSubModule(subModule);
 
         String[] sections = StringUtils.split(endpoint, "/");
 
         List<String> moduleList = new ArrayList<>();
-        int moduleIndex = 0;
-        if (StringUtils.isNotEmpty(module)) {
-            // 要检测模块名
-            if (sections[moduleIndex].equals(module)) {
-                moduleList.add(GenerateUtils.lowerCamelToUpperCamel(module));
-            } else {
-                throw new RuntimeException("未检测到模块, module=" + module);
-            }
-            moduleIndex++;
+        // 要检测模块名
+        if (sections[0].equals(module)) {
+            moduleList.add(GenerateUtils.lowerCamelToUpperCamel(module));
+        } else {
+            throw new RuntimeException("未检测到模块, module=" + module);
         }
-        if (StringUtils.isNotEmpty(subModule)) {
-            // 要检测子模块名
-            if (sections[moduleIndex].equals(subModule)) {
-                // 插到命名最前面
-                moduleList.add(0, GenerateUtils.lowerCamelToUpperCamel(subModule));
-            } else {
-                throw new RuntimeException("未检测到子模块, subModule=" + subModule);
-            }
-            moduleIndex++;
+        // 要检测子模块名
+        if (sections[1].equals(subModule)) {
+            moduleList.add(GenerateUtils.lowerCamelToUpperCamel(subModule));
+        } else {
+            throw new RuntimeException("未检测到子模块, subModule=" + subModule);
         }
-        def.setModulePrefix(StringUtils.join(moduleList, ""));
+
+        def.setApiName(StringUtils.join(moduleList, ""));
 
         List<String> nameList = new ArrayList<>();
-        for (int i = moduleIndex; i < sections.length; i++) {
+        for (int i = 2; i < sections.length; i++) {
             String s = sections[i];
             // 后面每段顺序压入
             nameList.add(GenerateUtils.lowerCamelToUpperCamel(GenerateUtils.lowerUnderScoreToUpperCamel(s)));
         }
 
-        def.setNamePrefix(StringUtils.join(nameList, ""));
+        def.setNamePrefix(GenerateUtils.lowerCamelToUpperCamel(subModule) + StringUtils.join(nameList, ""));
 
         List<EndpointMethodDef> methodDefList = new ArrayList<>();
 
