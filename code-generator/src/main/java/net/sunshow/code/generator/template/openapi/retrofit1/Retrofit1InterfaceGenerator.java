@@ -33,9 +33,13 @@ public class Retrofit1InterfaceGenerator {
                 .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
                 .returns(callClassName);
 
+        if (methodDef.getTagList() != null && !methodDef.getTagList().isEmpty()) {
+            methodSpecBuilder.addJavadoc(methodDef.getTagList().get(0));
+        }
+
         // 如果有请求体
         if (methodDef.getRequestSchemaRef() != null) {
-            ParameterSpec parameterSpec = ParameterSpec.builder(ClassName.get(template.getRequestPackagePath(), def.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix())), "request")
+            ParameterSpec parameterSpec = ParameterSpec.builder(ClassName.get(template.getRequestPackagePath(), def.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix())), "request")
                     .addAnnotation(Retrofit1Template.ClassNameRetrofitBody)
                     .build();
             methodSpecBuilder.addParameter(parameterSpec);

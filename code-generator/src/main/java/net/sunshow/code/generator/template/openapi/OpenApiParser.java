@@ -72,6 +72,13 @@ public class OpenApiParser {
             EndpointMethodDef methodDef = new EndpointMethodDef();
             methodDef.setHttpMethod(method);
 
+            // tags
+            if (node.get(field).has("tags")) {
+                List<String> tags = new ArrayList<>();
+                node.get(field).get("tags").forEach(tag -> tags.add(tag.asText()));
+                methodDef.setTagList(tags);
+            }
+
             // 获取请求体
             String requestSchemaRef = node.get(field).get("requestBody").get("content").iterator().next().get("schema").get("$ref").asText();
             requestSchemaRef = StringUtils.substringAfter(requestSchemaRef, "#/components/schemas/");

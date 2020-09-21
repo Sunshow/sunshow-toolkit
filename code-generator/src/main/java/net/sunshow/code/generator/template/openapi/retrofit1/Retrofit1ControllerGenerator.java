@@ -35,7 +35,7 @@ public class Retrofit1ControllerGenerator {
 
         {
             AnnotationSpec methodRequestMappingAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringPostMapping)
-                    .addMember("value", "/$S", GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()))
+                    .addMember("value", "$S", String.format("/%s", GenerateUtils.upperCamelToLowerCamel(StringUtils.substringAfter(def.getNamePrefix(), GenerateUtils.lowerCamelToUpperCamel(def.getSubModule())))))
                     .build();
 
             MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()))
@@ -80,7 +80,7 @@ public class Retrofit1ControllerGenerator {
         }
 
 
-        JavaFile javaFile = JavaFile.builder(template.getEndpointPackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
+        JavaFile javaFile = JavaFile.builder(template.getControllerPackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
 
         System.out.println(javaFile.toString());
         //javaFile.writeTo(new File(template.getOutputPath()));
