@@ -1,9 +1,6 @@
 package net.sunshow.code.generator.template.openapi;
 
-import net.sunshow.code.generator.template.openapi.retrofit1.Retrofit1InterfaceGenerator;
-import net.sunshow.code.generator.template.openapi.retrofit1.Retrofit1RequestGenerator;
-import net.sunshow.code.generator.template.openapi.retrofit1.Retrofit1ResponseGenerator;
-import net.sunshow.code.generator.template.openapi.retrofit1.Retrofit1Template;
+import net.sunshow.code.generator.template.openapi.retrofit1.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +22,7 @@ public class OpenApiRetrofit1SampleTest {
 
         template = new Retrofit1Template();
         template.setModuleName(module);
-        template.setPackagePathPrefix("tech.xiaoman.nplus6.merchant.api");
+        template.setPackagePathPrefix("tech.xiaoman.nplus6.merchant");
         template.setOutputPath("/Users/sunshow/GIT/MambaAITech/nplus6-merchant/src/main/java");
     }
 
@@ -37,5 +34,7 @@ public class OpenApiRetrofit1SampleTest {
         Retrofit1RequestGenerator.generate(template, parser, def);
         Retrofit1ResponseGenerator.generate(template, parser, def);
         Retrofit1InterfaceGenerator.generate(template, parser, def);
+        Retrofit1FOGenerator.generate(template, parser, def);
+        Retrofit1ControllerGenerator.generate(template, parser, def);
     }
 }

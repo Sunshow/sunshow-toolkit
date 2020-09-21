@@ -28,19 +28,45 @@ public class Retrofit1Template {
 
     private String responseSuffix = "response";
 
-    private String apiSuffix = "api";
+    private String endpointSuffix = "api";
+
+    private String foSuffix = "FO";
+
+    private String controllerSuffix = "Controller";
 
     private ClassName responseWrapperClassName = ClassName.get("tech.xiaoman.nplus6.merchant.api.response", "NSixResponseWrapper");
 
+    private ClassName responseHelperClassName = ClassName.get("tech.xiaoman.nplus6.merchant.component.nsix", "NSixResponseHelper");
+
+    private ClassName controllerRespFOClassName = ClassName.get("net.sunshow.cms.module.common.fo", "RestResponseFO");
+
+    private String foIgnoreSessionProperty = "employeeId";
+
+    public String getApiPackagePath() {
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "api", "");
+    }
+
     public String getRequestPackagePath() {
-        return GenerateUtils.combinePackagePath(packagePathPrefix, requestSuffix, moduleName);
+        return GenerateUtils.combinePackagePath(getApiPackagePath(), requestSuffix, moduleName);
     }
 
     public String getResponsePackagePath() {
-        return GenerateUtils.combinePackagePath(packagePathPrefix, responseSuffix, moduleName);
+        return GenerateUtils.combinePackagePath(getApiPackagePath(), responseSuffix, moduleName);
     }
 
-    public String getApiPackagePath() {
-        return GenerateUtils.combinePackagePath(packagePathPrefix, "endpoint", "");
+    public String getEndpointPackagePath() {
+        return GenerateUtils.combinePackagePath(getApiPackagePath(), "endpoint", moduleName);
+    }
+
+    public String getFOPackagePath() {
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "fo", moduleName);
+    }
+
+    public String getControllerPackagePath() {
+        return GenerateUtils.combinePackagePath(packagePathPrefix, "controller", moduleName);
+    }
+
+    public String getFOSuffix() {
+        return foSuffix;
     }
 }

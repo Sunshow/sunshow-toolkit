@@ -31,11 +31,13 @@ public class QTemplate {
     public static final ClassName ClassNameSpringService = ClassName.get("org.springframework.stereotype", "Service");
     public static final ClassName ClassNameSpringTransactional = ClassName.get("org.springframework.transaction.annotation", "Transactional");
     public static final ClassName ClassNameSpringController = ClassName.get("org.springframework.stereotype", "Controller");
+    public static final ClassName ClassNameSpringRestController = ClassName.get("org.springframework.web.bind.annotation", "RestController");
     public static final ClassName ClassNameSpringRequestMapping = ClassName.get("org.springframework.web.bind.annotation", "RequestMapping");
     public static final ClassName ClassNameSpringGetMapping = ClassName.get("org.springframework.web.bind.annotation", "GetMapping");
     public static final ClassName ClassNameSpringPostMapping = ClassName.get("org.springframework.web.bind.annotation", "PostMapping");
     public static final ClassName ClassNameSpringRequestParam = ClassName.get("org.springframework.web.bind.annotation", "RequestParam");
     public static final ClassName ClassNameSpringResponseBody = ClassName.get("org.springframework.web.bind.annotation", "ResponseBody");
+    public static final ClassName ClassNameSpringRequestBody = ClassName.get("org.springframework.web.bind.annotation", "RequestBody");
     public static final ClassName ClassNameSpringModelMap = ClassName.get("org.springframework.ui", "ModelMap");
 
     public static final ClassName ClassNameJavaxValid = ClassName.get("javax.validation", "Valid");

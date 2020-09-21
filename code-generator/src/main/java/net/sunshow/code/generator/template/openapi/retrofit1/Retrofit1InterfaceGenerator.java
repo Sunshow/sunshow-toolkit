@@ -13,7 +13,7 @@ public class Retrofit1InterfaceGenerator {
     public static void generate(Retrofit1Template template, OpenApiParser parser, EndpointDef def) throws Exception {
         EndpointMethodDef methodDef = def.getMethodDefList().get(0);
 
-        TypeSpec.Builder typeSpecBuilder = TypeSpec.interfaceBuilder(def.getApiName() + GenerateUtils.lowerCamelToUpperCamel(template.getApiSuffix()))
+        TypeSpec.Builder typeSpecBuilder = TypeSpec.interfaceBuilder(def.getApiName() + GenerateUtils.lowerCamelToUpperCamel(template.getEndpointSuffix()))
                 .addModifiers(Modifier.PUBLIC);
 
         AnnotationSpec postAnnotationSpec = AnnotationSpec.builder(Retrofit1Template.ClassNameRetrofitPost)
@@ -43,7 +43,7 @@ public class Retrofit1InterfaceGenerator {
 
         typeSpecBuilder.addMethod(methodSpecBuilder.build());
 
-        JavaFile javaFile = JavaFile.builder(template.getApiPackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
+        JavaFile javaFile = JavaFile.builder(template.getEndpointPackagePath(), typeSpecBuilder.build()).indent(template.getIndent()).skipJavaLangImports(true).build();
 
         System.out.println(javaFile.toString());
         //javaFile.writeTo(new File(template.getOutputPath()));
