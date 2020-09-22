@@ -24,7 +24,7 @@ public class Retrofit1InterfaceGenerator {
             // 如果没有响应体
             responseClassName = ParameterizedTypeName.get(template.getResponseWrapperClassName(), TypeName.VOID.box());
         } else {
-            responseClassName = ParameterizedTypeName.get(template.getResponseWrapperClassName(), ClassName.get(template.getResponsePackagePath(), def.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix())));
+            responseClassName = ParameterizedTypeName.get(template.getResponseWrapperClassName(), ClassName.get(template.getResponsePackagePath(), def.getNamePrefixCanonical() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix())));
         }
         TypeName callClassName = ParameterizedTypeName.get(Retrofit1Template.ClassNameRetrofitCall, responseClassName);
 
@@ -39,7 +39,7 @@ public class Retrofit1InterfaceGenerator {
 
         // 如果有请求体
         if (methodDef.getRequestSchemaRef() != null) {
-            ParameterSpec parameterSpec = ParameterSpec.builder(ClassName.get(template.getRequestPackagePath(), def.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix())), "request")
+            ParameterSpec parameterSpec = ParameterSpec.builder(ClassName.get(template.getRequestPackagePath(), def.getNamePrefixCanonical() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix())), "request")
                     .addAnnotation(Retrofit1Template.ClassNameRetrofitBody)
                     .build();
             methodSpecBuilder.addParameter(parameterSpec);

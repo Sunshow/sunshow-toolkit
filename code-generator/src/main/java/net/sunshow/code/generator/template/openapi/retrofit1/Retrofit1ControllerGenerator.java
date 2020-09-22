@@ -46,33 +46,35 @@ public class Retrofit1ControllerGenerator {
                     .addException(Exception.class)
                     .returns(template.getControllerRespFOClassName());
 
-            ObjectNode schemaNode = (ObjectNode) parser.getSchemas().get(methodDef.getRequestSchemaRef());
-            if (schemaNode.has("properties")) {
-                if (StringUtils.isNotEmpty(template.getFoIgnoreSessionProperty()) && schemaNode.get("properties").size() == 1 && schemaNode.get("properties").has(template.getFoIgnoreSessionProperty())) {
-
-                } else {
-                    // 需要生成请求参数
-                    ParameterSpec parameterSpec = ParameterSpec.builder(ClassName.get(template.getFOPackagePath(), def.getNamePrefix() + template.getFOSuffix()), "fo")
-                            .addAnnotation(QTemplate.ClassNameSpringRequestBody)
-                            .addAnnotation(QTemplate.ClassNameJavaxValid)
-                            .build();
-                    methodSpecBuilder.addParameter(parameterSpec);
-                }
-            }
-
             // 要请求体
+            String requestInstance = "";
             if (methodDef.getRequestSchemaRef() != null) {
-                ClassName requestClassName = ClassName.get(template.getRequestPackagePath(), def.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix()));
+                ObjectNode schemaNode = (ObjectNode) parser.getSchemas().get(methodDef.getRequestSchemaRef());
+                if (schemaNode.has("properties")) {
+                    if (StringUtils.isNotEmpty(template.getFoIgnoreSessionProperty()) && schemaNode.get("properties").size() == 1 && schemaNode.get("properties").has(template.getFoIgnoreSessionProperty())) {
+
+                    } else {
+                        // 需要生成请求参数
+                        ParameterSpec parameterSpec = ParameterSpec.builder(ClassName.get(template.getFOPackagePath(), def.getNamePrefixCanonical() + template.getFOSuffix()), "fo")
+                                .addAnnotation(QTemplate.ClassNameSpringRequestBody)
+                                .addAnnotation(QTemplate.ClassNameJavaxValid)
+                                .build();
+                        methodSpecBuilder.addParameter(parameterSpec);
+                        requestInstance = "request";
+                    }
+                }
+
+                ClassName requestClassName = ClassName.get(template.getRequestPackagePath(), def.getNamePrefixCanonical() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix()));
                 methodSpecBuilder.addStatement("$T request = new $T()", requestClassName, requestClassName);
             }
             // 要响应体
             if (methodDef.getResponseSchemaRef() != null && parser.getSchemas().get(methodDef.getResponseSchemaRef()).has("properties")) {
-                ClassName responseClassName = ClassName.get(template.getResponsePackagePath(), def.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()));
-                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N(request).execute().body()", template.getResponseWrapperClassName(), responseClassName, endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()));
+                ClassName responseClassName = ClassName.get(template.getResponsePackagePath(), def.getNamePrefixCanonical() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()));
+                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), responseClassName, endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()), requestInstance);
                 methodSpecBuilder.addStatement("$T response = $T.assertWrapperSuccess(responseWrapper)", responseClassName, template.getResponseHelperClassName());
                 methodSpecBuilder.addStatement("return $T.ok(response)", template.getControllerRespFOClassName());
             } else {
-                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N(request).execute().body()", template.getResponseWrapperClassName(), TypeName.VOID.box(), endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()));
+                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), TypeName.VOID.box(), endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()), requestInstance);
                 methodSpecBuilder.addStatement("$T.assertWrapperSuccess(responseWrapper)", template.getResponseHelperClassName());
                 methodSpecBuilder.addStatement("return $T.ok()", template.getControllerRespFOClassName());
             }
