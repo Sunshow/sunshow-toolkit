@@ -17,24 +17,24 @@ public class Retrofit1ControllerGenerator {
         EndpointMethodDef methodDef = def.getMethodDefList().get(0);
 
         AnnotationSpec classRequestMappingAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringRequestMapping)
-                .addMember("value", "$S", String.format("%s/%s", def.getModule(), def.getSubModule()))
+                .addMember("value", "$S", String.format("/%s/%s", def.getModule(), def.getSubModule()))
                 .build();
-        TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(def.getApiName() + GenerateUtils.lowerCamelToUpperCamel(template.getControllerSuffix()))
+        TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getModulePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getControllerSuffix()))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(QTemplate.ClassNameLombokSlf4j)
                 .addAnnotation(QTemplate.ClassNameLombokRequiredArgsConstructor)
                 .addAnnotation(QTemplate.ClassNameSpringRestController)
                 .addAnnotation(classRequestMappingAnnotationSpec);
 
-        String endpointInstance = GenerateUtils.upperCamelToLowerCamel(def.getApiName() + GenerateUtils.lowerCamelToUpperCamel(template.getEndpointSuffix()));
-        ClassName endpointClassName = ClassName.get(template.getEndpointPackagePath(), def.getApiName() + GenerateUtils.lowerCamelToUpperCamel(template.getEndpointSuffix()));
+        String endpointInstance = GenerateUtils.upperCamelToLowerCamel(template.getModulePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getEndpointSuffix()));
+        ClassName endpointClassName = ClassName.get(template.getEndpointPackagePath(), template.getModulePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getEndpointSuffix()));
         {
             FieldSpec fieldSpec = FieldSpec.builder(endpointClassName, endpointInstance, Modifier.PRIVATE, Modifier.FINAL).build();
             typeSpecBuilder.addField(fieldSpec);
         }
 
         {
-            String mappingName = GenerateUtils.upperCamelToLowerCamel(StringUtils.substringAfter(def.getNamePrefix(), GenerateUtils.lowerCamelToUpperCamel(def.getSubModule())));
+            String mappingName = GenerateUtils.upperCamelToLowerCamel(def.getName());
 
             AnnotationSpec methodRequestMappingAnnotationSpec = AnnotationSpec.builder(QTemplate.ClassNameSpringPostMapping)
                     .addMember("value", "$S", String.format("/%s", mappingName))
@@ -55,7 +55,7 @@ public class Retrofit1ControllerGenerator {
 
                     } else {
                         // 需要生成请求参数
-                        ParameterSpec parameterSpec = ParameterSpec.builder(ClassName.get(template.getFOPackagePath(), def.getNamePrefixCanonical() + template.getFOSuffix()), "fo")
+                        ParameterSpec parameterSpec = ParameterSpec.builder(ClassName.get(template.getFOPackagePath(), template.getNamePrefix() + template.getFOSuffix()), "fo")
                                 .addAnnotation(QTemplate.ClassNameSpringRequestBody)
                                 .addAnnotation(QTemplate.ClassNameJavaxValid)
                                 .build();
@@ -64,17 +64,17 @@ public class Retrofit1ControllerGenerator {
                     }
                 }
 
-                ClassName requestClassName = ClassName.get(template.getRequestPackagePath(), def.getNamePrefixCanonical() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix()));
+                ClassName requestClassName = ClassName.get(template.getRequestPackagePath(), template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix()));
                 methodSpecBuilder.addStatement("$T request = new $T()", requestClassName, requestClassName);
             }
             // 要响应体
             if (methodDef.getResponseSchemaRef() != null && parser.getSchemas().get(methodDef.getResponseSchemaRef()).has("properties")) {
-                ClassName responseClassName = ClassName.get(template.getResponsePackagePath(), def.getNamePrefixCanonical() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()));
-                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), responseClassName, endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()), requestInstance);
+                ClassName responseClassName = ClassName.get(template.getResponsePackagePath(), template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()));
+                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), responseClassName, endpointInstance, GenerateUtils.upperCamelToLowerCamel(template.getNamePrefix()), requestInstance);
                 methodSpecBuilder.addStatement("$T response = $T.assertWrapperSuccess(responseWrapper)", responseClassName, template.getResponseHelperClassName());
                 methodSpecBuilder.addStatement("return $T.ok(response)", template.getControllerRespFOClassName());
             } else {
-                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), TypeName.VOID.box(), endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()), requestInstance);
+                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), TypeName.VOID.box(), endpointInstance, GenerateUtils.upperCamelToLowerCamel(template.getNamePrefix()), requestInstance);
                 methodSpecBuilder.addStatement("$T.assertWrapperSuccess(responseWrapper)", template.getResponseHelperClassName());
                 methodSpecBuilder.addStatement("return $T.ok()", template.getControllerRespFOClassName());
             }

@@ -31,7 +31,7 @@ public class Retrofit1FOGenerator {
             }
         }
 
-        TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(def.getNamePrefixCanonical() + template.getFOSuffix())
+        TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getNamePrefix() + template.getFOSuffix())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(QTemplate.ClassNameLombokData)
                 .addAnnotation(QTemplate.ClassNameLombokNoArgsConstructor);

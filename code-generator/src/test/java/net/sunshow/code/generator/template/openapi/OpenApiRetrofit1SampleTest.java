@@ -20,16 +20,19 @@ public class OpenApiRetrofit1SampleTest {
     public void testInit() {
         parser = new OpenApiParser(openApiDoc);
 
-        template = new Retrofit1Template();
-        template.setModuleName(module);
-        template.setPackagePathPrefix("tech.xiaoman.nplus6.merchant");
-        template.setOutputPath("/Users/sunshow/GIT/MambaAITech/nplus6-merchant/src/main/java");
     }
 
     @Test
     public void testGenerate() throws Exception {
         String endpoint = "/merchant/employee/is_bind";
         EndpointDef def = parser.parse(endpoint, module, subModule);
+
+        template = new Retrofit1Template();
+        template.setModuleName(module);
+        template.setPackagePathPrefix("tech.xiaoman.nplus6.merchant");
+        template.setOutputPath("/Users/sunshow/GIT/MambaAITech/nplus6-merchant/src/main/java");
+
+        template.init(def);
 
         Retrofit1RequestGenerator.generate(template, parser, def);
         Retrofit1ResponseGenerator.generate(template, parser, def);

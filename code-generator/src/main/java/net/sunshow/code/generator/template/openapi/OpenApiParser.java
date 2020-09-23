@@ -56,8 +56,6 @@ public class OpenApiParser {
             sectionIndex++;
         }
 
-        def.setApiName(StringUtils.join(moduleList, ""));
-
         List<String> nameList = new ArrayList<>();
         for (int i = sectionIndex; i < sections.length; i++) {
             String s = sections[i];
@@ -65,7 +63,7 @@ public class OpenApiParser {
             nameList.add(GenerateUtils.lowerCamelToUpperCamel(GenerateUtils.lowerUnderScoreToUpperCamel(s)));
         }
 
-        def.setNamePrefix(GenerateUtils.lowerCamelToUpperCamel(subModule) + StringUtils.join(nameList, ""));
+        def.setName(StringUtils.join(nameList, ""));
 
         List<EndpointMethodDef> methodDefList = new ArrayList<>();
 

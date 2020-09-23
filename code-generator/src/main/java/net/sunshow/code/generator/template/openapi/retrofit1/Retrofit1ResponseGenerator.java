@@ -27,7 +27,7 @@ public class Retrofit1ResponseGenerator {
             return;
         }
 
-        TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(def.getNamePrefixCanonical() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()))
+        TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(QTemplate.ClassNameLombokData)
                 .addAnnotation(QTemplate.ClassNameLombokNoArgsConstructor);

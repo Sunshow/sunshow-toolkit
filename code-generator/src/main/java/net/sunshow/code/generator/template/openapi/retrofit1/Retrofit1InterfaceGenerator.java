@@ -13,7 +13,7 @@ public class Retrofit1InterfaceGenerator {
     public static void generate(Retrofit1Template template, OpenApiParser parser, EndpointDef def) throws Exception {
         EndpointMethodDef methodDef = def.getMethodDefList().get(0);
 
-        TypeSpec.Builder typeSpecBuilder = TypeSpec.interfaceBuilder(def.getApiName() + GenerateUtils.lowerCamelToUpperCamel(template.getEndpointSuffix()))
+        TypeSpec.Builder typeSpecBuilder = TypeSpec.interfaceBuilder(template.getModulePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getEndpointSuffix()))
                 .addModifiers(Modifier.PUBLIC);
 
         AnnotationSpec postAnnotationSpec = AnnotationSpec.builder(Retrofit1Template.ClassNameRetrofitPost)
@@ -24,11 +24,11 @@ public class Retrofit1InterfaceGenerator {
             // 如果没有响应体
             responseClassName = ParameterizedTypeName.get(template.getResponseWrapperClassName(), TypeName.VOID.box());
         } else {
-            responseClassName = ParameterizedTypeName.get(template.getResponseWrapperClassName(), ClassName.get(template.getResponsePackagePath(), def.getNamePrefixCanonical() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix())));
+            responseClassName = ParameterizedTypeName.get(template.getResponseWrapperClassName(), ClassName.get(template.getResponsePackagePath(), template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix())));
         }
         TypeName callClassName = ParameterizedTypeName.get(Retrofit1Template.ClassNameRetrofitCall, responseClassName);
 
-        MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(GenerateUtils.upperCamelToLowerCamel(def.getNamePrefix()))
+        MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(GenerateUtils.upperCamelToLowerCamel(template.getNamePrefix()))
                 .addAnnotation(postAnnotationSpec)
                 .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
                 .returns(callClassName);
@@ -39,7 +39,7 @@ public class Retrofit1InterfaceGenerator {
 
         // 如果有请求体
         if (methodDef.getRequestSchemaRef() != null) {
-            ParameterSpec parameterSpec = ParameterSpec.builder(ClassName.get(template.getRequestPackagePath(), def.getNamePrefixCanonical() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix())), "request")
+            ParameterSpec parameterSpec = ParameterSpec.builder(ClassName.get(template.getRequestPackagePath(), template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix())), "request")
                     .addAnnotation(Retrofit1Template.ClassNameRetrofitBody)
                     .build();
             methodSpecBuilder.addParameter(parameterSpec);

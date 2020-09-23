@@ -3,6 +3,7 @@ package net.sunshow.code.generator.template.openapi.retrofit1;
 import com.squareup.javapoet.ClassName;
 import lombok.Getter;
 import lombok.Setter;
+import net.sunshow.code.generator.template.openapi.EndpointDef;
 import net.sunshow.code.generator.util.GenerateUtils;
 
 @Setter
@@ -13,6 +14,23 @@ public class Retrofit1Template {
     public static final ClassName ClassNameRetrofitBody = ClassName.get("retrofit2.http", "Body");
     public static final ClassName ClassNameRetrofitCall = ClassName.get("retrofit2", "Call");
 
+    public void init(EndpointDef def) {
+        if (this.isModuleNamePrefix()) {
+            this.setNamePrefix(GenerateUtils.lowerCamelToUpperCamel(def.getSubModule()) + GenerateUtils.lowerCamelToUpperCamel(def.getModule()) + def.getName());
+        } else {
+            this.setNamePrefix(GenerateUtils.lowerCamelToUpperCamel(def.getSubModule()) + def.getName());
+        }
+        if (this.isModulePrefixReverse()) {
+            this.setModulePrefix(GenerateUtils.lowerCamelToUpperCamel(def.getSubModule()) + GenerateUtils.lowerCamelToUpperCamel(def.getModule()));
+        } else {
+            this.setModulePrefix(GenerateUtils.lowerCamelToUpperCamel(def.getModule()) + GenerateUtils.lowerCamelToUpperCamel(def.getSubModule()));
+        }
+    }
+
+    private String namePrefix;
+
+    private String modulePrefix;
+
     private String indent = "    ";
 
     // 基础包路径, 生成代码的上级包路径, 在此路径下分包输出
@@ -20,6 +38,11 @@ public class Retrofit1Template {
 
     // 模块名称, 生成代码都放在各自包下的子模块包下
     private String moduleName;
+
+    private boolean moduleNamePrefix = false;
+
+    // 模块前缀倒装, 即子模块名在前
+    private boolean modulePrefixReverse = false;
 
     // 输出路径
     private String outputPath = "";
