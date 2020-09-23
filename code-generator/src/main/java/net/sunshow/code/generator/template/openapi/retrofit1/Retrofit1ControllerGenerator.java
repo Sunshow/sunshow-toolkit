@@ -70,11 +70,11 @@ public class Retrofit1ControllerGenerator {
             // 要响应体
             if (methodDef.getResponseSchemaRef() != null && parser.getSchemas().get(methodDef.getResponseSchemaRef()).has("properties")) {
                 ClassName responseClassName = ClassName.get(template.getResponsePackagePath(), template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()));
-                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), responseClassName, endpointInstance, GenerateUtils.upperCamelToLowerCamel(template.getNamePrefix()), requestInstance);
+                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), responseClassName, endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getName()), requestInstance);
                 methodSpecBuilder.addStatement("$T response = $T.assertWrapperSuccess(responseWrapper)", responseClassName, template.getResponseHelperClassName());
                 methodSpecBuilder.addStatement("return $T.ok(response)", template.getControllerRespFOClassName());
             } else {
-                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), TypeName.VOID.box(), endpointInstance, GenerateUtils.upperCamelToLowerCamel(template.getNamePrefix()), requestInstance);
+                methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), TypeName.VOID.box(), endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getName()), requestInstance);
                 methodSpecBuilder.addStatement("$T.assertWrapperSuccess(responseWrapper)", template.getResponseHelperClassName());
                 methodSpecBuilder.addStatement("return $T.ok()", template.getControllerRespFOClassName());
             }

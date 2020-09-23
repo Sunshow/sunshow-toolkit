@@ -28,7 +28,7 @@ public class Retrofit1InterfaceGenerator {
         }
         TypeName callClassName = ParameterizedTypeName.get(Retrofit1Template.ClassNameRetrofitCall, responseClassName);
 
-        MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(GenerateUtils.upperCamelToLowerCamel(template.getNamePrefix()))
+        MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(GenerateUtils.upperCamelToLowerCamel(def.getName()))
                 .addAnnotation(postAnnotationSpec)
                 .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
                 .returns(callClassName);
