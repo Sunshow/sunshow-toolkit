@@ -57,13 +57,34 @@ public class Retrofit1Template {
 
     private String controllerSuffix = "Controller";
 
-    private ClassName responseWrapperClassName = ClassName.get(packagePathPrefix + ".api.response", "NSixResponseWrapper");
+    private ClassName responseWrapperClassName;
 
-    private ClassName responseHelperClassName = ClassName.get(packagePathPrefix + ".component.nsix", "NSixResponseHelper");
+    private ClassName responseHelperClassName;
 
-    private ClassName controllerRespFOClassName = ClassName.get("net.sunshow.cms.module.common.fo", "RestResponseFO");
+    private ClassName controllerRespFOClassName;
 
     private String foIgnoreSessionProperty = "employeeId";
+
+    public ClassName getResponseWrapperClassName() {
+        if (responseWrapperClassName == null) {
+            responseWrapperClassName = ClassName.get(getPackagePathPrefix() + ".api.response", "NSixResponseWrapper");
+        }
+        return responseWrapperClassName;
+    }
+
+    public ClassName getResponseHelperClassName() {
+        if (responseHelperClassName == null) {
+            responseHelperClassName = ClassName.get(getPackagePathPrefix() + ".component.nsix", "NSixResponseHelper");
+        }
+        return responseHelperClassName;
+    }
+
+    public ClassName getControllerRespFOClassName() {
+        if (controllerRespFOClassName == null) {
+            controllerRespFOClassName = ClassName.get("net.sunshow.cms.module.common.fo", "RestResponseFO");
+        }
+        return controllerRespFOClassName;
+    }
 
     public String getApiPackagePath() {
         return GenerateUtils.combinePackagePath(packagePathPrefix, "api", "");
