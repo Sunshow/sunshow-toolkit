@@ -57,9 +57,9 @@ public class Retrofit1Template {
 
     private String controllerSuffix = "Controller";
 
-    private ClassName responseWrapperClassName = ClassName.get("tech.xiaoman.nplus6.merchant.api.response", "NSixResponseWrapper");
+    private ClassName responseWrapperClassName = ClassName.get(packagePathPrefix + ".api.response", "NSixResponseWrapper");
 
-    private ClassName responseHelperClassName = ClassName.get("tech.xiaoman.nplus6.merchant.component.nsix", "NSixResponseHelper");
+    private ClassName responseHelperClassName = ClassName.get(packagePathPrefix + ".component.nsix", "NSixResponseHelper");
 
     private ClassName controllerRespFOClassName = ClassName.get("net.sunshow.cms.module.common.fo", "RestResponseFO");
 
