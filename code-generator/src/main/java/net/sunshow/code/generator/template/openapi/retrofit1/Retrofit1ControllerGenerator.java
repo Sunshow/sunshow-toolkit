@@ -142,6 +142,11 @@ public class Retrofit1ControllerGenerator {
                         methodSpecBuilder.addStatement("respFO.setTotalPage(response.getTotalPageCount())");
 
                         methodSpecBuilder.addStatement("return $T.ok(respFO)", template.getControllerRespFOClassName());
+                    } else {
+                        methodSpecBuilder.addStatement("return $T.ok(new $T<>(response.$N(), response.getTotalCount(), response.getTotalPageCount()))",
+                                template.getControllerRespFOClassName(),
+                                template.getLimitRespFOClassName(),
+                                GenerateUtils.lowerCamelToGetter(def.getPageableListProperty()));
                     }
                 } else {
                     methodSpecBuilder.addStatement("return $T.ok(response)", template.getControllerRespFOClassName());
