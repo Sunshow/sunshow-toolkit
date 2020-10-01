@@ -62,7 +62,10 @@ public class Retrofit1Template {
                         if (pageableResponseProperties.contains(f)) {
                             def.setPageable(true);
                         } else {
-                            def.setPageableRequestHasExtraProperties(true);
+                            def.setPageableResponseHasExtraProperties(true);
+                        }
+                        if (propertyNode.get(f).get("type").asText().equals("array")) {
+                            def.setPageableListProperty(f);
                         }
                     });
                 }
@@ -97,6 +100,8 @@ public class Retrofit1Template {
     private String endpointSuffix = "api";
 
     private String foSuffix = "FO";
+
+    private String respFOSuffix = "RespFO";
 
     private String controllerSuffix = "Controller";
 
@@ -164,7 +169,7 @@ public class Retrofit1Template {
 
     public ClassName getLimitRespFOClassName() {
         if (limitRespFOClassName == null) {
-            limitRespFOClassName = ClassName.get(getPackagePathPrefix() + ".fo", "limitRespFO");
+            limitRespFOClassName = ClassName.get(getPackagePathPrefix() + ".fo", "LimitRespFO");
         }
         return limitRespFOClassName;
     }

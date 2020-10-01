@@ -105,7 +105,45 @@ public class Retrofit1ControllerGenerator {
                 ClassName responseClassName = ClassName.get(template.getResponsePackagePath(), template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()));
                 methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), responseClassName, endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getName()), requestInstance);
                 methodSpecBuilder.addStatement("$T response = $T.assertWrapperSuccess(responseWrapper)", responseClassName, template.getResponseHelperClassName());
-                methodSpecBuilder.addStatement("return $T.ok(response)", template.getControllerRespFOClassName());
+
+                if (def.isPageable()) {
+                    if (def.isPageableResponseHasExtraProperties()) {
+                        ClassName respFOClassName = ClassName.get(template.getFOPackagePath(), template.getNamePrefix() + template.getRespFOSuffix());
+                        methodSpecBuilder.addCode("$T respFO = new $T(", respFOClassName, respFOClassName);
+
+                        ObjectNode propertiesNode = (ObjectNode) parser.getSchemas().get(methodDef.getResponseSchemaRef()).get("properties");
+                        Iterator<String> fieldNamesIterator = propertiesNode.fieldNames();
+                        boolean needComma = false;
+                        while (fieldNamesIterator.hasNext()) {
+                            String field = fieldNamesIterator.next();
+                            if (template.getPageableResponseProperties().contains(field)) {
+                                continue;
+                            }
+                            if (def.getPageableListProperty().equals(field)) {
+                                continue;
+                            }
+
+                            if (needComma) {
+                                methodSpecBuilder.addCode(", ");
+                                needComma = false;
+                            }
+
+                            methodSpecBuilder.addCode("response.$N()", GenerateUtils.lowerCamelToGetter(field));
+
+                            if (fieldNamesIterator.hasNext()) {
+                                needComma = true;
+                            }
+                        }
+
+                        methodSpecBuilder.addCode(");\n");
+
+                        methodSpecBuilder.addStatement("respFO.setItems(response.$N())", GenerateUtils.lowerCamelToGetter(def.getPageableListProperty()));
+                        methodSpecBuilder.addStatement("respFO.setTotal(response.getTotalCount())");
+                        methodSpecBuilder.addStatement("respFO.setTotalPage(response.getTotalPageCount())");
+                    }
+                } else {
+                    methodSpecBuilder.addStatement("return $T.ok(response)", template.getControllerRespFOClassName());
+                }
             } else {
                 methodSpecBuilder.addStatement("$T<$T> responseWrapper = $N.$N($N).execute().body()", template.getResponseWrapperClassName(), TypeName.VOID.box(), endpointInstance, GenerateUtils.upperCamelToLowerCamel(def.getName()), requestInstance);
                 methodSpecBuilder.addStatement("$T.assertWrapperSuccess(responseWrapper)", template.getResponseHelperClassName());

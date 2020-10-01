@@ -1,8 +1,11 @@
 package net.sunshow.code.generator.template.openapi;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import net.sunshow.code.generator.template.qbean.QTemplate;
+
+import java.util.List;
 
 public class OpenApiUtils {
 
@@ -31,6 +34,9 @@ public class OpenApiUtils {
             }
             case "boolean": {
                 return TypeName.BOOLEAN;
+            }
+            case "array": {
+                return ParameterizedTypeName.get(List.class, Object.class);
             }
             default:
                 return TypeName.OBJECT;

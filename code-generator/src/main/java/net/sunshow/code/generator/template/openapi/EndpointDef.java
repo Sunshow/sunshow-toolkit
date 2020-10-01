@@ -33,4 +33,9 @@ public class EndpointDef {
      * 分页响应包含分页数据之外的属性
      */
     private boolean pageableResponseHasExtraProperties;
+
+    /**
+     * 分页返回列表的属性
+     */
+    private String pageableListProperty;
 }
