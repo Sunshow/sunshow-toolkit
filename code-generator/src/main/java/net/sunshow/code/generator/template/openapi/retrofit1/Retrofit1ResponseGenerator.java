@@ -28,9 +28,15 @@ public class Retrofit1ResponseGenerator {
         }
 
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getResponseSuffix()))
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(QTemplate.ClassNameLombokData)
-                .addAnnotation(QTemplate.ClassNameLombokNoArgsConstructor);
+                .addModifiers(Modifier.PUBLIC);
+        if (def.isPageable()) {
+            typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokGetter)
+                    .addAnnotation(QTemplate.ClassNameLombokSetter)
+                    .superclass(template.getPageableResponseClassName());
+        } else {
+            typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokData);
+        }
+        typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokNoArgsConstructor);
 
         typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokAllArgsConstructor);
 
@@ -38,6 +44,9 @@ public class Retrofit1ResponseGenerator {
         ObjectNode propertiesNode = (ObjectNode) schemaNode.get("properties");
 
         propertiesNode.fieldNames().forEachRemaining(field -> {
+            if (def.isPageable() && template.getPageableResponseProperties().contains(field)) {
+                return;
+            }
             ObjectNode node = (ObjectNode) propertiesNode.get(field);
             TypeName typeName = OpenApiUtils.generateTypeName(node);
             String title = null;

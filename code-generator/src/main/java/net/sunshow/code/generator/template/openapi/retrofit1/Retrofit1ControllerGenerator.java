@@ -10,6 +10,7 @@ import net.sunshow.code.generator.util.GenerateUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Modifier;
+import java.util.Iterator;
 
 public class Retrofit1ControllerGenerator {
 
@@ -64,8 +65,40 @@ public class Retrofit1ControllerGenerator {
                     }
                 }
 
-                ClassName requestClassName = ClassName.get(template.getRequestPackagePath(), template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix()));
-                methodSpecBuilder.addStatement("$T request = new $T()", requestClassName, requestClassName);
+                if (StringUtils.isNotEmpty(requestInstance)) {
+                    ClassName requestClassName = ClassName.get(template.getRequestPackagePath(), template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix()));
+                    methodSpecBuilder.addCode("$T $N = new $T(", requestClassName, requestInstance, requestClassName);
+
+                    // 有属性 创建构造函数
+                    // 创建属性
+                    ObjectNode propertiesNode = (ObjectNode) schemaNode.get("properties");
+                    Iterator<String> fieldNamesIterator = propertiesNode.fieldNames();
+                    boolean needComma = false;
+                    while (fieldNamesIterator.hasNext()) {
+                        String field = fieldNamesIterator.next();
+                        if (def.isPageable() && template.getPageableRequestProperties().contains(field)) {
+                            continue;
+                        }
+
+                        if (needComma) {
+                            methodSpecBuilder.addCode(", ");
+                            needComma = false;
+                        }
+
+                        methodSpecBuilder.addCode("fo.$N()", GenerateUtils.lowerCamelToGetter(field));
+
+                        if (fieldNamesIterator.hasNext()) {
+                            needComma = true;
+                        }
+                    }
+
+                    methodSpecBuilder.addCode(");\n");
+
+                    if (def.isPageable()) {
+                        methodSpecBuilder.addStatement("$N.setPageIndex(fo.getPage())", requestInstance);
+                        methodSpecBuilder.addStatement("$N.setPageSize(fo.getLimit())", requestInstance);
+                    }
+                }
             }
             // 要响应体
             if (methodDef.getResponseSchemaRef() != null && parser.getSchemas().get(methodDef.getResponseSchemaRef()).has("properties")) {

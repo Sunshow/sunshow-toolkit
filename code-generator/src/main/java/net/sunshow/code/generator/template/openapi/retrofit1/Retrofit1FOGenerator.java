@@ -31,10 +31,21 @@ public class Retrofit1FOGenerator {
             }
         }
 
+        if (def.isPageable() && !def.isPageableRequestHasExtraProperties()) {
+            return;
+        }
+
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getNamePrefix() + template.getFOSuffix())
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(QTemplate.ClassNameLombokData)
-                .addAnnotation(QTemplate.ClassNameLombokNoArgsConstructor);
+                .addModifiers(Modifier.PUBLIC);
+
+        if (def.isPageable()) {
+            typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokGetter)
+                    .addAnnotation(QTemplate.ClassNameLombokSetter)
+                    .superclass(template.getLimitFOClassName());
+        } else {
+            typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokData);
+        }
+        typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokNoArgsConstructor);
 
 
         if (schemaNode.has("properties")) {
@@ -45,6 +56,9 @@ public class Retrofit1FOGenerator {
             ObjectNode propertiesNode = (ObjectNode) schemaNode.get("properties");
 
             propertiesNode.fieldNames().forEachRemaining(field -> {
+                if (def.isPageable() && template.getPageableRequestProperties().contains(field)) {
+                    return;
+                }
                 if (!field.equals(template.getFoIgnoreSessionProperty())) {
                     ObjectNode node = (ObjectNode) propertiesNode.get(field);
                     TypeName typeName = OpenApiUtils.generateTypeName(node);

@@ -24,9 +24,17 @@ public class Retrofit1RequestGenerator {
         }
 
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(template.getNamePrefix() + GenerateUtils.lowerCamelToUpperCamel(template.getRequestSuffix()))
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(QTemplate.ClassNameLombokData)
-                .addAnnotation(QTemplate.ClassNameLombokNoArgsConstructor);
+                .addModifiers(Modifier.PUBLIC);
+
+        if (def.isPageable()) {
+            typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokGetter)
+                    .addAnnotation(QTemplate.ClassNameLombokSetter)
+                    .superclass(template.getPageableRequestClassName());
+        } else {
+            typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokData);
+        }
+
+        typeSpecBuilder.addAnnotation(QTemplate.ClassNameLombokNoArgsConstructor);
 
         ObjectNode schemaNode = (ObjectNode) parser.getSchemas().get(methodDef.getRequestSchemaRef());
         if (schemaNode.has("properties")) {
@@ -37,6 +45,9 @@ public class Retrofit1RequestGenerator {
             ObjectNode propertiesNode = (ObjectNode) schemaNode.get("properties");
 
             propertiesNode.fieldNames().forEachRemaining(field -> {
+                if (def.isPageable() && template.getPageableRequestProperties().contains(field)) {
+                    return;
+                }
                 ObjectNode node = (ObjectNode) propertiesNode.get(field);
                 TypeName typeName = OpenApiUtils.generateTypeName(node);
                 String title = node.get("title").asText();

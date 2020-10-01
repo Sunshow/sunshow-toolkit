@@ -1,10 +1,16 @@
 package net.sunshow.code.generator.template.openapi.retrofit1;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Sets;
 import com.squareup.javapoet.ClassName;
 import lombok.Getter;
 import lombok.Setter;
 import net.sunshow.code.generator.template.openapi.EndpointDef;
+import net.sunshow.code.generator.template.openapi.EndpointMethodDef;
+import net.sunshow.code.generator.template.openapi.OpenApiParser;
 import net.sunshow.code.generator.util.GenerateUtils;
+
+import java.util.Set;
 
 @Setter
 @Getter
@@ -15,6 +21,10 @@ public class Retrofit1Template {
     public static final ClassName ClassNameRetrofitCall = ClassName.get("retrofit2", "Call");
 
     public void init(EndpointDef def) {
+        init(def, null);
+    }
+
+    public void init(EndpointDef def, OpenApiParser parser) {
         if (this.isModuleNamePrefix()) {
             this.setNamePrefix(GenerateUtils.lowerCamelToUpperCamel(def.getSubModule()) + GenerateUtils.lowerCamelToUpperCamel(def.getModule()) + def.getName());
         } else {
@@ -24,6 +34,39 @@ public class Retrofit1Template {
             this.setModulePrefix(GenerateUtils.lowerCamelToUpperCamel(def.getSubModule()) + GenerateUtils.lowerCamelToUpperCamel(def.getModule()));
         } else {
             this.setModulePrefix(GenerateUtils.lowerCamelToUpperCamel(def.getModule()) + GenerateUtils.lowerCamelToUpperCamel(def.getSubModule()));
+        }
+
+        EndpointMethodDef methodDef = def.getMethodDefList().get(0);
+        if (methodDef.getRequestSchemaRef() != null && parser != null) {
+            {
+                ObjectNode schemaNode = (ObjectNode) parser.getSchemas().get(methodDef.getRequestSchemaRef());
+                if (schemaNode.has("properties")) {
+                    // 判断是否是分页请求
+                    ObjectNode propertyNode = (ObjectNode) schemaNode.get("properties");
+                    propertyNode.fieldNames().forEachRemaining(f -> {
+                        if (pageableRequestProperties.contains(f)) {
+                            def.setPageable(true);
+                        } else {
+                            def.setPageableRequestHasExtraProperties(true);
+                        }
+                    });
+                }
+            }
+
+            {
+                ObjectNode schemaNode = (ObjectNode) parser.getSchemas().get(methodDef.getResponseSchemaRef());
+                if (schemaNode.has("properties")) {
+                    // 判断是否是分页请求
+                    ObjectNode propertyNode = (ObjectNode) schemaNode.get("properties");
+                    propertyNode.fieldNames().forEachRemaining(f -> {
+                        if (pageableResponseProperties.contains(f)) {
+                            def.setPageable(true);
+                        } else {
+                            def.setPageableRequestHasExtraProperties(true);
+                        }
+                    });
+                }
+            }
         }
     }
 
@@ -65,6 +108,18 @@ public class Retrofit1Template {
 
     private String foIgnoreSessionProperty = "employeeId";
 
+    private Set<String> pageableRequestProperties = Sets.newHashSet("pageIndex", "pageSize");
+
+    private Set<String> pageableResponseProperties = Sets.newHashSet("currentPageIndex", "pageSize", "totalPageCount", "totalCount");
+
+    private ClassName pageableRequestClassName;
+
+    private ClassName pageableResponseClassName;
+
+    private ClassName limitFOClassName;
+
+    private ClassName limitRespFOClassName;
+
     public ClassName getResponseWrapperClassName() {
         if (responseWrapperClassName == null) {
             responseWrapperClassName = ClassName.get(getPackagePathPrefix() + ".api.response", "NSixResponseWrapper");
@@ -84,6 +139,34 @@ public class Retrofit1Template {
             controllerRespFOClassName = ClassName.get("net.sunshow.cms.module.common.fo", "RestResponseFO");
         }
         return controllerRespFOClassName;
+    }
+
+    public ClassName getPageableRequestClassName() {
+        if (pageableRequestClassName == null) {
+            pageableRequestClassName = ClassName.get(getPackagePathPrefix() + ".api.request", "PageableRequest");
+        }
+        return pageableRequestClassName;
+    }
+
+    public ClassName getPageableResponseClassName() {
+        if (pageableResponseClassName == null) {
+            pageableResponseClassName = ClassName.get(getPackagePathPrefix() + ".api.response", "PageableResponse");
+        }
+        return pageableResponseClassName;
+    }
+
+    public ClassName getLimitFOClassName() {
+        if (limitFOClassName == null) {
+            limitFOClassName = ClassName.get(getPackagePathPrefix() + ".fo", "LimitFO");
+        }
+        return limitFOClassName;
+    }
+
+    public ClassName getLimitRespFOClassName() {
+        if (limitRespFOClassName == null) {
+            limitRespFOClassName = ClassName.get(getPackagePathPrefix() + ".fo", "limitRespFO");
+        }
+        return limitRespFOClassName;
     }
 
     public String getApiPackagePath() {
