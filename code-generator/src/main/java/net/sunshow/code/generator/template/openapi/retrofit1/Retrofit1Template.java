@@ -64,7 +64,7 @@ public class Retrofit1Template {
                         } else {
                             def.setPageableResponseHasExtraProperties(true);
                         }
-                        if (propertyNode.get(f).get("type").asText().equals("array")) {
+                        if (propertyNode.get(f).has("type") && propertyNode.get(f).get("type").asText().equals("array")) {
                             def.setPageableListProperty(f);
                         }
                     });

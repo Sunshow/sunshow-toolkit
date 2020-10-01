@@ -13,6 +13,7 @@ public class QTemplate {
     public static final ClassName ClassNameRuntimeException = ClassName.get("java.lang", "RuntimeException");
     public static final ClassName ClassNameLocalDateTime = ClassName.get("java.time", "LocalDateTime");
     public static final ClassName ClassNameSupplier = ClassName.get("java.util.function", "Supplier");
+    public static final ClassName ClassNameBigDecimal = ClassName.get("java.math", "BigDecimal");
 
     public static final ClassName ClassNameJpaTable = ClassName.get("javax.persistence", "Table");
     public static final ClassName ClassNameJpaEntity = ClassName.get("javax.persistence", "Entity");

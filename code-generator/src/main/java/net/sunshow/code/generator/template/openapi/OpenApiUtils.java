@@ -38,6 +38,9 @@ public class OpenApiUtils {
             case "array": {
                 return ParameterizedTypeName.get(List.class, Object.class);
             }
+            case "number": {
+                return QTemplate.ClassNameBigDecimal;
+            }
             default:
                 return TypeName.OBJECT;
         }
