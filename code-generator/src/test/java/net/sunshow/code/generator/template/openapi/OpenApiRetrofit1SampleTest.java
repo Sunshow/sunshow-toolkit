@@ -29,15 +29,18 @@ public class OpenApiRetrofit1SampleTest {
 
         template = new Retrofit1Template();
         template.setModuleName(module);
+        // template.setModuleNamePrefix(true);
+        // template.setModulePrefixReverse(true);
         template.setPackagePathPrefix("tech.xiaoman.nplus6.merchant");
         template.setOutputPath("/Users/sunshow/GIT/MambaAITech/nplus6-merchant/src/main/java");
 
-        template.init(def);
+        template.init(def, parser);
 
         Retrofit1RequestGenerator.generate(template, parser, def);
         Retrofit1ResponseGenerator.generate(template, parser, def);
         Retrofit1InterfaceGenerator.generate(template, parser, def);
         Retrofit1FOGenerator.generate(template, parser, def);
+        Retrofit1RespFOGenerator.generate(template, parser, def);
         Retrofit1ControllerGenerator.generate(template, parser, def);
     }
 }
