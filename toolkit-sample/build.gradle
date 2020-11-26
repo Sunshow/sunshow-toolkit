@@ -21,10 +21,18 @@ tasks.withType(Test) {
 }
 
 repositories {
+    mavenLocal()
     maven {
-        url 'http://maven.aliyun.com/nexus/content/groups/public/'
+        url 'https://maven.aliyun.com/nexus/content/groups/public/'
     }
     mavenCentral()
+}
+
+configurations.all {
+    resolutionStrategy {
+        cacheDynamicVersionsFor 0, 'seconds'
+        cacheChangingModulesFor 0, 'seconds'
+    }
 }
 
 dependencies {
