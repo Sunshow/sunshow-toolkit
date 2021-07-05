@@ -26,9 +26,18 @@ allprojects {
     }
 
     publishing {
+        // 打包源码
+        task sourcesJar(type: Jar) {
+            from sourceSets.main.allJava
+            archiveClassifier = 'sources'
+        }
+
         publications {
             mavenJava(MavenPublication) {
                 from components.java
+
+                // 源码
+                artifact sourcesJar
             }
         }
     }
