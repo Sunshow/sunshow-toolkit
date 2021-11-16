@@ -77,4 +77,9 @@ public class BaseExtRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
             detach(s);
         }
     }
+
+    @Override
+    public List<T> findAllByIdIn(Iterable<ID> ids) {
+        return findAllById(ids);
+    }
 }

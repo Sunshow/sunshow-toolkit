@@ -7,6 +7,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author qatang
@@ -57,4 +58,12 @@ public interface BaseExtRepository<T, ID extends Serializable> extends PagingAnd
      * @param <S>      entity类型
      */
     <S extends T> void detach(Iterable<S> iterable);
+
+    /**
+     * 按主键批量查找
+     *
+     * @param ids 可遍历的主键集合
+     * @return 找到的实体对象列表
+     */
+    List<T> findAllByIdIn(Iterable<ID> ids);
 }

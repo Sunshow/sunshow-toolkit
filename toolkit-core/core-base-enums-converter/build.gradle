@@ -1,6 +1,5 @@
 dependencies {
     implementation(project(':core-base-enums'))
-    implementation("org.slf4j:slf4j-api:1.7.30")
     implementation('commons-beanutils:commons-beanutils:1.9.4')
     compileOnly('org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final')
     compileOnly('org.springframework:spring-core:5.2.5.RELEASE')
