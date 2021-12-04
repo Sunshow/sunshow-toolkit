@@ -1,10 +1,15 @@
 package net.sunshow.toolkit.core.qbean.api.response;
 
 import net.sunshow.toolkit.core.qbean.api.request.QPage;
+import net.sunshow.toolkit.core.qbean.api.request.QRequest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 封装响应对象供自定义查询使用
@@ -42,6 +47,16 @@ public class QResponse<E> implements Serializable {
     }
 
     public QResponse() {
+    }
+
+    public <T> QResponse<T> map(Function<E, T> mapper) {
+        List<T> mapList;
+        if (this.getPagedData() == null) {
+            mapList = new ArrayList<>();
+        } else {
+            mapList = this.getPagedData().stream().map(mapper).collect(Collectors.toList());
+        }
+        return new QResponse<>(this.getPage(), this.getPageSize(), mapList, this.getTotal());
     }
 
     public int getCount() {
