@@ -2,6 +2,7 @@ package net.sunshow.toolkit.core.base.enums;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -11,6 +12,23 @@ import java.util.stream.Collectors;
  * @author qatang
  */
 public class BaseEnumHelper {
+
+    /**
+     * 根据断言获取枚举对象
+     *
+     * @param predicate 断言
+     * @param enums 枚举数组
+     * @param <T>   泛型
+     * @return 枚举对象
+     */
+    public static <T extends BaseEnum> T getByPredicate(Predicate<T> predicate, T[] enums) {
+        return Arrays.stream(enums)
+                .filter(predicate)
+                .findAny()
+                .orElseThrow(InvalidEnumValueException::new);
+    }
+
+
     /**
      * 根据枚举值获取枚举对象
      *
@@ -20,10 +38,7 @@ public class BaseEnumHelper {
      * @return 枚举对象
      */
     public static <T extends BaseEnum> T getByValue(int value, T[] enums) {
-        return Arrays.stream(enums)
-                .filter(e -> e.getValue() == value)
-                .findAny()
-                .orElseThrow(InvalidEnumValueException::new);
+        return getByPredicate(e -> e.getValue() == value, enums);
     }
 
     /**
@@ -35,10 +50,7 @@ public class BaseEnumHelper {
      * @return 枚举对象
      */
     public static <T extends BaseEnum> T getByName(String name, T[] enums) {
-        return Arrays.stream(enums)
-                .filter(e -> e.getName().equals(name))
-                .findAny()
-                .orElseThrow(() -> new InvalidEnumValueException("未找到对应的枚举值, name=" + name));
+        return getByPredicate(e -> name.equals(e.getName()), enums);
     }
 
     /**
