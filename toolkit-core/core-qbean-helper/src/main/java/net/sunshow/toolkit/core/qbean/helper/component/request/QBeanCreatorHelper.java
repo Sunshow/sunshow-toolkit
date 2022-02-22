@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * author: sunshow.
@@ -40,6 +41,8 @@ public final class QBeanCreatorHelper {
 
     public static <CreatorBuilder, Creator extends BaseQBeanCreator, PropertiesSource> void copyPropertiesToCreatorBuilder(CreatorBuilder builder, Class<Creator> creatorType, PropertiesSource source) {
         PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(creatorType);
+        Map<String, List<Method>> methodNameListMap = Arrays.stream(builder.getClass().getMethods())
+                .collect(Collectors.groupingBy(Method::getName));
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String fieldName = propertyDescriptor.getName();
             if (StringUtils.equalsAny(fieldName, "createProperties", "class")) {
@@ -50,8 +53,17 @@ public final class QBeanCreatorHelper {
                 if (fieldValue != null) {
                     // 反射调用 builder 的 withXXX 方法
                     String methodName = "with" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                    Method method = builder.getClass().getMethod(methodName, fieldValue.getClass());
-                    method.invoke(builder, fieldValue);
+
+                    if (methodNameListMap.containsKey(methodName)) {
+                        Optional<Method> methodOptional = methodNameListMap.get(methodName).stream()
+                                .filter(method -> method.getParameterCount() == 1)
+                                .filter(method -> method.getParameterTypes()[0].isAssignableFrom(fieldValue.getClass()))
+                                .findAny();
+                        if (methodOptional.isPresent()) {
+                            Method method = methodOptional.get();
+                            method.invoke(builder, fieldValue);
+                        }
+                    }
                 }
             } catch (IllegalAccessException | NoSuchMethodException e) {
                 // did nothing
