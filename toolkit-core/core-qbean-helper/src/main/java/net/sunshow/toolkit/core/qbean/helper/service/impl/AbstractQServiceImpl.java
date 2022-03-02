@@ -66,7 +66,7 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
         return repository.findByIdForUpdate(id);
     }
 
-    protected <Entity extends BaseEntity, ID extends Serializable, Rep extends BaseRepository<Entity, ID>> Entity findOrCreate(ID id, Rep repository, Supplier<Entity> findUnique, Supplier<Entity> creator) {
+    protected <Entity extends BaseEntity, ID extends Serializable, Rep extends BaseRepository<Entity, ID>> Entity findOrCreate(Rep repository, Supplier<Entity> findUnique, Supplier<Entity> creator) {
         // 1) look for the record
         Entity found = findUnique.get();
         if (found != null) {
