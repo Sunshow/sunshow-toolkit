@@ -14,10 +14,17 @@ import net.sunshow.toolkit.core.qbean.helper.repository.BaseRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
@@ -38,6 +45,9 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    protected PlatformTransactionManager transactionManager;
+
     @SuppressWarnings("unchecked")
     protected Class<Q> getActualType() {
         ParameterizedType paramType = (ParameterizedType) this.getClass().getGenericSuperclass();
@@ -54,6 +64,38 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
         repository.detach(entity);
         // 重新锁行获取
         return repository.findByIdForUpdate(id);
+    }
+
+    protected <Entity extends BaseEntity, ID extends Serializable, Rep extends BaseRepository<Entity, ID>> Entity findOrCreate(ID id, Rep repository, Supplier<Entity> findUnique, Supplier<Entity> creator) {
+        // 1) look for the record
+        Entity found = findUnique.get();
+        if (found != null) {
+            return found;
+        }
+        // 2) if not found, start a new, independent transaction
+        TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        found = tt.execute(new TransactionCallback<Entity>() {
+            @Override
+            public Entity doInTransaction(TransactionStatus status) {
+                try {
+                    // 3) store the record in this new transaction
+                    return repository.save(creator.get());
+                } catch (DataIntegrityViolationException e) {
+                    // another thread or process created this already, possibly
+                    // between 1) and 2)
+                    status.setRollbackOnly();
+                    return null;
+                }
+            }
+        });
+        // 4) if we failed to create the record in the second transaction, found will
+        // still be null; however, this would happen only if another process
+        // created the record. let's see what they made for us!
+        if (found == null) {
+            found = findUnique.get();
+        }
+        return found;
     }
 
     protected Sort convertSort(QPage requestPage) {
