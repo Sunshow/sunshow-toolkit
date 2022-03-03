@@ -75,18 +75,15 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
         // 2) if not found, start a new, independent transaction
         TransactionTemplate tt = new TransactionTemplate(transactionManager);
         tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-        found = tt.execute(new TransactionCallback<Entity>() {
-            @Override
-            public Entity doInTransaction(TransactionStatus status) {
-                try {
-                    // 3) store the record in this new transaction
-                    return repository.save(creator.get());
-                } catch (DataIntegrityViolationException e) {
-                    // another thread or process created this already, possibly
-                    // between 1) and 2)
-                    status.setRollbackOnly();
-                    return null;
-                }
+        found = tt.execute(status -> {
+            try {
+                // 3) store the record in this new transaction
+                return repository.save(creator.get());
+            } catch (DataIntegrityViolationException e) {
+                // another thread or process created this already, possibly
+                // between 1) and 2)
+                status.setRollbackOnly();
+                return null;
             }
         });
         // 4) if we failed to create the record in the second transaction, found will
