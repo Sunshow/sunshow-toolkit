@@ -84,6 +84,18 @@ public final class QBeanSearchHelper {
                             break;
                     }
                     request.filter(annotation.operator(), fieldName, search);
+                } else if (annotation.operator() == Operator.BETWEEN) {
+                    if (!object.getClass().isArray()) {
+                        logger.error("Between 操作必须传入数组, 忽略");
+                        continue;
+                    }
+                    Object[] array = (Object[]) object;
+                    if (array.length != 2) {
+                        logger.error("Between 操作必须传入数组有且必须包含两个元素, 忽略");
+                        continue;
+                    }
+
+                    request.filterBetween(fieldName, array[0], array[1]);
                 } else {
                     request.filter(annotation.operator(), fieldName, value);
                 }
