@@ -20,4 +20,10 @@ public interface BaseQService<Q extends BaseQBean, ID extends Serializable> {
 
     QResponse<Q> findAll(QRequest request, QPage requestPage);
 
+    Q save(Object creator);
+
+    Q update(Object updater);
+
+    Q update(ID id, Object updater);
+
 }
