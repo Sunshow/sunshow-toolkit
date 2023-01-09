@@ -26,4 +26,6 @@ public interface BaseQService<Q extends BaseQBean, ID extends Serializable> {
 
     Q update(ID id, Object updater);
 
+    void deleteById(ID id);
+
 }

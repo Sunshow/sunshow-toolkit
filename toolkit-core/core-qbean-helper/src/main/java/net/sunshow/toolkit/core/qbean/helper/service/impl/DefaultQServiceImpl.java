@@ -151,6 +151,13 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
         return convertQBean(po);
     }
 
+    @Override
+    @Transactional
+    public void deleteById(ID id) {
+        ENTITY po = getEntityWithNullCheckForUpdate(id);
+        dao.delete(po);
+    }
+
     protected void copyProperties(Object source, Object dest) {
         Field[] fields = source.getClass().getDeclaredFields();
 
