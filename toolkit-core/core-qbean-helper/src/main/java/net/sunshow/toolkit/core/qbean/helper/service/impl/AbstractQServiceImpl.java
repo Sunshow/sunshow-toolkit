@@ -32,6 +32,7 @@ import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -242,5 +243,9 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
 
     protected <T> List<Q> convertStreamQBeanToList(Stream<T> stream) {
         return stream.map(this::convertQBean).collect(Collectors.toList());
+    }
+
+    protected <T> List<Q> convertQBeanToList(Collection<T> collection) {
+        return convertStreamQBeanToList(collection.stream());
     }
 }
