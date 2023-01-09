@@ -22,8 +22,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -32,11 +30,11 @@ import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * 预留基础服务实现
@@ -245,7 +243,7 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
         return stream.map(this::convertQBean).collect(Collectors.toList());
     }
 
-    protected <T> List<Q> convertQBeanToList(Collection<T> collection) {
-        return convertStreamQBeanToList(collection.stream());
+    protected <T> List<Q> convertQBeanToList(Iterable<T> iterable) {
+        return convertStreamQBeanToList(StreamSupport.stream(iterable.spliterator(), false));
     }
 }
