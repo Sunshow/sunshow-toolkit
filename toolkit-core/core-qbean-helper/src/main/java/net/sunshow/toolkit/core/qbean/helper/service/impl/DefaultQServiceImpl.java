@@ -154,8 +154,13 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
     @Override
     @Transactional
     public void deleteById(ID id) {
+        deleteAndReturn(id);
+    }
+
+    protected ENTITY deleteAndReturn(ID id) {
         ENTITY po = getEntityWithNullCheckForUpdate(id);
         dao.delete(po);
+        return po;
     }
 
     protected void copyProperties(Object source, Object dest) {
