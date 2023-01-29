@@ -11,10 +11,13 @@ import net.sunshow.toolkit.core.qbean.helper.component.request.QBeanCreatorHelpe
 import net.sunshow.toolkit.core.qbean.helper.component.request.QBeanUpdaterHelper;
 import net.sunshow.toolkit.core.qbean.helper.entity.BaseEntity;
 import net.sunshow.toolkit.core.qbean.helper.repository.BaseRepository;
+import nxcloud.foundation.core.data.jpa.entity.DeletedField;
+import nxcloud.foundation.core.data.support.annotation.EnableSoftDelete;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -159,7 +162,15 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
 
     protected ENTITY deleteAndReturn(ID id) {
         ENTITY po = getEntityWithNullCheckForUpdate(id);
-        dao.delete(po);
+        if (AnnotatedElementUtils.hasAnnotation(this.getClass(), EnableSoftDelete.class)) {
+            if (DeletedField.class.isAssignableFrom(getEntityClass())) {
+                ((DeletedField) po).setDeleted(System.currentTimeMillis());
+            } else {
+                logger.error("配置启用了软删除但未实现软删除字段接口, 需要自行实现, 不做任何处理");
+            }
+        } else {
+            dao.delete(po);
+        }
         return po;
     }
 

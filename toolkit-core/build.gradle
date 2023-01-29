@@ -26,6 +26,10 @@ allprojects {
     }
 
     publishing {
+
+        // 发布 release
+        // version = "1.1.0"
+
         // 打包源码
         task sourcesJar(type: Jar) {
             from sourceSets.main.allJava
@@ -40,5 +44,22 @@ allprojects {
                 artifact sourcesJar
             }
         }
+
+        if (project.hasProperty("publishUsername") && project.hasProperty("publishPassword")
+                && project.hasProperty("publishReleasesRepoUrl") && project.hasProperty("publishSnapshotsRepoUrl")
+        ) {
+            repositories {
+                maven {
+                    url = version.toString().endsWith("SNAPSHOT") ?  project.findProperty("publishSnapshotsRepoUrl") :  project.findProperty("publishReleasesRepoUrl")
+                    allowInsecureProtocol true
+
+                    credentials {
+                        username project.findProperty("publishUsername")
+                        password project.findProperty("publishPassword")
+                    }
+                }
+            }
+        }
     }
+
 }
