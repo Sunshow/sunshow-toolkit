@@ -2,7 +2,7 @@ dependencies {
     implementation(project(':core-qbean-api'))
     implementation('commons-beanutils:commons-beanutils:1.9.4')
     implementation('org.apache.commons:commons-lang3:3.10')
-    implementation('net.sunshow.nxcloud:nxcloud-core-spring-data-jpa:0.2.8')
+    implementation('net.sunshow.nxcloud:nxcloud-core-spring-data-jpa:0.2.9')
     compileOnly('org.springframework.data:spring-data-jpa:2.2.6.RELEASE')
     compileOnly('org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final')
     compileOnly('com.github.dozermapper:dozer-core:6.5.0')
