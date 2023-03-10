@@ -28,7 +28,7 @@ allprojects {
     publishing {
 
         // 发布 release
-        // version = "1.1.0"
+        // version = "1.2.1"
 
         // 打包源码
         task sourcesJar(type: Jar) {
@@ -50,7 +50,7 @@ allprojects {
         ) {
             repositories {
                 maven {
-                    url = version.toString().endsWith("SNAPSHOT") ?  project.findProperty("publishSnapshotsRepoUrl") :  project.findProperty("publishReleasesRepoUrl")
+                    url = version.toString().endsWith("SNAPSHOT") ? project.findProperty("publishSnapshotsRepoUrl") : project.findProperty("publishReleasesRepoUrl")
                     allowInsecureProtocol true
 
                     credentials {

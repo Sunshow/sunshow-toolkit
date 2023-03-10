@@ -20,6 +20,9 @@ public @interface QField {
 
     boolean sortable() default false;
 
+    // 默认排序字段
+    boolean defaultSort() default false;
+
     // 仅在标记在属性上时有效
     String name() default "";
 

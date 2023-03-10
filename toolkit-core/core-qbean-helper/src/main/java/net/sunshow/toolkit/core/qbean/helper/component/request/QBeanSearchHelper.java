@@ -127,12 +127,13 @@ public final class QBeanSearchHelper {
                 continue;
             }
 
-            if (!predicate.test(annotation)) {
+            if (predicate != null && !predicate.test(annotation)) {
                 continue;
             }
 
             QFieldDef def = new QFieldDef();
             def.setName(field.getName());
+            def.setAliasName(annotation.name());
             def.setControl(annotation.control());
             def.setLabel(annotation.label());
             def.setPlaceholder(annotation.placeholder());
@@ -141,6 +142,11 @@ public final class QBeanSearchHelper {
             def.setRefName(annotation.refName());
             def.setTemplate(annotation.template());
             def.setOrder(annotation.order());
+            def.setSearchable(annotation.searchable());
+            def.setSortable(annotation.sortable());
+            def.setDefaultSort(annotation.defaultSort());
+            def.setOperator(annotation.operator());
+            def.setWildcard(annotation.wildcard());
 
             if (StringUtils.isEmpty(def.getLabel()) && StringUtils.isNotEmpty(def.getPlaceholder())) {
                 def.setLabel(def.getPlaceholder());
@@ -160,4 +166,7 @@ public final class QBeanSearchHelper {
         return convertQFieldDefList(clazz, QField::sortable);
     }
 
+    public static List<QFieldDef> convertQFieldDefList(Class<?> clazz) {
+        return convertQFieldDefList(clazz, null);
+    }
 }

@@ -1,6 +1,8 @@
 package net.sunshow.toolkit.core.qbean.api.request;
 
 import net.sunshow.toolkit.core.qbean.api.enums.Control;
+import net.sunshow.toolkit.core.qbean.api.enums.Operator;
+import net.sunshow.toolkit.core.qbean.api.enums.Wildcard;
 
 /**
  * author: sunshow.
@@ -8,6 +10,9 @@ import net.sunshow.toolkit.core.qbean.api.enums.Control;
 public class QFieldDef {
 
     private String name;
+
+    // 注解中定义的别名
+    private String aliasName;
 
     private Control control;
 
@@ -24,6 +29,17 @@ public class QFieldDef {
     private String template;
 
     private String order;
+
+    private Operator operator;
+
+    private Wildcard wildcard;
+
+    private boolean searchable;
+
+    private boolean sortable;
+
+    // 默认排序字段
+    private boolean defaultSort;
 
     public String getName() {
         return name;
@@ -95,5 +111,53 @@ public class QFieldDef {
 
     public void setRefName(String refName) {
         this.refName = refName;
+    }
+
+    public String getAliasName() {
+        return aliasName;
+    }
+
+    public void setAliasName(String aliasName) {
+        this.aliasName = aliasName;
+    }
+
+    public boolean isSearchable() {
+        return searchable;
+    }
+
+    public void setSearchable(boolean searchable) {
+        this.searchable = searchable;
+    }
+
+    public boolean isSortable() {
+        return sortable;
+    }
+
+    public void setSortable(boolean sortable) {
+        this.sortable = sortable;
+    }
+
+    public boolean isDefaultSort() {
+        return defaultSort;
+    }
+
+    public void setDefaultSort(boolean defaultSort) {
+        this.defaultSort = defaultSort;
+    }
+
+    public Operator getOperator() {
+        return operator;
+    }
+
+    public void setOperator(Operator operator) {
+        this.operator = operator;
+    }
+
+    public Wildcard getWildcard() {
+        return wildcard;
+    }
+
+    public void setWildcard(Wildcard wildcard) {
+        this.wildcard = wildcard;
     }
 }
