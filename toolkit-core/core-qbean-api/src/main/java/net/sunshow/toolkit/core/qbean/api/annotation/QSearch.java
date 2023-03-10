@@ -13,5 +13,7 @@ import java.lang.annotation.*;
 public @interface QSearch {
 
     Class<?> definition() default Void.class;
-    
+
+    boolean strict() default false;
+
 }
