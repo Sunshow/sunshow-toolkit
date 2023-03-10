@@ -6,6 +6,7 @@ import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanUpdater;
 import net.sunshow.toolkit.core.qbean.api.request.QPage;
 import net.sunshow.toolkit.core.qbean.api.request.QRequest;
 import net.sunshow.toolkit.core.qbean.api.response.QResponse;
+import net.sunshow.toolkit.core.qbean.api.search.PageSearch;
 import net.sunshow.toolkit.core.qbean.api.service.BaseQService;
 import net.sunshow.toolkit.core.qbean.helper.component.request.QBeanCreatorHelper;
 import net.sunshow.toolkit.core.qbean.helper.component.request.QBeanUpdaterHelper;
@@ -95,6 +96,11 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
 
     private Page<ENTITY> findAllInternal(QRequest request, QPage requestPage) {
         return dao.findAll(convertSpecification(request), convertPageable(requestPage));
+    }
+
+    @Override
+    public QResponse<Q> search(PageSearch search) {
+        return findAll(search.toQRequest(), search.toQPage());
     }
 
     @Override

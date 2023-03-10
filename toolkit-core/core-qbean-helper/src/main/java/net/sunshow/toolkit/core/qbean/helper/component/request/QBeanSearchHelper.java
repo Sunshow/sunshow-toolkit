@@ -147,6 +147,7 @@ public final class QBeanSearchHelper {
             def.setDefaultSort(annotation.defaultSort());
             def.setOperator(annotation.operator());
             def.setWildcard(annotation.wildcard());
+            def.setSortPriority(annotation.sortPriority());
 
             if (StringUtils.isEmpty(def.getLabel()) && StringUtils.isNotEmpty(def.getPlaceholder())) {
                 def.setLabel(def.getPlaceholder());

@@ -4,6 +4,7 @@ import net.sunshow.toolkit.core.qbean.api.bean.BaseQBean;
 import net.sunshow.toolkit.core.qbean.api.request.QPage;
 import net.sunshow.toolkit.core.qbean.api.request.QRequest;
 import net.sunshow.toolkit.core.qbean.api.response.QResponse;
+import net.sunshow.toolkit.core.qbean.api.search.PageSearch;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -19,6 +20,8 @@ public interface BaseQService<Q extends BaseQBean, ID extends Serializable> {
     List<Q> findByIdCollection(Collection<ID> idCollection);
 
     QResponse<Q> findAll(QRequest request, QPage requestPage);
+
+    QResponse<Q> search(PageSearch search);
 
     Q save(Object creator);
 

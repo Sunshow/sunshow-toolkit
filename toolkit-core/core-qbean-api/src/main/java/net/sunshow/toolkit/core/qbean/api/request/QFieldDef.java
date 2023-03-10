@@ -41,6 +41,8 @@ public class QFieldDef {
     // 默认排序字段
     private boolean defaultSort;
 
+    private int sortPriority;
+
     public String getName() {
         return name;
     }
@@ -159,5 +161,13 @@ public class QFieldDef {
 
     public void setWildcard(Wildcard wildcard) {
         this.wildcard = wildcard;
+    }
+
+    public int getSortPriority() {
+        return sortPriority;
+    }
+
+    public void setSortPriority(int sortPriority) {
+        this.sortPriority = sortPriority;
     }
 }
