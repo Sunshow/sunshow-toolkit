@@ -9,10 +9,11 @@ import net.sunshow.toolkit.core.qbean.api.enums.Wildcard;
  */
 public class QFieldDef {
 
-    private String name;
+    // 查询条件中定义的名字
+    private String fieldName;
 
-    // 注解中定义的别名
-    private String aliasName;
+    // 最终查询的列名
+    private String name;
 
     private Control control;
 
@@ -28,7 +29,7 @@ public class QFieldDef {
 
     private String template;
 
-    private String order;
+    private boolean desc;
 
     private Operator operator;
 
@@ -91,12 +92,12 @@ public class QFieldDef {
         this.template = template;
     }
 
-    public String getOrder() {
-        return order;
+    public boolean isDesc() {
+        return desc;
     }
 
-    public void setOrder(String order) {
-        this.order = order;
+    public void setDesc(boolean desc) {
+        this.desc = desc;
     }
 
     public String getRefId() {
@@ -115,12 +116,12 @@ public class QFieldDef {
         this.refName = refName;
     }
 
-    public String getAliasName() {
-        return aliasName;
+    public String getFieldName() {
+        return fieldName;
     }
 
-    public void setAliasName(String aliasName) {
-        this.aliasName = aliasName;
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 
     public boolean isSearchable() {

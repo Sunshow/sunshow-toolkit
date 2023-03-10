@@ -1,5 +1,6 @@
 package net.sunshow.toolkit.core.qbean.api.search;
 
+import net.sunshow.toolkit.core.qbean.api.enums.Operator;
 import net.sunshow.toolkit.core.qbean.api.request.QPage;
 import net.sunshow.toolkit.core.qbean.api.request.QRequest;
 
@@ -23,7 +24,15 @@ public class PageSearch {
 
         if (filters != null) {
             for (FieldFilter filter : filters) {
-                result.filter(filter.getOperator(), filter.getField(), filter.getValues());
+                if (filter.getOperator() == Operator.AND || filter.getOperator() == Operator.OR) {
+                    Object[] values = new Object[filter.getValues().length];
+                    for (int i = 0; i < values.length; i++) {
+                        values[i] = ((FieldFilter) filter.getValues()[i]).toQFilter();
+                    }
+                    result.filter(filter.getOperator(), null, values);
+                } else {
+                    result.filter(filter.getOperator(), filter.getField(), filter.getValues());
+                }
             }
         }
 

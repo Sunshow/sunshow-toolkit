@@ -132,8 +132,8 @@ public final class QBeanSearchHelper {
             }
 
             QFieldDef def = new QFieldDef();
-            def.setName(field.getName());
-            def.setAliasName(annotation.name());
+            def.setFieldName(field.getName());
+            def.setName(annotation.name());
             def.setControl(annotation.control());
             def.setLabel(annotation.label());
             def.setPlaceholder(annotation.placeholder());
@@ -141,7 +141,7 @@ public final class QBeanSearchHelper {
             def.setRefId(annotation.refId());
             def.setRefName(annotation.refName());
             def.setTemplate(annotation.template());
-            def.setOrder(annotation.order());
+            def.setDesc(annotation.desc());
             def.setSearchable(annotation.searchable());
             def.setSortable(annotation.sortable());
             def.setDefaultSort(annotation.defaultSort());

@@ -49,5 +49,5 @@ public @interface QField {
 
     String template() default "";
 
-    String order() default "ASC";
+    boolean desc() default false;
 }
