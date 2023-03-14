@@ -12,6 +12,9 @@ public class QFieldDef {
     // 查询条件中定义的名字
     private String fieldName;
 
+    // 查询条件中定义的类型
+    private Class<?> fieldType;
+
     // 最终查询的列名
     private String name;
 
@@ -170,5 +173,13 @@ public class QFieldDef {
 
     public void setSortPriority(int sortPriority) {
         this.sortPriority = sortPriority;
+    }
+
+    public Class<?> getFieldType() {
+        return fieldType;
+    }
+
+    public void setFieldType(Class<?> fieldType) {
+        this.fieldType = fieldType;
     }
 }

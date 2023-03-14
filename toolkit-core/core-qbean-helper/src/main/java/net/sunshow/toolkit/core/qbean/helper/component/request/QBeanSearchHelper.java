@@ -133,6 +133,7 @@ public final class QBeanSearchHelper {
 
             QFieldDef def = new QFieldDef();
             def.setFieldName(field.getName());
+            def.setFieldType(field.getType());
             def.setName(annotation.name());
             def.setControl(annotation.control());
             def.setLabel(annotation.label());
@@ -148,6 +149,7 @@ public final class QBeanSearchHelper {
             def.setOperator(annotation.operator());
             def.setWildcard(annotation.wildcard());
             def.setSortPriority(annotation.sortPriority());
+
 
             if (StringUtils.isEmpty(def.getLabel()) && StringUtils.isNotEmpty(def.getPlaceholder())) {
                 def.setLabel(def.getPlaceholder());
