@@ -1,5 +1,6 @@
 allprojects {
     apply plugin: 'java'
+    apply plugin: 'signing'
     apply plugin: 'maven-publish'
 
     sourceCompatibility = 1.8
@@ -36,12 +37,46 @@ allprojects {
             archiveClassifier = 'sources'
         }
 
+        // JavaDoc
+        task javadocJar(type: Jar) {
+            from javadoc
+            archiveClassifier = 'javadoc'
+        }
+
         publications {
             mavenJava(MavenPublication) {
                 from components.java
 
                 // 源码
                 artifact sourcesJar
+
+                // JavaDoc
+                artifact javadocJar
+
+                // pom
+                pom {
+                    name = 'Sunshow Toolkit Core'
+                    description = 'A toolkit for Java'
+                    url = 'https://github.com/Sunshow/sunshow-toolkit'
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'sunshow'
+                            name = 'Sunshow'
+                            email = 'sunshow@gmail.com'
+                        }
+                    }
+                    scm {
+                        connection = 'https://github.com/Sunshow/sunshow-toolkit'
+                        developerConnection = 'https://github.com/Sunshow/sunshow-toolkit'
+                        url = 'https://github.com/Sunshow/sunshow-toolkit'
+                    }
+                }
             }
         }
 
@@ -60,6 +95,10 @@ allprojects {
                 }
             }
         }
+    }
+
+    signing {
+        sign publishing.publications.mavenJava
     }
 
 }
