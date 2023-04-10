@@ -40,8 +40,13 @@ public class PageSearch {
     }
 
     public QPage toQPage() {
+        return toQPage(false);
+    }
+
+    public QPage toQPage(boolean withoutCountQuery) {
         QPage result = QPage.newInstance()
-                .paging(page, pageSize);
+                .paging(page, pageSize)
+                .withoutCountQuery(withoutCountQuery);
 
         if (sorts != null) {
             for (FieldSort sort : sorts) {
