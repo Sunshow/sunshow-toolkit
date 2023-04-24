@@ -8,9 +8,9 @@ import net.sunshow.toolkit.core.qbean.api.request.QRequest;
 import net.sunshow.toolkit.core.qbean.api.request.QSort;
 import net.sunshow.toolkit.core.qbean.api.response.QResponse;
 import net.sunshow.toolkit.core.qbean.helper.bean.jpa.QPageRequest;
-import net.sunshow.toolkit.core.qbean.helper.component.mapper.BeanMapper;
 import net.sunshow.toolkit.core.qbean.helper.entity.BaseEntity;
 import net.sunshow.toolkit.core.qbean.helper.repository.BaseRepository;
+import nxcloud.foundation.core.bean.mapper.BeanMapperFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +46,9 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
 
     @Autowired
     protected PlatformTransactionManager transactionManager;
+
+    @Autowired
+    protected BeanMapperFacade beanMapperFacade;
 
     @SuppressWarnings("unchecked")
     protected Class<Q> getActualType() {
@@ -236,7 +239,7 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
     }
 
     protected <T> Q convertQBean(T object) {
-        return BeanMapper.map(object, getActualType());
+        return beanMapperFacade.map(object, getActualType());
     }
 
     protected <T> List<Q> convertStreamQBeanToList(Stream<T> stream) {
