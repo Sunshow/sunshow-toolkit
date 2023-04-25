@@ -11,13 +11,28 @@ public class PageSearch {
     /**
      * zero based
      */
-    private int page = 0;
+    private int page;
 
     private int pageSize = 10;
+
+    private boolean zeroBased;
 
     private List<FieldFilter> filters;
 
     private List<FieldSort> sorts;
+
+    public PageSearch() {
+        this(true);
+    }
+
+    public PageSearch(boolean zeroBased) {
+        this.zeroBased = zeroBased;
+        if (zeroBased) {
+            page = 0;
+        } else {
+            page = 1;
+        }
+    }
 
     public QRequest toQRequest() {
         QRequest result = QRequest.newInstance();
@@ -55,6 +70,14 @@ public class PageSearch {
         }
 
         return result;
+    }
+
+    public boolean isZeroBased() {
+        return zeroBased;
+    }
+
+    public void setZeroBased(boolean zeroBased) {
+        this.zeroBased = zeroBased;
     }
 
     public int getPage() {
