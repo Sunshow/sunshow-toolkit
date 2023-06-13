@@ -106,6 +106,10 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
     @Override
     @Transactional
     public Q save(Object creator) {
+        return convertQBean(saveInternal(creator));
+    }
+
+    protected ENTITY saveInternal(Object creator) {
         ENTITY po = createNewEntityInstance();
 
         if (creator instanceof BaseQBeanCreator) {
@@ -115,19 +119,23 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
             copyProperties(creator, po);
         }
 
-        return convertQBean(dao.save(po));
+        return dao.save(po);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public Q update(Object updater) {
+        return convertQBean(updateInternal(updater));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected ENTITY updateInternal(Object updater) {
         if (updater instanceof BaseQBeanUpdater) {
             BaseQBeanUpdater baseQBeanUpdater = (BaseQBeanUpdater) updater;
             if (Long.class.isAssignableFrom(getIdClass())) {
                 ENTITY po = getEntityWithNullCheckForUpdate((ID) baseQBeanUpdater.getUpdateId());
                 QBeanUpdaterHelper.copyUpdaterField(po, baseQBeanUpdater);
-                return convertQBean(po);
+                return po;
             } else {
                 throw new RuntimeException("使用 BaseQBeanUpdater 更新时只支持 Long 主键");
             }
@@ -139,7 +147,7 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
                     throw new RuntimeException("更新对象中没有 id 属性");
                 }
                 if (fieldValue.getClass().isAssignableFrom(getIdClass())) {
-                    return update((ID) fieldValue, updater);
+                    return updateInternal((ID) fieldValue, updater);
                 } else {
                     throw new RuntimeException(String.format("更新对象中 id 属性类型不匹配, 需要 %s, 实际 %s", getIdClass().getName(), fieldValue.getClass().getName()));
                 }
@@ -149,24 +157,28 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
         }
     }
 
-    @Override
-    @Transactional
-    public Q update(ID id, Object updater) {
+    protected ENTITY updateInternal(ID id, Object updater) {
         ENTITY po = getEntityWithNullCheckForUpdate(id);
 
         // 作为通用对象处理复制 private 属性
         copyProperties(updater, po);
 
-        return convertQBean(po);
+        return po;
+    }
+
+    @Override
+    @Transactional
+    public Q update(ID id, Object updater) {
+        return convertQBean(updateInternal(id, updater));
     }
 
     @Override
     @Transactional
     public void deleteById(ID id) {
-        deleteAndReturn(id);
+        deleteInternal(id);
     }
 
-    protected ENTITY deleteAndReturn(ID id) {
+    protected ENTITY deleteInternal(ID id) {
         ENTITY po = getEntityWithNullCheckForUpdate(id);
         if (AnnotatedElementUtils.hasAnnotation(this.getClass(), EnableSoftDelete.class)) {
             if (DeletedField.class.isAssignableFrom(getEntityClass())) {
