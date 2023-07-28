@@ -1,0 +1,46 @@
+[versions]
+org-jetbrains-kotlin = "1.9.0"
+org-springframework-boot = { prefer = "3.1.2" }
+io-freefair-lombok = "8.1.0"
+jakarta-persistence = "3.1.0"
+jakarta-validation = { prefer = "3.0.2" }
+kotlin-logging-jvm = "5.0.1"
+com-fasterxml-jackson = { prefer = "2.15.2" }
+org-hibernate = { prefer = "6.2.7.Final" }
+org-hibernate-validator = { prefer = "8.0.1.Final" }
+org-modelmapper = { prefer = "3.1.1" }
+org-glassfish-jakarta-el = "5.0.0-M1"
+nxcloud-foundation-core = "0.5.0"
+commons-beanutils = "1.9.4"
+com-squareup-javapoet = "1.13.0"
+
+[libraries]
+javax-jaxb = { module = "javax.xml.bind:jaxb-api", version = "2.3.1" }
+bom-springboot = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "org-springframework-boot" }
+orika-core = { module = "ma.glasnost.orika:orika-core", version = "1.5.4" }
+dozer-core = { module = "com.github.dozermapper:dozer-core", version = "6.5.2" }
+jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakarta-persistence" }
+jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation" }
+kotlin-logging-jvm = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging-jvm" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "com-fasterxml-jackson" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "com-fasterxml-jackson" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "com-fasterxml-jackson" }
+hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "org-hibernate-validator" }
+hibernate-envers = { module = "org.hibernate:hibernate-envers", version.ref = "org-hibernate" }
+modelmapper = { module = "org.modelmapper:modelmapper", version.ref = "org-modelmapper" }
+jakarta-el = { module = "org.glassfish:jakarta.el", version.ref = "org-glassfish-jakarta-el" }
+nxcloud-starter-jpa = { module = "net.sunshow.nxcloud:nxcloud-core-spring-boot-starter-data-jpa", version.ref = "nxcloud-foundation-core" }
+nxcloud-core-spring-data-jpa = { module = "net.sunshow.nxcloud:nxcloud-core-spring-data-jpa", version.ref = "nxcloud-foundation-core" }
+nxcloud-core-base = { module = "net.sunshow.nxcloud:nxcloud-core-base", version.ref = "nxcloud-foundation-core" }
+nxcloud-core-bean = { module = "net.sunshow.nxcloud:nxcloud-core-bean", version.ref = "nxcloud-foundation-core" }
+nxcloud-core-validation = { module = "net.sunshow.nxcloud:nxcloud-core-validation", version.ref = "nxcloud-foundation-core" }
+commons-beanutils = { module = "commons-beanutils:commons-beanutils", version.ref = "commons-beanutils" }
+javapoet = { module = "com.squareup:javapoet", version.ref = "com-squareup-javapoet" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin" }
+kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "org-jetbrains-kotlin" }
+kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "org-jetbrains-kotlin" }
+kotlin-lombok = { id = "org.jetbrains.kotlin.plugin.lombok", version.ref = "org-jetbrains-kotlin" }
+freefair-lombok = { id = "io.freefair.lombok", version.ref = "io-freefair-lombok" }
+springboot = { id = "org.springframework.boot", version.ref = "org-springframework-boot" }

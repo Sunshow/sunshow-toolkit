@@ -1,12 +1,12 @@
 package net.sunshow.toolkit.core.base.enums.converter;
 
+import jakarta.persistence.AttributeConverter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.util.ReflectionUtils;
 
-import javax.persistence.AttributeConverter;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 
@@ -47,5 +47,5 @@ public abstract class BaseEnumConverter<T> implements AttributeConverter<T, Inte
     public T convert(String s) {
         return this.convertToEntityAttribute(Integer.parseInt(s));
     }
-    
+
 }

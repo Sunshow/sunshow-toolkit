@@ -7,3 +7,4 @@ include 'core-base-enums'
 include 'core-base-enums-converter'
 include 'core-utils'
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

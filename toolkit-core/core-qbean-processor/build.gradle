@@ -1,4 +1,4 @@
 dependencies {
     implementation(project(':core-qbean-api'))
-    implementation('com.squareup:javapoet:1.12.1')
+    implementation(libs.javapoet)
 }

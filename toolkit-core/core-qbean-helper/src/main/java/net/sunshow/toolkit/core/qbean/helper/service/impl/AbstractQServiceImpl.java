@@ -1,5 +1,8 @@
 package net.sunshow.toolkit.core.qbean.helper.service.impl;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBean;
 import net.sunshow.toolkit.core.qbean.api.enums.Operator;
 import net.sunshow.toolkit.core.qbean.api.request.QFilter;
@@ -24,9 +27,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;

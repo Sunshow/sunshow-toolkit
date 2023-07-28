@@ -1,5 +1,8 @@
 package net.sunshow.toolkit.core.qbean.helper.repository.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.TypedQuery;
 import net.sunshow.toolkit.core.qbean.helper.bean.jpa.QPageRequest;
 import net.sunshow.toolkit.core.qbean.helper.repository.BaseExtRepository;
 import org.springframework.data.domain.Page;
@@ -10,9 +13,6 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.lang.Nullable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.TypedQuery;
 import java.io.Serializable;
 import java.util.List;
 
