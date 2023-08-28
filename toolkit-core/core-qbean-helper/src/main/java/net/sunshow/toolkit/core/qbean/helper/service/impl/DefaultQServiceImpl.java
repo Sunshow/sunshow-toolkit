@@ -98,6 +98,20 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
         return dao.findAll(convertSpecification(request), convertPageable(requestPage));
     }
 
+    private List<ENTITY> findAllTotalInternal(QRequest request) {
+        return dao.findAll(convertSpecification(request));
+    }
+
+    @Override
+    public List<Q> findAllTotal(QRequest request) {
+        return convertQBeanToList(findAllTotalInternal(request));
+    }
+
+    @Override
+    public List<Q> searchTotal(PageSearch search) {
+        return findAllTotal(search.toQRequest());
+    }
+
     @Override
     public QResponse<Q> search(PageSearch search) {
         return findAll(search.toQRequest(), search.toQPage());

@@ -21,7 +21,11 @@ public interface BaseQService<Q extends BaseQBean, ID extends Serializable> {
 
     QResponse<Q> findAll(QRequest request, QPage requestPage);
 
+    List<Q> findAllTotal(QRequest request);
+
     QResponse<Q> search(PageSearch search);
+
+    List<Q> searchTotal(PageSearch search);
 
     Q save(Object creator);
 
