@@ -17,8 +17,8 @@ public class BaseEnumHelper {
      * 根据断言获取枚举对象
      *
      * @param predicate 断言
-     * @param enums 枚举数组
-     * @param <T>   泛型
+     * @param enums     枚举数组
+     * @param <T>       泛型
      * @return 枚举对象
      */
     public static <T extends BaseEnum> T getByPredicate(Predicate<T> predicate, T[] enums) {
@@ -38,7 +38,13 @@ public class BaseEnumHelper {
      * @return 枚举对象
      */
     public static <T extends BaseEnum> T getByValue(int value, T[] enums) {
-        return getByPredicate(e -> e.getValue() == value, enums);
+        try {
+            return getByPredicate(e -> e.getValue() == value, enums);
+        } catch (InvalidEnumValueException e) {
+            throw new InvalidEnumValueException(
+                    String.format("无效的枚举值, class=%s, value=%s", enums[0].getClass().getSimpleName(), value)
+            );
+        }
     }
 
     /**
@@ -50,7 +56,13 @@ public class BaseEnumHelper {
      * @return 枚举对象
      */
     public static <T extends BaseEnum> T getByName(String name, T[] enums) {
-        return getByPredicate(e -> name.equals(e.getName()), enums);
+        try {
+            return getByPredicate(e -> name.equals(e.getName()), enums);
+        } catch (InvalidEnumValueException e) {
+            throw new InvalidEnumValueException(
+                    String.format("无效的枚举值, class=%s, name=%s", enums[0].getClass().getSimpleName(), name)
+            );
+        }
     }
 
     /**

@@ -20,9 +20,9 @@ allprojects {
     }
 
     repositories {
-        maven {
-            url 'https://maven.aliyun.com/nexus/content/groups/public/'
-        }
+//        maven {
+//            url 'https://maven.aliyun.com/nexus/content/groups/public/'
+//        }
         mavenCentral()
     }
 
@@ -33,7 +33,7 @@ allprojects {
     publishing {
 
         // 发布 release
-        version = "2.1.0"
+        version = "2.1.1"
 
         // 打包源码
         task sourcesJar(type: Jar) {

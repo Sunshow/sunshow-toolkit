@@ -1,7 +1,7 @@
 [versions]
-org-jetbrains-kotlin = "1.9.0"
-org-springframework-boot = { prefer = "3.1.2" }
-io-freefair-lombok = "8.1.0"
+org-jetbrains-kotlin = "1.9.20"
+org-springframework-boot = { prefer = "3.1.5" }
+io-freefair-lombok = "8.4"
 jakarta-persistence = "3.1.0"
 jakarta-validation = { prefer = "3.0.2" }
 kotlin-logging-jvm = "5.0.1"
@@ -10,7 +10,7 @@ org-hibernate = { prefer = "6.2.7.Final" }
 org-hibernate-validator = { prefer = "8.0.1.Final" }
 org-modelmapper = { prefer = "3.1.1" }
 org-glassfish-jakarta-el = "5.0.0-M1"
-nxcloud-foundation-core = "0.5.0"
+nxcloud-foundation-core = "0.5.4"
 commons-beanutils = "1.9.4"
 com-squareup-javapoet = "1.13.0"
 
