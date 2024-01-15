@@ -94,11 +94,11 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
         return convertQResponse(findAllInternal(request, requestPage));
     }
 
-    private Page<ENTITY> findAllInternal(QRequest request, QPage requestPage) {
+    protected Page<ENTITY> findAllInternal(QRequest request, QPage requestPage) {
         return dao.findAll(convertSpecification(request), convertPageable(requestPage));
     }
 
-    private List<ENTITY> findAllTotalInternal(QRequest request) {
+    protected List<ENTITY> findAllTotalInternal(QRequest request) {
         return dao.findAll(convertSpecification(request));
     }
 
