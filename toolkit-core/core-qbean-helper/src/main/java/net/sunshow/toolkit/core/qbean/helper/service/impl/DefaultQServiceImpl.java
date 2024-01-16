@@ -194,16 +194,42 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
 
     protected ENTITY deleteInternal(ID id) {
         ENTITY po = getEntityWithNullCheckForUpdate(id);
-        if (AnnotatedElementUtils.hasAnnotation(this.getClass(), EnableSoftDelete.class)) {
+        deleteEntityInternal(po);
+        return po;
+    }
+
+    protected void deleteEntityInternal(ENTITY entity) {
+        if (shouldSoftDelete()) {
             if (DeletedField.class.isAssignableFrom(getEntityClass())) {
-                ((DeletedField) po).setDeleted(System.currentTimeMillis());
+                ((DeletedField) entity).setDeleted(System.currentTimeMillis());
             } else {
                 logger.error("配置启用了软删除但未实现软删除字段接口, 需要自行实现, 不做任何处理");
             }
         } else {
-            dao.delete(po);
+            dao.delete(entity);
         }
-        return po;
+    }
+
+    protected boolean shouldSoftDelete() {
+        return AnnotatedElementUtils.hasAnnotation(this.getClass(), EnableSoftDelete.class);
+    }
+
+    protected void deleteAllInternal(List<ENTITY> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return;
+        }
+
+        if (shouldSoftDelete()) {
+            if (DeletedField.class.isAssignableFrom(getEntityClass())) {
+                for (ENTITY po : entityList) {
+                    ((DeletedField) po).setDeleted(System.currentTimeMillis());
+                }
+            } else {
+                logger.error("配置启用了软删除但未实现软删除字段接口, 需要自行实现, 不做任何处理");
+            }
+        } else {
+            dao.deleteAll(entityList);
+        }
     }
 
     protected void copyProperties(Object source, Object dest) {
