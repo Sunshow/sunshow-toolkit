@@ -239,6 +239,9 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
     }
 
     protected <T> Q convertQBean(T object) {
+        if (object == null) {
+            return null;
+        }
         return beanMapperFacade.map(object, getActualType());
     }
 
