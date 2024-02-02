@@ -39,11 +39,19 @@ import java.util.stream.Collectors;
 public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serializable, ENTITY extends BaseEntity, DAO extends BaseRepository<ENTITY, ID>>
         extends AbstractQServiceImpl<Q> implements BaseQService<Q, ID> {
 
-    @Autowired
     protected ApplicationContext applicationContext;
 
     @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
     protected DAO dao;
+
+    @Autowired
+    public void setDao(DAO dao) {
+        this.dao = dao;
+    }
 
     @SuppressWarnings("unchecked")
     protected Class<ENTITY> getIdClass() {

@@ -174,6 +174,8 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
                 return cb.like(root.get(filter.getField()), filter.getValueList().get(0).toString(), (char) filter.getValueList().get(1));
             case NOT_NULL:
                 return cb.isNotNull(root.get(filter.getField()));
+            case IS_NULL:
+                return cb.isNull(root.get(filter.getField()));
             case NOT_EQUAL:
                 return cb.notEqual(root.get(filter.getField()), filter.getValue());
             case AND:
