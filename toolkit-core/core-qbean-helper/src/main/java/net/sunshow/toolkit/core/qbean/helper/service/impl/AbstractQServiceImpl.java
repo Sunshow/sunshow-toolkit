@@ -168,6 +168,8 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
                 }
             case IN:
                 return root.get(filter.getField()).in(filter.getValueList());
+            case NOT_IN:
+                return cb.not(root.get(filter.getField()).in(filter.getValueList()));
             case LIKE:
                 return cb.like(root.get(filter.getField()), filter.getValue().toString());
             case LIKE_ESCAPE:

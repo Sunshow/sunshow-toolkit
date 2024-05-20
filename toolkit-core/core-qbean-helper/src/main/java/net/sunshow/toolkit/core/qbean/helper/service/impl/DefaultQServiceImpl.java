@@ -110,6 +110,15 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
         return dao.findAll(convertSpecification(request));
     }
 
+    protected Long findAllInternal(QRequest request) {
+        return dao.count(convertSpecification(request));
+    }
+
+    @Override
+    public Long countAll(QRequest request) {
+        return findAllInternal(request);
+    }
+
     @Override
     public List<Q> findAllTotal(QRequest request) {
         return convertQBeanToList(findAllTotalInternal(request));

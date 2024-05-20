@@ -23,6 +23,8 @@ public interface BaseQService<Q extends BaseQBean, ID extends Serializable> {
 
     List<Q> findAllTotal(QRequest request);
 
+    Long countAll(QRequest request);
+
     QResponse<Q> search(PageSearch search);
 
     List<Q> searchTotal(PageSearch search);
