@@ -19,6 +19,8 @@ public class QRequest implements Serializable {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private List<QSelect> selectList;
+
     private List<QFilter> filterList;
 
     private boolean distinct;
@@ -29,6 +31,16 @@ public class QRequest implements Serializable {
 
     public static QRequest newInstance() {
         return new QRequest();
+    }
+
+    public QRequest select(String... fields) {
+        if (selectList == null) {
+            selectList = new ArrayList<>();
+        }
+        for (String field : fields) {
+            selectList.add(new QSelect(field));
+        }
+        return this;
     }
 
     public QRequest filter(Operator operator, String field, Object... values) {
@@ -118,6 +130,7 @@ public class QRequest implements Serializable {
     public QRequest filterIn(String field, Iterable<Object> valueList) {
         return this.filter(Operator.IN, field, StreamSupport.stream(valueList.spliterator(), false).toArray(Object[]::new));
     }
+
     public QRequest filterNotIn(String field, Iterable<Object> valueList) {
         return this.filter(Operator.NOT_IN, field, StreamSupport.stream(valueList.spliterator(), false).toArray(Object[]::new));
     }
@@ -153,6 +166,14 @@ public class QRequest implements Serializable {
 
     public boolean isDistinct() {
         return distinct;
+    }
+
+    public List<QSelect> getSelectList() {
+        return selectList;
+    }
+
+    public void setSelectList(List<QSelect> selectList) {
+        this.selectList = selectList;
     }
 }
 

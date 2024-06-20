@@ -3,6 +3,7 @@ package net.sunshow.toolkit.core.qbean.helper.service.impl;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Selection;
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBean;
 import net.sunshow.toolkit.core.qbean.api.enums.Operator;
 import net.sunshow.toolkit.core.qbean.api.request.QFilter;
@@ -218,6 +219,23 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
             return null;
         }
         return (root, query, cb) -> {
+            // 处理 select
+            if (request.getSelectList() != null && !request.getSelectList().isEmpty()) {
+                // 使用Selection来为查询字段指定别名
+                Selection<?>[] selections = request.getSelectList()
+                        .stream()
+                        .map(select -> {
+                                    Selection<?> selection = root.get(select.getField());
+                                    if (select.getAlias() != null) {
+                                        selection = selection.alias(select.getAlias());
+                                    }
+                                    return selection;
+                                }
+                        )
+                        .toArray(Selection[]::new);
+                query.multiselect(selections);
+            }
+
             List<Predicate> predicateList = new ArrayList<>();
             if (request.getFilterList() != null && !request.getFilterList().isEmpty()) {
                 for (QFilter filter : request.getFilterList()) {
