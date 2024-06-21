@@ -52,6 +52,15 @@ public class QPage implements Serializable {
         return this;
     }
 
+    /**
+     * 传入页面为 1-based 内部自动转换为 0-based
+     */
+    public QPage pagingOneBased(int pageIndex, int pageSize) {
+        this.pageIndex = pageIndex - 1;
+        this.pageSize = pageSize;
+        return this;
+    }
+
     public QPage limitId(long limitId) {
         this.limitId = limitId;
         return this;
