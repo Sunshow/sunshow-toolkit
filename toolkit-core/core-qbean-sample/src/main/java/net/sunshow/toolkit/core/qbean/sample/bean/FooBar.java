@@ -1,6 +1,9 @@
 package net.sunshow.toolkit.core.qbean.sample.bean;
 
-import net.sunshow.toolkit.core.qbean.api.annotation.*;
+import net.sunshow.toolkit.core.qbean.api.annotation.QBean;
+import net.sunshow.toolkit.core.qbean.api.annotation.QBeanCreator;
+import net.sunshow.toolkit.core.qbean.api.annotation.QBeanCreatorIgnore;
+import net.sunshow.toolkit.core.qbean.api.annotation.QBeanUpdater;
 import net.sunshow.toolkit.core.qbean.api.bean.AbstractQBean;
 
 import java.time.LocalDateTime;
@@ -8,16 +11,16 @@ import java.time.LocalDateTime;
 /**
  * author: sunshow.
  */
-@QBean
+@QBean(defaultIdPropertyCreatorIgnore = false)
 @QBeanCreator
 @QBeanUpdater
 public class FooBar extends AbstractQBean {
     /**
      * 主键
      */
-    @QBeanID
-    @QBeanCreatorIgnore
-    private Long id;
+//    @QBeanID
+//    @QBeanCreatorIgnore
+//    private Long id;
 
     private String foo;
 
@@ -29,13 +32,13 @@ public class FooBar extends AbstractQBean {
     @QBeanCreatorIgnore
     private LocalDateTime updatedTime;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public String getFoo() {
         return foo;

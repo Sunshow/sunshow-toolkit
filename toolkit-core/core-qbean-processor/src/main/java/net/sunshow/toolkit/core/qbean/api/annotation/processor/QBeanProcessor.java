@@ -8,6 +8,7 @@ import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanUpdater;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
+import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -82,18 +83,39 @@ public class QBeanProcessor extends AbstractProcessor {
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(TYPE_QUERY_PREFIX + typeElement.getSimpleName())
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 
+        boolean hasQBeanId = false;
+
         for (VariableElement variableElement : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
             if ((variableElement.getModifiers().contains(Modifier.PRIVATE) || variableElement.getModifiers().contains(Modifier.PROTECTED))
                     && !variableElement.getModifiers().contains(Modifier.FINAL)
                     && !variableElement.getModifiers().contains(Modifier.STATIC)) {
 
+                // 先判断是否ID属性
+                if (variableElement.getAnnotation(QBeanID.class) != null) {
+                    // 找到ID, 仅标记 不做额外处理
+                    hasQBeanId = true;
+                }
+
                 String fieldName = variableElement.getSimpleName().toString();
 
                 // 只生成private的非final且非static修饰的属性
                 typeSpecBuilder.addField(FieldSpec.builder(String.class,
-                        fieldName,
-                        Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
+                                fieldName,
+                                Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
                         .initializer("$S", fieldName)
+                        .build());
+            }
+        }
+
+        if (!hasQBeanId) {
+            // 尝试解析类注解中的默认ID属性
+            QBean annotation = typeElement.getAnnotation(QBean.class);
+            if (annotation.defaultIdProperty() && !annotation.defaultIdPropertyCreatorIgnore()) {
+                // 说明要创建默认 id 属性
+                typeSpecBuilder.addField(FieldSpec.builder(String.class,
+                                annotation.defaultIdPropertyName(),
+                                Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
+                        .initializer("$S", annotation.defaultIdPropertyName())
                         .build());
             }
         }
@@ -125,6 +147,8 @@ public class QBeanProcessor extends AbstractProcessor {
             generateCreator = true;
         }
 
+        boolean hasQBeanId = false;
+
         List<VariableElement> createFieldElementList = new ArrayList<>();
         for (VariableElement variableElement : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
             if ((variableElement.getModifiers().contains(Modifier.PRIVATE) || variableElement.getModifiers().contains(Modifier.PROTECTED))
@@ -134,6 +158,12 @@ public class QBeanProcessor extends AbstractProcessor {
                 // 是否忽略, 忽略的直接跳过
                 if (variableElement.getAnnotation(QBeanCreatorIgnore.class) != null) {
                     continue;
+                }
+
+                // 先判断是否ID属性
+                if (variableElement.getAnnotation(QBeanID.class) != null) {
+                    // 找到ID, 仅标记 不做额外处理
+                    hasQBeanId = true;
                 }
 
                 if (creatorAnnotation != null) {
@@ -151,6 +181,25 @@ public class QBeanProcessor extends AbstractProcessor {
         if (!generateCreator) {
             // 不生成代码
             return;
+        }
+
+        String extraIdProperty = null;
+        TypeName extraIdPropertyType = null;
+
+        if (!hasQBeanId) {
+            // 尝试解析类注解中的默认ID属性
+            QBean annotation = typeElement.getAnnotation(QBean.class);
+            if (annotation.defaultIdProperty() && !annotation.defaultIdPropertyCreatorIgnore()) {
+                // 说明要创建默认 id 属性
+                extraIdProperty = annotation.defaultIdPropertyName();
+                try {
+                    Class<?> propertyType = annotation.defaultIdPropertyType();
+                    extraIdPropertyType = TypeName.get(propertyType);
+                } catch (MirroredTypeException e) {
+                    extraIdPropertyType = TypeName.get(e.getTypeMirror());
+                }
+                // System.err.println("QBeanProcessor: use default id property " + typeElement.getQualifiedName() + " with type " + extraIdPropertyType);
+            }
         }
 
         String creatorClassSimpleName = typeElement.getSimpleName() + TYPE_CREATOR_SUFFIX;
@@ -200,6 +249,26 @@ public class QBeanProcessor extends AbstractProcessor {
         }
 
         // 声明创建属性
+        if (extraIdProperty != null) {
+            FieldSpec field = FieldSpec.builder(extraIdPropertyType, extraIdProperty)
+                    .addModifiers(Modifier.PRIVATE)
+                    .build();
+            typeSpecBuilder.addField(field);
+
+            // 同时声明 getter
+            typeSpecBuilder.addMethod(createGetter(extraIdPropertyType, extraIdProperty, Modifier.PUBLIC));
+
+            // 内部类声明修改创建属性的方法
+            MethodSpec createMethod = MethodSpec.methodBuilder("with" + toCamelCase(extraIdProperty))
+                    .returns(builderClassName)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(extraIdPropertyType, extraIdProperty)
+                    .addStatement("this.$N.$N = $N", FIELD_CREATOR, extraIdProperty, extraIdProperty)
+                    .addStatement("this.$N.$N.add($S)", FIELD_CREATOR, FIELD_CREATE_PROPERTIES, extraIdProperty)
+                    .addStatement("return this")
+                    .build();
+            buildTypeSpecBuilder.addMethod(createMethod);
+        }
         for (VariableElement variableElement : createFieldElementList) {
             TypeName typeName = TypeName.get(variableElement.asType());
             String fieldName = variableElement.getSimpleName().toString();
@@ -314,10 +383,30 @@ public class QBeanProcessor extends AbstractProcessor {
             }
         }
 
+        // 解析ID属性类型
+        TypeName updateIdTypeName = null;
+
         if (updateIdFieldElement == null) {
             System.err.println("QBeanProcessor: cannot find @QBeanID field while processing " + typeElement.getQualifiedName());
-            return;
+
+            // 尝试解析类注解中的默认ID属性
+            QBean annotation = typeElement.getAnnotation(QBean.class);
+            if (annotation.defaultIdProperty()) {
+                try {
+                    annotation.defaultIdPropertyType();
+                } catch (MirroredTypeException e) {
+                    updateIdTypeName = TypeName.get(e.getTypeMirror());
+                }
+                System.err.println("QBeanProcessor: use default id property " + typeElement.getQualifiedName() + " with type " + updateIdTypeName);
+            }
+        } else {
+            updateIdTypeName = TypeName.get(updateIdFieldElement.asType());
         }
+
+        if (updateIdTypeName == null) {
+            System.err.println("QBeanProcessor: cannot find id property, stop generating updater of " + typeElement.getQualifiedName());
+        }
+
         if (!generateUpdater) {
             // 不生成代码
             return;
@@ -342,8 +431,6 @@ public class QBeanProcessor extends AbstractProcessor {
                     .build();
             buildTypeSpecBuilder.addField(field);
         }
-
-        TypeName updateIdTypeName = TypeName.get(updateIdFieldElement.asType());
 
         // 声明updateId
         {

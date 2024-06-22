@@ -12,4 +12,17 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Documented
 public @interface QBean {
+
+    /**
+     * 未找到 QBeanID 注解时是否自动添加默认ID属性
+     */
+
+    boolean defaultIdProperty() default true;
+
+    String defaultIdPropertyName() default "id";
+
+    Class<?> defaultIdPropertyType() default Long.class;
+
+    boolean defaultIdPropertyCreatorIgnore() default true;
+
 }
