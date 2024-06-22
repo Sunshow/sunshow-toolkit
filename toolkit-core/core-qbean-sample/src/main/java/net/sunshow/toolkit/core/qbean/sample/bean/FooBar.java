@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 /**
  * author: sunshow.
  */
-@QBean(defaultIdPropertyCreatorIgnore = false)
+@QBean(defaultIdPropertyType = Integer.class)
 @QBeanCreator
 @QBeanUpdater
 public class FooBar extends AbstractQBean {

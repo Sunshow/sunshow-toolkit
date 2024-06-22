@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public interface BaseQBeanUpdater extends Serializable {
 
-    Long getUpdateId();
+    Serializable getUpdateId();
 
     Set<String> getUpdateProperties();
 }

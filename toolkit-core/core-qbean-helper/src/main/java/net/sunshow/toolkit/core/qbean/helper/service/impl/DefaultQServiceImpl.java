@@ -161,15 +161,11 @@ public abstract class DefaultQServiceImpl<Q extends BaseQBean, ID extends Serial
 
     @SuppressWarnings("unchecked")
     protected ENTITY updateInternal(Object updater) {
-        if (updater instanceof BaseQBeanUpdater) {
-            BaseQBeanUpdater baseQBeanUpdater = (BaseQBeanUpdater) updater;
-            if (Long.class.isAssignableFrom(getIdClass())) {
-                ENTITY po = getEntityWithNullCheckForUpdate((ID) baseQBeanUpdater.getUpdateId());
-                QBeanUpdaterHelper.copyUpdaterField(po, baseQBeanUpdater);
-                return po;
-            } else {
-                throw new RuntimeException("使用 BaseQBeanUpdater 更新时只支持 Long 主键");
-            }
+        if (updater instanceof BaseQBeanUpdater baseQBeanUpdater) {
+            ENTITY po = getEntityWithNullCheckForUpdate((ID) baseQBeanUpdater.getUpdateId());
+            QBeanUpdaterHelper.copyUpdaterField(po, baseQBeanUpdater);
+            return po;
+            //throw new RuntimeException("使用 BaseQBeanUpdater 更新时只支持 Long 主键");
         } else {
             // 获取更新 ID
             try {
