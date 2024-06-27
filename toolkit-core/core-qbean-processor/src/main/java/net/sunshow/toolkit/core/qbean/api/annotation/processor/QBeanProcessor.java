@@ -110,7 +110,7 @@ public class QBeanProcessor extends AbstractProcessor {
         if (!hasQBeanId) {
             // 尝试解析类注解中的默认ID属性
             QBean annotation = typeElement.getAnnotation(QBean.class);
-            if (annotation.defaultIdProperty() && !annotation.defaultIdPropertyCreatorIgnore()) {
+            if (annotation.defaultIdProperty()) {
                 // 说明要创建默认 id 属性
                 typeSpecBuilder.addField(FieldSpec.builder(String.class,
                                 annotation.defaultIdPropertyName(),
