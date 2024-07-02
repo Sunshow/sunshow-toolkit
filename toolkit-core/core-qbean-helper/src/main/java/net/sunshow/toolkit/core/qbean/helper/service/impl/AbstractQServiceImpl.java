@@ -131,49 +131,48 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
             case EQUAL:
                 return cb.equal(root.get(filter.getField()), filter.getValue());
             case GREATER_EQUAL:
-                return cb.greaterThanOrEqualTo(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
-//                if (filter.getValue() instanceof Comparable) {
-//                    return cb.greaterThanOrEqualTo(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
-//                } else {
+                if (filter.getValue() instanceof Comparable) {
+                    return cb.greaterThanOrEqualTo(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
+                } else {
+                    throw new IllegalArgumentException("字段(" + filter.getField() + ")不是可比较对象, value=" + filter.getValue());
 //                    logger.error("字段({})不是可比较对象, value={}", filter.getField(), filter.getValue());
 //                    return null;
-//                }
+                }
             case LESS_EQUAL:
-                return cb.lessThanOrEqualTo(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
-//                if (filter.getValue() instanceof Comparable) {
-//                    return cb.lessThanOrEqualTo(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
-//                } else {
+                if (filter.getValue() instanceof Comparable) {
+                    return cb.lessThanOrEqualTo(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
+                } else {
+                    throw new IllegalArgumentException("字段(" + filter.getField() + ")不是可比较对象, value=" + filter.getValue());
 //                    logger.error("字段({})不是可比较对象, value={}", filter.getField(), filter.getValue());
 //                    return null;
-//                }
+                }
             case GREATER_THAN:
-                return cb.greaterThan(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
-//                if (filter.getValue() instanceof Comparable) {
-//                    return cb.greaterThan(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
-//                } else {
+                if (filter.getValue() instanceof Comparable) {
+                    return cb.greaterThan(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
+                } else {
+                    throw new IllegalArgumentException("字段(" + filter.getField() + ")不是可比较对象, value=" + filter.getValue());
 //                    logger.error("字段({})不是可比较对象, value={}", filter.getField(), filter.getValue());
 //                    return null;
-//                }
+                }
             case LESS_THAN:
-                return cb.lessThan(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
-//                if (filter.getValue() instanceof Comparable) {
-//                    return cb.lessThan(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
-//                } else {
+                if (filter.getValue() instanceof Comparable) {
+                    return cb.lessThan(root.get(filter.getField()), (Comparable<Object>) filter.getValue());
+                } else {
+                    throw new IllegalArgumentException("字段(" + filter.getField() + ")不是可比较对象, value=" + filter.getValue());
 //                    logger.error("字段({})不是可比较对象, value={}", filter.getField(), filter.getValue());
 //                    return null;
-//                }
+                }
             case BETWEEN:
                 Object val1 = filter.getValueList().get(0);
                 Object val2 = filter.getValueList().get(1);
 
-                return cb.between(root.get(filter.getField()), (Comparable<Object>) val1, (Comparable<Object>) val2);
-
-//                if (val1 instanceof Comparable && val2 instanceof Comparable) {
-//                    return cb.between(root.get(filter.getField()), (Comparable<Object>) val1, (Comparable<Object>) val2);
-//                } else {
+                if (val1 instanceof Comparable && val2 instanceof Comparable) {
+                    return cb.between(root.get(filter.getField()), (Comparable<Object>) val1, (Comparable<Object>) val2);
+                } else {
+                    throw new IllegalArgumentException("字段(" + filter.getField() + ")不是可比较对象, value1=" + val1 + ", value2=" + val2);
 //                    logger.error("字段({})不是可比较对象, value1={}, value2={}", filter.getField(), val1, val2);
 //                    return null;
-//                }
+                }
             case IN:
                 return root.get(filter.getField()).in(filter.getValueList());
             case NOT_IN:

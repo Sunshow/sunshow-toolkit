@@ -98,23 +98,23 @@ public class QRequest implements Serializable {
         return this.filter(Operator.EQUAL, field, value);
     }
 
-    public QRequest filterLessEqual(String field, Object value) {
+    public QRequest filterLessEqual(String field, Comparable<?> value) {
         return this.filter(Operator.LESS_EQUAL, field, value);
     }
 
-    public QRequest filterGreaterEqual(String field, Object value) {
+    public QRequest filterGreaterEqual(String field, Comparable<?> value) {
         return this.filter(Operator.GREATER_EQUAL, field, value);
     }
 
-    public QRequest filterLessThan(String field, Object value) {
+    public QRequest filterLessThan(String field, Comparable<?> value) {
         return this.filter(Operator.LESS_THAN, field, value);
     }
 
-    public QRequest filterGreaterThan(String field, Object value) {
+    public QRequest filterGreaterThan(String field, Comparable<?> value) {
         return this.filter(Operator.GREATER_THAN, field, value);
     }
 
-    public QRequest filterBetween(String field, Object low, Object high) {
+    public QRequest filterBetween(String field, Comparable<?> low, Comparable<?> high) {
         if (low != null && high != null) {
             return this.filter(Operator.BETWEEN, field, low, high);
         }

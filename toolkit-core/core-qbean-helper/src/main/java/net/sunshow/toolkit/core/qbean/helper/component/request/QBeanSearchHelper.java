@@ -95,7 +95,7 @@ public final class QBeanSearchHelper {
                         continue;
                     }
 
-                    request.filterBetween(fieldName, array[0], array[1]);
+                    request.filterBetween(fieldName, (Comparable<?>) array[0], (Comparable<?>) array[1]);
                 } else {
                     request.filter(annotation.operator(), fieldName, value);
                 }
