@@ -1,4 +1,9 @@
+plugins {
+    alias(libs.plugins.kotlin.jvm)
+}
+
 allprojects {
+    apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'java'
     apply plugin: 'signing'
     apply plugin: 'maven-publish'
@@ -33,7 +38,7 @@ allprojects {
     publishing {
 
         // 发布 release
-        version = "2.2.6"
+        version = "2.2.7"
 
         // 打包源码
         task sourcesJar(type: Jar) {
