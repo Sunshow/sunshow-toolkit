@@ -87,8 +87,13 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return getById(id).orElseThrow(getExceptionSupplier("指定ID的数据不存在", null))
     }
 
-    override fun findByIdCollection(ids: Collection<ID>): List<Q> {
-        return dao.findAllByIdIn(ids)
+    override fun getByIdOrNull(id: ID): Q? {
+        return dao.findByIdOrNull(id)
+            ?.toPojo()
+    }
+
+    override fun findByIdCollection(idCollection: Collection<ID>): List<Q> {
+        return dao.findAllByIdIn(idCollection)
             .map {
                 it.toPojo()
             }
