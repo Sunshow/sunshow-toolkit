@@ -15,7 +15,6 @@ import net.sunshow.toolkit.core.qbean.helper.repository.BaseRepository
 import nxcloud.foundation.core.data.jpa.entity.DeletedField
 import nxcloud.foundation.core.data.support.annotation.EnableSoftDelete
 import org.apache.commons.beanutils.BeanUtils
-import org.apache.commons.beanutils.PropertyUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.core.annotation.AnnotatedElementUtils
@@ -132,57 +131,70 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     }
 
     @Transactional
-    override fun save(creator: Any): Q {
+    override fun save(creator: BaseQBeanCreator): Q {
         return convertQBean(saveInternal(creator))
     }
 
-    protected fun saveInternal(creator: Any): ENTITY {
+    @Transactional
+    override fun saveAny(creator: Any): Q {
+        return convertQBean(saveAnyInternal(creator))
+    }
+
+    protected fun saveInternal(creator: BaseQBeanCreator): ENTITY {
         val po = createNewEntityInstance()
 
-        if (creator is BaseQBeanCreator) {
-            QBeanCreatorHelper.copyCreatorField(po, creator)
-        } else {
-            // 作为通用对象处理复制 private 属性
-            copyProperties(creator, po)
-        }
+        QBeanCreatorHelper.copyCreatorField(po, creator)
+
+        return dao.save(po)
+    }
+
+    protected fun saveAnyInternal(creator: Any): ENTITY {
+        val po = createNewEntityInstance()
+
+        // 作为通用对象处理复制 private 属性
+        copyProperties(creator, po)
 
         return dao.save(po)
     }
 
     @Transactional
-    override fun update(updater: Any): Q {
+    override fun update(updater: BaseQBeanUpdater): Q {
         return convertQBean(updateInternal(updater))
     }
 
     @Suppress("UNCHECKED_CAST")
-    protected fun updateInternal(updater: Any): ENTITY {
-        if (updater is BaseQBeanUpdater) {
-            val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
-            QBeanUpdaterHelper.copyUpdaterField(po, updater)
-            return po
-            //throw new RuntimeException("使用 BaseQBeanUpdater 更新时只支持 Long 主键");
-        } else {
-            // 获取更新 ID
-            try {
-                val fieldValue = PropertyUtils.getProperty(updater, "id")
-                    ?: throw RuntimeException("更新对象中没有 id 属性")
-                if (fieldValue.javaClass.isAssignableFrom(idClass)) {
-                    return updateInternal(fieldValue as ID, updater)
-                } else {
-                    throw RuntimeException(
-                        "更新对象中 id 属性类型不匹配, 需要 ${idClass.name}, 实际 ${fieldValue.javaClass.name}",
-                    )
-                }
-            } catch (e: Exception) {
-                throw RuntimeException("获取更新 ID 出错", e)
-            }
-        }
+    protected fun updateInternal(updater: BaseQBeanUpdater): ENTITY {
+        val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
+        QBeanUpdaterHelper.copyUpdaterField(po, updater)
+        return po
+//        if (updater is BaseQBeanUpdater) {
+//            val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
+//            QBeanUpdaterHelper.copyUpdaterField(po, updater)
+//            return po
+//            //throw new RuntimeException("使用 BaseQBeanUpdater 更新时只支持 Long 主键");
+//        } else {
+//            // 获取更新 ID
+//            try {
+//                val fieldValue = PropertyUtils.getProperty(updater, "id")
+//                    ?: throw RuntimeException("更新对象中没有 id 属性")
+//                if (fieldValue.javaClass.isAssignableFrom(idClass)) {
+//                    return updateInternal(fieldValue as ID, updater)
+//                } else {
+//                    throw RuntimeException(
+//                        "更新对象中 id 属性类型不匹配, 需要 ${idClass.name}, 实际 ${fieldValue.javaClass.name}",
+//                    )
+//                }
+//            } catch (e: Exception) {
+//                throw RuntimeException("获取更新 ID 出错", e)
+//            }
+//        }
     }
 
-    protected fun updateInternal(id: ID, updater: Any): ENTITY {
+    protected fun updateAnyInternal(id: ID, updater: Any): ENTITY {
         val po = getEntityWithNullCheckForUpdate(id)
 
         // 作为通用对象处理复制 private 属性
+        // TODO 忽略 @Id 字段 避免主键被错误更新
         copyProperties(updater, po)
 
         return po
@@ -190,7 +202,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
     @Transactional
     override fun update(id: ID, updater: Any): Q {
-        return convertQBean(updateInternal(id, updater))
+        return convertQBean(updateAnyInternal(id, updater))
     }
 
     @Transactional

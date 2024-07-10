@@ -1,6 +1,8 @@
 package net.sunshow.toolkit.core.qbean.api.service
 
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBean
+import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanCreator
+import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanUpdater
 import net.sunshow.toolkit.core.qbean.api.request.QPage
 import net.sunshow.toolkit.core.qbean.api.request.QRequest
 import net.sunshow.toolkit.core.qbean.api.response.QResponse
@@ -28,9 +30,11 @@ interface BaseQService<Q : BaseQBean, ID : Serializable> {
 
     fun searchTotal(search: PageSearch): List<Q>
 
-    fun save(creator: Any): Q
+    fun save(creator: BaseQBeanCreator): Q
 
-    fun update(updater: Any): Q
+    fun saveAny(creator: Any): Q
+
+    fun update(updater: BaseQBeanUpdater): Q
 
     fun update(id: ID, updater: Any): Q
 

@@ -10,7 +10,7 @@ org-hibernate = { prefer = "6.2.7.Final" }
 org-hibernate-validator = { prefer = "8.0.1.Final" }
 org-modelmapper = { prefer = "3.1.1" }
 org-glassfish-jakarta-el = "5.0.0-M1"
-nxcloud-foundation-core = "0.5.6"
+nxcloud-foundation-core = "0.5.8"
 commons-beanutils = "1.9.4"
 com-squareup-javapoet = "1.13.0"
 
