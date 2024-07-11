@@ -205,9 +205,15 @@ public class QBeanProcessor extends AbstractProcessor {
         String creatorClassSimpleName = typeElement.getSimpleName() + TYPE_CREATOR_SUFFIX;
         ClassName creatorClassName = ClassName.get(packageElement.getQualifiedName().toString(), creatorClassSimpleName);
         // 开始组装类
+
+        // 父类设置泛型
+        TypeName creatorParentTypeName = ParameterizedTypeName.get(ClassName.get(BaseQBeanCreator.class), TypeName.get(typeElement.asType()));
+
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(creatorClassSimpleName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addSuperinterface(BaseQBeanCreator.class);
+                .addSuperinterface(
+                        creatorParentTypeName
+                );
 
         ClassName builderClassName = creatorClassName.nestedClass(TYPE_BUILDER);
         // 内部 Builder 类
@@ -415,9 +421,13 @@ public class QBeanProcessor extends AbstractProcessor {
         String updaterClassSimpleName = typeElement.getSimpleName() + TYPE_UPDATER_SUFFIX;
         ClassName updaterClassName = ClassName.get(packageElement.getQualifiedName().toString(), updaterClassSimpleName);
         // 开始组装类
+
+        // 父类设置泛型
+        TypeName updaterParentTypeName = ParameterizedTypeName.get(ClassName.get(BaseQBeanUpdater.class), TypeName.get(typeElement.asType()));
+
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(updaterClassSimpleName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addSuperinterface(BaseQBeanUpdater.class);
+                .addSuperinterface(updaterParentTypeName);
 
         ClassName builderClassName = updaterClassName.nestedClass(TYPE_BUILDER);
         // 内部 Builder 类

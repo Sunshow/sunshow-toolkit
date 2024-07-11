@@ -132,7 +132,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     }
 
     @Transactional
-    override fun save(creator: BaseQBeanCreator): Q {
+    override fun <T : BaseQBeanCreator<Q>> save(creator: T): Q {
         return convertQBean(saveInternal(creator))
     }
 
@@ -141,7 +141,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return convertQBean(saveAnyInternal(creator))
     }
 
-    protected fun saveInternal(creator: BaseQBeanCreator): ENTITY {
+    protected fun <T : BaseQBeanCreator<Q>> saveInternal(creator: T): ENTITY {
         val po = createNewEntityInstance()
 
         QBeanCreatorHelper.copyCreatorField(po, creator)
@@ -159,12 +159,12 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     }
 
     @Transactional
-    override fun update(updater: BaseQBeanUpdater): Q {
+    override fun <T : BaseQBeanUpdater<Q>> update(updater: T): Q {
         return convertQBean(updateInternal(updater))
     }
 
     @Suppress("UNCHECKED_CAST")
-    protected fun updateInternal(updater: BaseQBeanUpdater): ENTITY {
+    protected fun <T : BaseQBeanUpdater<Q>> updateInternal(updater: T): ENTITY {
         val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
         QBeanUpdaterHelper.copyUpdaterField(po, updater)
         return po

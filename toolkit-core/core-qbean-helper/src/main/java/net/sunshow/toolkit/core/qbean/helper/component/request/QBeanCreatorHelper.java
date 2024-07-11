@@ -1,5 +1,6 @@
 package net.sunshow.toolkit.core.qbean.helper.component.request;
 
+import net.sunshow.toolkit.core.qbean.api.bean.BaseQBean;
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanCreator;
 import net.sunshow.toolkit.core.qbean.helper.entity.BaseEntity;
 import org.apache.commons.beanutils.BeanUtils;
@@ -20,7 +21,7 @@ public final class QBeanCreatorHelper {
 
     private final static Logger logger = LoggerFactory.getLogger(QBeanCreatorHelper.class);
 
-    public static <E extends BaseEntity, S extends BaseQBeanCreator> E copyCreatorField(E entity, S creator) {
+    public static <Q extends BaseQBean, E extends BaseEntity, S extends BaseQBeanCreator<Q>> E copyCreatorField(E entity, S creator) {
         if (creator != null) {
             Set<String> createProperties = creator.getCreateProperties();
             if (createProperties != null) {
@@ -39,7 +40,7 @@ public final class QBeanCreatorHelper {
         return entity;
     }
 
-    public static <CreatorBuilder, Creator extends BaseQBeanCreator, PropertiesSource> void copyPropertiesToCreatorBuilder(CreatorBuilder builder, Class<Creator> creatorType, PropertiesSource source) {
+    public static <Q extends BaseQBean, CreatorBuilder, Creator extends BaseQBeanCreator<Q>, PropertiesSource> void copyPropertiesToCreatorBuilder(CreatorBuilder builder, Class<Creator> creatorType, PropertiesSource source) {
         PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(creatorType);
         Map<String, List<Method>> methodNameListMap = Arrays.stream(builder.getClass().getMethods())
                 .collect(Collectors.groupingBy(Method::getName));

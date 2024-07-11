@@ -1,5 +1,6 @@
 package net.sunshow.toolkit.core.qbean.helper.component.request;
 
+import net.sunshow.toolkit.core.qbean.api.bean.BaseQBean;
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanUpdater;
 import net.sunshow.toolkit.core.qbean.helper.entity.BaseEntity;
 import org.apache.commons.beanutils.BeanUtils;
@@ -20,7 +21,7 @@ public final class QBeanUpdaterHelper {
 
     private final static Logger logger = LoggerFactory.getLogger(QBeanUpdaterHelper.class);
 
-    public static <E extends BaseEntity, S extends BaseQBeanUpdater> E copyUpdaterField(E entity, S updater) {
+    public static <Q extends BaseQBean, E extends BaseEntity, S extends BaseQBeanUpdater<Q>> E copyUpdaterField(E entity, S updater) {
         if (updater != null) {
             Set<String> updateProperties = updater.getUpdateProperties();
             if (updateProperties != null) {
@@ -39,7 +40,7 @@ public final class QBeanUpdaterHelper {
         return entity;
     }
 
-    public static <UpdateBuilder, Updater extends BaseQBeanUpdater, PropertiesSource> void copyPropertiesToUpdateBuilder(UpdateBuilder builder, Class<Updater> creatorType, PropertiesSource source) {
+    public static <Q extends BaseQBean, UpdateBuilder, Updater extends BaseQBeanUpdater<Q>, PropertiesSource> void copyPropertiesToUpdateBuilder(UpdateBuilder builder, Class<Updater> creatorType, PropertiesSource source) {
         PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(creatorType);
         Map<String, List<Method>> methodNameListMap = Arrays.stream(builder.getClass().getMethods())
                 .collect(Collectors.groupingBy(Method::getName));

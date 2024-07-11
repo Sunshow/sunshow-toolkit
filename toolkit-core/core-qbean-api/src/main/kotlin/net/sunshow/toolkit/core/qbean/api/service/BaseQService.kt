@@ -30,11 +30,11 @@ interface BaseQService<Q : BaseQBean, ID : Serializable> {
 
     fun searchTotal(search: PageSearch): List<Q>
 
-    fun save(creator: BaseQBeanCreator): Q
+    fun <T : BaseQBeanCreator<Q>> save(creator: T): Q
 
     fun saveAny(creator: Any): Q
 
-    fun update(updater: BaseQBeanUpdater): Q
+    fun <T : BaseQBeanUpdater<Q>> update(updater: T): Q
 
     fun update(id: ID, updater: Any): Q
 

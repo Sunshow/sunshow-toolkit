@@ -8,7 +8,7 @@ import java.util.Set;
  *
  * @author sunshow
  */
-public interface BaseQBeanCreator extends Serializable {
+public interface BaseQBeanCreator<T extends BaseQBean> extends Serializable {
 
     Set<String> getCreateProperties();
 

@@ -8,7 +8,7 @@ import java.util.Set;
  *
  * @author sunshow
  */
-public interface BaseQBeanUpdater extends Serializable {
+public interface BaseQBeanUpdater<T extends BaseQBean> extends Serializable {
 
     Serializable getUpdateId();
 
