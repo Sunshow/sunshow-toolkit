@@ -33,12 +33,13 @@ allprojects {
 
     dependencies {
         implementation(platform(rootProject.libs.bom.springboot))
+        implementation(rootProject.libs.kotlin.logging.jvm)
     }
 
     publishing {
 
         // 发布 release
-        version = "2.2.8"
+        version = "2.2.9"
 
         // 打包源码
         task sourcesJar(type: Jar) {

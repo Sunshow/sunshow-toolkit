@@ -11,6 +11,7 @@ import net.sunshow.toolkit.core.qbean.api.service.BaseQService
 import net.sunshow.toolkit.core.qbean.helper.component.request.QBeanCreatorHelper
 import net.sunshow.toolkit.core.qbean.helper.component.request.QBeanUpdaterHelper
 import net.sunshow.toolkit.core.qbean.helper.entity.BaseEntity
+import net.sunshow.toolkit.core.qbean.helper.framework.jpa.QJpa
 import net.sunshow.toolkit.core.qbean.helper.repository.BaseRepository
 import nxcloud.foundation.core.data.jpa.entity.DeletedField
 import nxcloud.foundation.core.data.support.annotation.EnableSoftDelete
@@ -194,8 +195,10 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         val po = getEntityWithNullCheckForUpdate(id)
 
         // 作为通用对象处理复制 private 属性
-        // TODO 忽略 @Id 字段 避免主键被错误更新
-        copyProperties(updater, po)
+        // 忽略主键更新
+        copyProperties(updater, po) {
+            it != QJpa.getIdProperty(entityClass)
+        }
 
         return po
     }
@@ -250,13 +253,18 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         }
     }
 
-    protected fun copyProperties(source: Any, dest: Any) {
+    protected fun copyProperties(source: Any, dest: Any, filter: (String) -> Boolean = { true }) {
         val fields = source.javaClass.declaredFields
 
         for (field in fields) {
             field.isAccessible = true
 
             val fieldName = field.name
+
+            if (!filter(fieldName)) {
+                logger.info("忽略复制属性: $fieldName")
+                continue
+            }
 
             try {
                 val value = field[source]
