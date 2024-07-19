@@ -34,20 +34,20 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     : AbstractQServiceImpl<Q>(), BaseQService<Q, ID> {
 
     @Autowired
-    protected lateinit var applicationContext: ApplicationContext
+    protected open lateinit var applicationContext: ApplicationContext
 
     @Autowired
-    protected lateinit var dao: DAO
+    protected open lateinit var dao: DAO
 
     @Suppress("UNCHECKED_CAST")
-    protected val idClass: Class<ID>
+    protected open val idClass: Class<ID>
         get() = (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[1] as Class<ID>
 
     @Suppress("UNCHECKED_CAST")
-    protected val entityClass: Class<ENTITY>
+    protected open val entityClass: Class<ENTITY>
         get() = (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[2] as Class<ENTITY>
 
-    protected fun createNewEntityInstance(): ENTITY {
+    protected open fun createNewEntityInstance(): ENTITY {
         val entityClass = entityClass
         try {
             val constructor = entityClass.getConstructor()
@@ -63,7 +63,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         }
     }
 
-    protected fun getEntityWithNullCheckForUpdate(id: ID): ENTITY {
+    protected open fun getEntityWithNullCheckForUpdate(id: ID): ENTITY {
         val entity = dao.findByIdOrNull(id)
             ?: throw getExceptionSupplier(
                 "未获取到 PO 记录, id=$id",
@@ -103,15 +103,15 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return convertQResponse(findAllInternal(request, requestPage))
     }
 
-    protected fun findAllInternal(request: QRequest, requestPage: QPage): Page<ENTITY> {
+    protected open fun findAllInternal(request: QRequest, requestPage: QPage): Page<ENTITY> {
         return dao.findAll(convertSpecification(request), convertPageable(requestPage))
     }
 
-    protected fun findAllTotalInternal(request: QRequest): List<ENTITY> {
+    protected open fun findAllTotalInternal(request: QRequest): List<ENTITY> {
         return dao.findAll(convertSpecification(request))
     }
 
-    protected fun findAllInternal(request: QRequest): Long {
+    protected open fun findAllInternal(request: QRequest): Long {
         return dao.count(convertSpecification(request))
     }
 
@@ -141,21 +141,45 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return convertQBean(saveAnyInternal(creator))
     }
 
-    protected fun <T : BaseQBeanCreator<Q>> saveInternal(creator: T): ENTITY {
+    protected open fun <T : BaseQBeanCreator<Q>> saveInternal(creator: T): ENTITY {
         val po = createNewEntityInstance()
 
+        beforeSetSaveProperties(po)
+
         QBeanCreatorHelper.copyCreatorField(po, creator)
+
+        afterSetSaveProperties(po)
 
         return dao.save(po)
     }
 
-    protected fun saveAnyInternal(creator: Any): ENTITY {
+    protected open fun saveAnyInternal(creator: Any): ENTITY {
         val po = createNewEntityInstance()
+
+        beforeSetSaveProperties(po)
 
         // 作为通用对象处理复制 private 属性
         copyProperties(creator, po)
 
+        afterSetSaveProperties(po)
+
         return dao.save(po)
+    }
+
+    protected open fun beforeSetSaveProperties(po: ENTITY) {
+        // 默认不处理
+    }
+
+    protected open fun afterSetSaveProperties(po: ENTITY) {
+        // 默认不处理
+    }
+
+    protected open fun beforeSetUpdateProperties(po: ENTITY) {
+        // 默认不处理
+    }
+
+    protected open fun afterSetUpdateProperties(po: ENTITY) {
+        // 默认不处理
     }
 
     @Transactional
@@ -164,9 +188,15 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     }
 
     @Suppress("UNCHECKED_CAST")
-    protected fun <T : BaseQBeanUpdater<Q>> updateInternal(updater: T): ENTITY {
+    protected open fun <T : BaseQBeanUpdater<Q>> updateInternal(updater: T): ENTITY {
         val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
+
+        beforeSetUpdateProperties(po)
+
         QBeanUpdaterHelper.copyUpdaterField(po, updater)
+
+        afterSetUpdateProperties(po)
+
         return po
 //        if (updater is BaseQBeanUpdater) {
 //            val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
@@ -191,14 +221,18 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 //        }
     }
 
-    protected fun updateAnyInternal(id: ID, updater: Any): ENTITY {
+    protected open fun updateAnyInternal(id: ID, updater: Any): ENTITY {
         val po = getEntityWithNullCheckForUpdate(id)
+
+        beforeSetUpdateProperties(po)
 
         // 作为通用对象处理复制 private 属性
         // 忽略主键更新
         copyProperties(updater, po) {
             it != QJpa.getIdProperty(entityClass)
         }
+
+        afterSetUpdateProperties(po)
 
         return po
     }
@@ -213,13 +247,13 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         deleteInternal(id)
     }
 
-    protected fun deleteInternal(id: ID): ENTITY {
+    protected open fun deleteInternal(id: ID): ENTITY {
         val po = getEntityWithNullCheckForUpdate(id)
         deleteEntityInternal(po)
         return po
     }
 
-    protected fun deleteEntityInternal(entity: ENTITY) {
+    protected open fun deleteEntityInternal(entity: ENTITY) {
         if (shouldSoftDelete()) {
             if (DeletedField::class.java.isAssignableFrom(entityClass)) {
                 (entity as DeletedField).deleted = System.currentTimeMillis()
@@ -231,7 +265,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         }
     }
 
-    protected fun shouldSoftDelete(): Boolean {
+    protected open fun shouldSoftDelete(): Boolean {
         return AnnotatedElementUtils.hasAnnotation(this.javaClass, EnableSoftDelete::class.java)
     }
 
@@ -253,7 +287,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         }
     }
 
-    protected fun copyProperties(source: Any, dest: Any, filter: (String) -> Boolean = { true }) {
+    protected open fun copyProperties(source: Any, dest: Any, filter: (String) -> Boolean = { true }) {
         val fields = source.javaClass.declaredFields
 
         for (field in fields) {
@@ -278,7 +312,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         }
     }
 
-    protected fun (ENTITY).toPojo(): Q {
+    protected open fun (ENTITY).toPojo(): Q {
         return convertQBean(this)
     }
 
