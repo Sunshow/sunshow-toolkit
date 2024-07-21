@@ -265,6 +265,11 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         }
     }
 
+    @Transactional
+    override fun <T> doInTransaction(action: () -> T): T {
+        return action()
+    }
+
     protected open fun shouldSoftDelete(): Boolean {
         return AnnotatedElementUtils.hasAnnotation(this.javaClass, EnableSoftDelete::class.java)
     }

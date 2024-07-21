@@ -40,4 +40,6 @@ interface BaseQService<Q : BaseQBean, ID : Serializable> {
 
     fun deleteById(id: ID)
 
+    fun <T> doInTransaction(action: () -> T): T
+
 }
