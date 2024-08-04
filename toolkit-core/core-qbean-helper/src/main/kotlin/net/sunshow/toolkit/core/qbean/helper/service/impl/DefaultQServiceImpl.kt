@@ -76,6 +76,19 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return dao.findByIdForUpdate(id)
     }
 
+    protected open fun getEntityWithNullCheckForUpdateReturningOriginal(id: ID): Pair<ENTITY, ENTITY> {
+        val entity = dao.findByIdOrNull(id)
+            ?: throw getExceptionSupplier(
+                "未获取到 PO 记录, id=$id",
+                null,
+            ).get()
+
+        dao.detach(entity)
+
+        // 重新锁行获取 并同时返回原始对象
+        return dao.findByIdForUpdate(id) to entity
+    }
+
     override fun getById(id: ID): Optional<Q> {
         return dao.findById(id)
             .map {
@@ -174,11 +187,11 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         // 默认不处理
     }
 
-    protected open fun beforeSetUpdateProperties(po: ENTITY) {
+    protected open fun beforeSetUpdateProperties(po: ENTITY, original: ENTITY) {
         // 默认不处理
     }
 
-    protected open fun afterSetUpdateProperties(po: ENTITY) {
+    protected open fun afterSetUpdateProperties(po: ENTITY, original: ENTITY) {
         // 默认不处理
     }
 
@@ -189,13 +202,13 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
     @Suppress("UNCHECKED_CAST")
     protected open fun <T : BaseQBeanUpdater<Q>> updateInternal(updater: T): ENTITY {
-        val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
+        val (po, original) = getEntityWithNullCheckForUpdateReturningOriginal(updater.updateId as ID)
 
-        beforeSetUpdateProperties(po)
+        beforeSetUpdateProperties(po, original)
 
         QBeanUpdaterHelper.copyUpdaterField(po, updater)
 
-        afterSetUpdateProperties(po)
+        afterSetUpdateProperties(po, original)
 
         return po
 //        if (updater is BaseQBeanUpdater) {
@@ -222,9 +235,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     }
 
     protected open fun updateAnyInternal(id: ID, updater: Any): ENTITY {
-        val po = getEntityWithNullCheckForUpdate(id)
+        val (po, original) = getEntityWithNullCheckForUpdateReturningOriginal(id)
 
-        beforeSetUpdateProperties(po)
+        beforeSetUpdateProperties(po, original)
 
         // 作为通用对象处理复制 private 属性
         // 忽略主键更新
@@ -232,7 +245,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
             it != QJpa.getIdProperty(entityClass)
         }
 
-        afterSetUpdateProperties(po)
+        afterSetUpdateProperties(po, original)
 
         return po
     }
