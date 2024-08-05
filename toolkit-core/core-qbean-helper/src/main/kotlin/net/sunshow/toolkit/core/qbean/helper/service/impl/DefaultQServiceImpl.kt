@@ -177,6 +177,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         afterSetSaveProperties(po)
 
         return dao.save(po)
+            .apply {
+                afterPostSave(this)
+            }
     }
 
     protected open fun beforeSetSaveProperties(po: ENTITY) {
@@ -187,11 +190,19 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         // 默认不处理
     }
 
+    protected open fun afterPostSave(po: ENTITY) {
+        // 默认不处理
+    }
+
     protected open fun beforeSetUpdateProperties(po: ENTITY, original: ENTITY) {
         // 默认不处理
     }
 
     protected open fun afterSetUpdateProperties(po: ENTITY, original: ENTITY) {
+        // 默认不处理
+    }
+
+    protected open fun afterPostUpdate(po: ENTITY, original: ENTITY) {
         // 默认不处理
     }
 
@@ -211,6 +222,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         afterSetUpdateProperties(po, original)
 
         return po
+            .apply {
+                afterPostUpdate(this, original)
+            }
 //        if (updater is BaseQBeanUpdater) {
 //            val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
 //            QBeanUpdaterHelper.copyUpdaterField(po, updater)
@@ -248,6 +262,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         afterSetUpdateProperties(po, original)
 
         return po
+            .apply {
+                afterPostUpdate(this, original)
+            }
     }
 
     @Transactional
