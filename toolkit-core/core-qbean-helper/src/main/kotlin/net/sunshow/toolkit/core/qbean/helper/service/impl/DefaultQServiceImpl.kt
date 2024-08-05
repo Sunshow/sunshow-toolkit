@@ -177,8 +177,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         afterSetSaveProperties(po)
 
         return dao.save(po)
-            .apply {
-                afterPostSave(this)
+            .let {
+                afterPostSave(it)
+                dao.save(it)
             }
     }
 
@@ -222,8 +223,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         afterSetUpdateProperties(po, original)
 
         return po
-            .apply {
-                afterPostUpdate(this, original)
+            .let {
+                afterPostUpdate(it, original)
+                it
             }
 //        if (updater is BaseQBeanUpdater) {
 //            val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
