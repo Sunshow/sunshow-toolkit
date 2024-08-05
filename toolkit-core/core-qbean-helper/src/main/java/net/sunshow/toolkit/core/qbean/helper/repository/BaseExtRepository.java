@@ -17,6 +17,11 @@ public interface BaseExtRepository<T, ID extends Serializable> extends PagingAnd
 
     void flush();
 
+    /**
+     * 重新加载对象
+     */
+    <S extends T> void refresh(S s);
+
     <S extends T> S saveAndFlush(S s);
 
     /**

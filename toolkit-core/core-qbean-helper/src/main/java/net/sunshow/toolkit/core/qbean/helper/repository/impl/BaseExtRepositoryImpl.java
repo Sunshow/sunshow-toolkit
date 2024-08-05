@@ -82,4 +82,10 @@ public class BaseExtRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
     public List<T> findAllByIdIn(Iterable<ID> ids) {
         return findAllById(ids);
     }
+
+    @Override
+    public <S extends T> void refresh(S s) {
+        entityManager.refresh(s);
+    }
+    
 }

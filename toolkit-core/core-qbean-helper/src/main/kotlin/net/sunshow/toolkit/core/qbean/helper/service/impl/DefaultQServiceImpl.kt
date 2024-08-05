@@ -163,7 +163,14 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
         afterSetSaveProperties(po)
 
-        return dao.save(po)
+        dao.save(po)
+
+        dao.flush()
+
+        // 重新加载解决 DynamicInsert 问题
+        dao.refresh(po)
+
+        return afterPostSave(po)
     }
 
     protected open fun saveAnyInternal(creator: Any): ENTITY {
@@ -176,11 +183,14 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
         afterSetSaveProperties(po)
 
-        return dao.save(po)
-            .let {
-                afterPostSave(it)
-                dao.save(it)
-            }
+        dao.save(po)
+
+        dao.flush()
+
+        // 重新加载解决 DynamicInsert 问题
+        dao.refresh(po)
+
+        return afterPostSave(po)
     }
 
     protected open fun beforeSetSaveProperties(po: ENTITY) {
@@ -191,8 +201,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         // 默认不处理
     }
 
-    protected open fun afterPostSave(po: ENTITY) {
+    protected open fun afterPostSave(po: ENTITY): ENTITY {
         // 默认不处理
+        return po
     }
 
     protected open fun beforeSetUpdateProperties(po: ENTITY, original: ENTITY) {
@@ -203,8 +214,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         // 默认不处理
     }
 
-    protected open fun afterPostUpdate(po: ENTITY, original: ENTITY) {
+    protected open fun afterPostUpdate(po: ENTITY, original: ENTITY): ENTITY {
         // 默认不处理
+        return po
     }
 
     @Transactional
@@ -222,11 +234,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
         afterSetUpdateProperties(po, original)
 
-        return po
-            .let {
-                afterPostUpdate(it, original)
-                it
-            }
+        dao.flush()
+
+        return afterPostUpdate(po, original)
 //        if (updater is BaseQBeanUpdater) {
 //            val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
 //            QBeanUpdaterHelper.copyUpdaterField(po, updater)
@@ -263,10 +273,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
         afterSetUpdateProperties(po, original)
 
-        return po
-            .apply {
-                afterPostUpdate(this, original)
-            }
+        dao.flush()
+
+        return afterPostUpdate(po, original)
     }
 
     @Transactional
