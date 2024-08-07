@@ -168,7 +168,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         // 重新加载解决 DynamicInsert 问题
         dao.refresh(savedPO)
 
-        return afterPostSave(po)
+        return afterPostSave(savedPO)
     }
 
     protected open fun saveAnyInternal(creator: Any): ENTITY {
@@ -186,7 +186,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         // 重新加载解决 DynamicInsert 问题
         dao.refresh(savedPO)
 
-        return afterPostSave(po)
+        return afterPostSave(savedPO)
     }
 
     protected open fun beforeSetSaveProperties(po: ENTITY) {
