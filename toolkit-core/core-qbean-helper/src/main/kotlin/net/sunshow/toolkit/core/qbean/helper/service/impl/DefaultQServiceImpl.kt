@@ -163,12 +163,10 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
         afterSetSaveProperties(po)
 
-        dao.save(po)
-
-        dao.flush()
+        val savedPO = dao.saveAndFlush(po)
 
         // 重新加载解决 DynamicInsert 问题
-        dao.refresh(po)
+        dao.refresh(savedPO)
 
         return afterPostSave(po)
     }
@@ -183,12 +181,10 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
         afterSetSaveProperties(po)
 
-        dao.save(po)
-
-        dao.flush()
+        val savedPO = dao.saveAndFlush(po)
 
         // 重新加载解决 DynamicInsert 问题
-        dao.refresh(po)
+        dao.refresh(savedPO)
 
         return afterPostSave(po)
     }
