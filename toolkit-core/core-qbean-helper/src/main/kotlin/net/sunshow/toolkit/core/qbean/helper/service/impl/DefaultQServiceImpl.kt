@@ -303,6 +303,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
             }
         } else {
             dao.delete(entity)
+            dao.flush()
         }
     }
 
@@ -330,6 +331,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
             }
         } else {
             dao.deleteAll(entityList)
+            dao.flush()
         }
     }
 
