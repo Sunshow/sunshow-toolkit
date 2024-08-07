@@ -43,7 +43,7 @@ allprojects {
 
         // 打包源码
         task sourcesJar(type: Jar) {
-            from sourceSets.main.allJava
+            from sourceSets.main.allSource
             archiveClassifier = 'sources'
         }
 
