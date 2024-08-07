@@ -298,6 +298,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         if (shouldSoftDelete()) {
             if (DeletedField::class.java.isAssignableFrom(entityClass)) {
                 (entity as DeletedField).deleted = System.currentTimeMillis()
+                dao.flush()
             } else {
                 logger.error("配置启用了软删除但未实现软删除字段接口, 需要自行实现, 不做任何处理")
             }
@@ -326,6 +327,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
                 for (po in entityList) {
                     (po as DeletedField).deleted = System.currentTimeMillis()
                 }
+                dao.flush()
             } else {
                 logger.error("配置启用了软删除但未实现软删除字段接口, 需要自行实现, 不做任何处理")
             }
