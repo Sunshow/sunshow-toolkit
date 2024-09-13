@@ -15,6 +15,8 @@ import java.util.List;
 @NoRepositoryBean
 public interface BaseExtRepository<T, ID extends Serializable> extends PagingAndSortingRepository<T, ID> {
 
+    Class<T> getDomainClass();
+
     void flush();
 
     /**
