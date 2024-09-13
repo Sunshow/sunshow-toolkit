@@ -33,6 +33,11 @@ public class BaseExtRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
     }
 
     @Override
+    public Class<T> getDomainClass() {
+        return super.getDomainClass();
+    }
+
+    @Override
     public T findByIdForUpdate(ID id) {
         return entityManager.find(this.getDomainClass(), id, LockModeType.PESSIMISTIC_WRITE);
     }
@@ -87,5 +92,5 @@ public class BaseExtRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
     public <S extends T> void refresh(S s) {
         entityManager.refresh(s);
     }
-    
+
 }

@@ -39,7 +39,7 @@ allprojects {
     publishing {
 
         // 发布 release
-        version = "2.4.4"
+        version = "2.4.5"
 
         // 打包源码
         task sourcesJar(type: Jar) {
