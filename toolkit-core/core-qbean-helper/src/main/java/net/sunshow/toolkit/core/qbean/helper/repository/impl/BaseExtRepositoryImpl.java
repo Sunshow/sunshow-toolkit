@@ -5,12 +5,12 @@ import jakarta.persistence.LockModeType;
 import jakarta.persistence.TypedQuery;
 import net.sunshow.toolkit.core.qbean.helper.bean.jpa.QPageRequest;
 import net.sunshow.toolkit.core.qbean.helper.repository.BaseExtRepository;
+import nxcloud.foundation.core.data.jpa.repository.support.AdvancedJpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author qatang
  */
-public class BaseExtRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements BaseExtRepository<T, ID> {
+public class BaseExtRepositoryImpl<T, ID extends Serializable> extends AdvancedJpaRepository<T, ID> implements BaseExtRepository<T, ID> {
     private final EntityManager entityManager;
 
     public BaseExtRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager em) {
@@ -30,11 +30,6 @@ public class BaseExtRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
     public BaseExtRepositoryImpl(Class<T> domainClass, EntityManager em) {
         super(domainClass, em);
         this.entityManager = em;
-    }
-
-    @Override
-    public Class<T> getDomainClass() {
-        return super.getDomainClass();
     }
 
     @Override
