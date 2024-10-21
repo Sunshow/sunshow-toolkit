@@ -1,0 +1,70 @@
+plugins {
+    id 'java-platform'
+    id 'signing'
+    id 'maven-publish'
+}
+
+dependencies {
+    constraints {
+        api project(":core-qbean-api")
+        api project(":core-qbean-helper")
+        api project(":core-qbean-processor")
+        api project(":core-qbean-sample")
+        api project(":core-base-enums")
+        api project(":core-base-enums-converter")
+        api project(":core-utils")
+    }
+}
+
+publishing {
+    publications {
+        mavenPlatform(MavenPublication) {
+            from components.javaPlatform
+
+            // pom
+            pom {
+                name = 'Sunshow Toolkit Core'
+                description = 'A toolkit for Java'
+                url = 'https://github.com/Sunshow/sunshow-toolkit'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'sunshow'
+                        name = 'Sunshow'
+                        email = 'sunshow@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'https://github.com/Sunshow/sunshow-toolkit'
+                    developerConnection = 'https://github.com/Sunshow/sunshow-toolkit'
+                    url = 'https://github.com/Sunshow/sunshow-toolkit'
+                }
+            }
+        }
+    }
+
+    if (project.hasProperty("publishUsername") && project.hasProperty("publishPassword")
+            && project.hasProperty("publishReleasesRepoUrl") && project.hasProperty("publishSnapshotsRepoUrl")
+    ) {
+        repositories {
+            maven {
+                url = version.toString().endsWith("SNAPSHOT") ? project.findProperty("publishSnapshotsRepoUrl") : project.findProperty("publishReleasesRepoUrl")
+                allowInsecureProtocol true
+
+                credentials {
+                    username project.findProperty("publishUsername")
+                    password project.findProperty("publishPassword")
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenPlatform
+}

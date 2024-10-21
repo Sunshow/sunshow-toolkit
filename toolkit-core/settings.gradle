@@ -6,5 +6,7 @@ include 'core-qbean-sample'
 include 'core-base-enums'
 include 'core-base-enums-converter'
 include 'core-utils'
+include 'bom'
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+

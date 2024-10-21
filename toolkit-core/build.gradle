@@ -3,6 +3,23 @@ plugins {
 }
 
 allprojects {
+    group = "net.sunshow.toolkit"
+    version = "2.0-SNAPSHOT"
+
+    // 发布 release
+    version = "2.5.3"
+
+    repositories {
+//        maven {
+//            url 'https://maven.aliyun.com/nexus/content/groups/public/'
+//        }
+        mavenCentral()
+    }
+
+    if (project.name == 'bom') {
+        return
+    }
+
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'java'
     apply plugin: 'signing'
@@ -10,8 +27,6 @@ allprojects {
 
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-    group = "net.sunshow.toolkit"
-    version = "2.0-SNAPSHOT"
 
     compileJava.options.encoding = "UTF-8"
     compileTestJava.options.encoding = "UTF-8"
@@ -24,23 +39,12 @@ allprojects {
         systemProperty "file.encoding", "UTF-8"
     }
 
-    repositories {
-//        maven {
-//            url 'https://maven.aliyun.com/nexus/content/groups/public/'
-//        }
-        mavenCentral()
-    }
-
     dependencies {
         implementation(platform(rootProject.libs.bom.springboot))
         implementation(rootProject.libs.kotlin.logging.jvm)
     }
 
     publishing {
-
-        // 发布 release
-        version = "2.5.2"
-
         // 打包源码
         task sourcesJar(type: Jar) {
             from sourceSets.main.allSource
