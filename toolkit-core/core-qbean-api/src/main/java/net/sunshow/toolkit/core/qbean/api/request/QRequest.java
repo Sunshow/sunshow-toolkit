@@ -147,6 +147,10 @@ public class QRequest implements Serializable {
         return this.filter(Operator.NOT_NULL, field);
     }
 
+    public QRequest filterIsNull(String field) {
+        return this.filter(Operator.IS_NULL, field);
+    }
+
     public QRequest filterNotEqual(String field, Object value) {
         return this.filter(Operator.NOT_EQUAL, field, value);
     }
