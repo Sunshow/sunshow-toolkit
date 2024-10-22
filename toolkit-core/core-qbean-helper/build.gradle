@@ -2,10 +2,9 @@ dependencies {
     implementation(project(':core-qbean-api'))
     implementation(libs.commons.beanutils)
     implementation('org.apache.commons:commons-lang3')
-    implementation(libs.nxcloud.core.spring.data.jpa)
-    implementation(libs.nxcloud.core.bean)
+    implementation("net.sunshow.nxcloud:nxcloud-core-spring-boot-starter-data-jpa")
+    implementation("net.sunshow.nxcloud:nxcloud-core-bean")
     compileOnly('org.springframework.data:spring-data-jpa')
     compileOnly('org.springframework.boot:spring-boot-starter-data-jpa')
     compileOnly('jakarta.annotation:jakarta.annotation-api')
-    compileOnly(libs.dozer.core)
 }
