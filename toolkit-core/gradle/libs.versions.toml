@@ -3,7 +3,7 @@ org-jetbrains-kotlin = "1.9.24"
 org-springframework-boot = { prefer = "3.2.6" }
 io-freefair-lombok = "8.6"
 kotlin-logging-jvm = "6.0.9"
-nxcloud-foundation-core = "0.6.4"
+nxcloud-foundation-core = "0.6.5"
 commons-beanutils = "1.9.4"
 com-squareup-javapoet = "1.13.0"
 
