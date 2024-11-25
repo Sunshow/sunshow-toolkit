@@ -1,4 +1,5 @@
 dependencies {
     implementation(project(':core-qbean-api'))
     implementation(libs.javapoet)
+    implementation(libs.ksp.processing.api)
 }

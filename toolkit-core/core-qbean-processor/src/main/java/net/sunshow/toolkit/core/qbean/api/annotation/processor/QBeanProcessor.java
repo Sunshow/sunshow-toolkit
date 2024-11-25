@@ -15,6 +15,8 @@ import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import java.util.*;
 
+import static net.sunshow.toolkit.core.qbean.api.annotation.processor.QBeanProcessorConstants.*;
+
 /**
  * 实际的QBean注解处理器
  * Created by sunshow.
@@ -25,18 +27,6 @@ public class QBeanProcessor extends AbstractProcessor {
     private Elements elementUtils;
     private Filer filer;
     private Messager messager;
-
-    private final static String FIELD_UPDATER = "updater";
-    private final static String FIELD_UPDATE_ID = "updateId";
-    private final static String FIELD_UPDATE_PROPERTIES = "updateProperties";
-    private final static String TYPE_BUILDER = "Builder";
-    private final static String TYPE_QUERY_PREFIX = "Q";
-    private final static String TYPE_UPDATER_SUFFIX = "Updater";
-    private final static String METHOD_BUILD = "build";
-    private final static String METHOD_BUILDER = "builder";
-    private final static String FIELD_CREATE_PROPERTIES = "createProperties";
-    private final static String FIELD_CREATOR = "creator";
-    private final static String TYPE_CREATOR_SUFFIX = "Creator";
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {

@@ -1,11 +1,13 @@
 [versions]
-org-jetbrains-kotlin = "1.9.24"
+org-jetbrains-kotlin = "2.0.21"
+ksp = "2.0.21-1.0.25"
 org-springframework-boot = { prefer = "3.2.6" }
 io-freefair-lombok = "8.6"
 kotlin-logging-jvm = "6.0.9"
 nxcloud-foundation-core = "0.6.5"
 commons-beanutils = "1.9.4"
 com-squareup-javapoet = "1.13.0"
+com-squareup-kotlinpoet = "2.0.0"
 
 [libraries]
 bom-nxcloud-core = { module = "net.sunshow.nxcloud:nxcloud-core-bom", version.ref = "nxcloud-foundation-core" }
@@ -13,6 +15,10 @@ bom-springboot = { module = "org.springframework.boot:spring-boot-dependencies",
 kotlin-logging-jvm = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging-jvm" }
 commons-beanutils = { module = "commons-beanutils:commons-beanutils", version.ref = "commons-beanutils" }
 javapoet = { module = "com.squareup:javapoet", version.ref = "com-squareup-javapoet" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "com-squareup-kotlinpoet" }
+kotlinpoet-javapoet = { module = "com.squareup:kotlinpoet-javapoet", version.ref = "com-squareup-kotlinpoet" }
+kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "org-jetbrains-kotlin" }
+ksp-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin" }
@@ -21,3 +27,4 @@ kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "org-je
 kotlin-lombok = { id = "org.jetbrains.kotlin.plugin.lombok", version.ref = "org-jetbrains-kotlin" }
 freefair-lombok = { id = "io.freefair.lombok", version.ref = "io-freefair-lombok" }
 springboot = { id = "org.springframework.boot", version.ref = "org-springframework-boot" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
