@@ -14,6 +14,7 @@ import net.sunshow.toolkit.core.qbean.helper.entity.BaseEntity
 import net.sunshow.toolkit.core.qbean.helper.framework.jpa.QJpa
 import net.sunshow.toolkit.core.qbean.helper.repository.BaseRepository
 import nxcloud.foundation.core.data.jpa.entity.DeletedField
+import nxcloud.foundation.core.data.jpa.entity.UpdatedTimeField
 import nxcloud.foundation.core.data.support.annotation.EnableSoftDelete
 import org.apache.commons.beanutils.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,6 +25,8 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.transaction.annotation.Transactional
 import java.io.Serializable
 import java.lang.reflect.ParameterizedType
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 /**
@@ -228,6 +231,11 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
         QBeanUpdaterHelper.copyUpdaterField(po, updater)
 
+        if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
+            (po as UpdatedTimeField).updatedTime = LocalDateTime.now()
+            logger.debug("实现了 UpdatedTimeField, 自动维护更新时间")
+        }
+
         afterSetUpdateProperties(po, original)
 
         dao.flush()
@@ -267,6 +275,11 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
             it != QJpa.getIdProperty(entityClass)
         }
 
+        if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
+            (po as UpdatedTimeField).updatedTime = LocalDateTime.now()
+            logger.debug("实现了 UpdatedTimeField, 自动维护更新时间")
+        }
+
         afterSetUpdateProperties(po, original)
 
         dao.flush()
@@ -294,6 +307,12 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         if (shouldSoftDelete()) {
             if (DeletedField::class.java.isAssignableFrom(entityClass)) {
                 (entity as DeletedField).deleted = System.currentTimeMillis()
+
+                if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
+                    (entity as UpdatedTimeField).updatedTime = LocalDateTime.now()
+                    logger.debug("实现了 UpdatedTimeField, 自动维护更新时间")
+                }
+
                 dao.flush()
             } else {
                 logger.error("配置启用了软删除但未实现软删除字段接口, 需要自行实现, 不做任何处理")
@@ -320,9 +339,21 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
         if (shouldSoftDelete()) {
             if (DeletedField::class.java.isAssignableFrom(entityClass)) {
+                val now = LocalDateTime.now()
+                val timestamp = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
                 for (po in entityList) {
-                    (po as DeletedField).deleted = System.currentTimeMillis()
+                    (po as DeletedField).deleted = timestamp
                 }
+
+                logger.debug("实现了 DeletedField, 自动维护软删除的删除时间标记")
+                if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
+                    for (po in entityList) {
+                        (po as UpdatedTimeField).updatedTime = now
+                    }
+                    logger.debug("实现了 UpdatedTimeField, 自动维护更新时间")
+                }
+
                 dao.flush()
             } else {
                 logger.error("配置启用了软删除但未实现软删除字段接口, 需要自行实现, 不做任何处理")
