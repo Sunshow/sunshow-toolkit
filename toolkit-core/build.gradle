@@ -13,9 +13,10 @@ allprojects {
     version = "2.0-SNAPSHOT"
 
     // 发布 release
-    version = "2.5.7"
+    version = "2.5.8"
 
     repositories {
+        mavenLocal()
 //        maven {
 //            url 'https://maven.aliyun.com/nexus/content/groups/public/'
 //        }

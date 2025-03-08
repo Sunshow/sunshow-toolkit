@@ -23,6 +23,8 @@ import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.data.domain.Page
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionSynchronization
+import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.io.Serializable
 import java.lang.reflect.ParameterizedType
 import java.time.LocalDateTime
@@ -164,14 +166,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
         QBeanCreatorHelper.copyCreatorField(po, creator)
 
-        afterSetSaveProperties(po)
-
-        val savedPO = dao.saveAndFlush(po)
-
-        // 重新加载解决 DynamicInsert 问题
-        dao.refresh(savedPO)
-
-        return afterPostSave(savedPO)
+        return saveInternal(po)
     }
 
     protected open fun saveAnyInternal(creator: Any): ENTITY {
@@ -182,12 +177,24 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         // 作为通用对象处理复制 private 属性
         copyProperties(creator, po)
 
-        afterSetSaveProperties(po)
+        return saveInternal(po)
+    }
 
-        val savedPO = dao.saveAndFlush(po)
+    protected open fun saveInternal(entity: ENTITY): ENTITY {
+        afterSetSaveProperties(entity)
+
+        val savedPO = dao.saveAndFlush(entity)
 
         // 重新加载解决 DynamicInsert 问题
         dao.refresh(savedPO)
+
+        TransactionSynchronizationManager.registerSynchronization(object : TransactionSynchronization {
+
+            override fun afterCommit() {
+                afterCommitSave(entity)
+            }
+
+        })
 
         return afterPostSave(savedPO)
     }
@@ -218,6 +225,29 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return po
     }
 
+    // 注意 事务提交后的回调中 PO 对象已经是 detached 状态, 不能再进行任何操作
+
+    /**
+     * 新增保存事务提交后的处理
+     */
+    protected open fun afterCommitSave(po: ENTITY) {
+        // 默认不处理
+    }
+
+    /**
+     * 更新事务提交后的处理
+     */
+    protected open fun afterCommitUpdate(po: ENTITY, original: ENTITY) {
+        // 默认不处理
+    }
+
+    /**
+     * 删除事务提交后的处理
+     */
+    protected open fun afterCommitDelete(po: ENTITY) {
+        // 默认不处理
+    }
+
     @Transactional
     override fun <T : BaseQBeanUpdater<Q>> update(updater: T): Q {
         return convertQBean(updateInternal(updater))
@@ -231,37 +261,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
         QBeanUpdaterHelper.copyUpdaterField(po, updater)
 
-        if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
-            (po as UpdatedTimeField).updatedTime = LocalDateTime.now()
-            logger.debug("实现了 UpdatedTimeField, 自动维护更新时间")
-        }
-
-        afterSetUpdateProperties(po, original)
-
-        dao.flush()
-
-        return afterPostUpdate(po, original)
-//        if (updater is BaseQBeanUpdater) {
-//            val po = getEntityWithNullCheckForUpdate(updater.updateId as ID)
-//            QBeanUpdaterHelper.copyUpdaterField(po, updater)
-//            return po
-//            //throw new RuntimeException("使用 BaseQBeanUpdater 更新时只支持 Long 主键");
-//        } else {
-//            // 获取更新 ID
-//            try {
-//                val fieldValue = PropertyUtils.getProperty(updater, "id")
-//                    ?: throw RuntimeException("更新对象中没有 id 属性")
-//                if (fieldValue.javaClass.isAssignableFrom(idClass)) {
-//                    return updateInternal(fieldValue as ID, updater)
-//                } else {
-//                    throw RuntimeException(
-//                        "更新对象中 id 属性类型不匹配, 需要 ${idClass.name}, 实际 ${fieldValue.javaClass.name}",
-//                    )
-//                }
-//            } catch (e: Exception) {
-//                throw RuntimeException("获取更新 ID 出错", e)
-//            }
-//        }
+        return updateInternal(po, original)
     }
 
     protected open fun updateAnyInternal(id: ID, updater: Any): ENTITY {
@@ -275,16 +275,28 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
             it != QJpa.getIdProperty(entityClass)
         }
 
+        return updateInternal(po, original)
+    }
+
+    protected open fun updateInternal(entity: ENTITY, original: ENTITY): ENTITY {
         if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
-            (po as UpdatedTimeField).updatedTime = LocalDateTime.now()
+            (entity as UpdatedTimeField).updatedTime = LocalDateTime.now()
             logger.debug("实现了 UpdatedTimeField, 自动维护更新时间")
         }
 
-        afterSetUpdateProperties(po, original)
+        afterSetUpdateProperties(entity, original)
 
         dao.flush()
 
-        return afterPostUpdate(po, original)
+        TransactionSynchronizationManager.registerSynchronization(object : TransactionSynchronization {
+
+            override fun afterCommit() {
+                afterCommitUpdate(entity, original)
+            }
+
+        })
+
+        return afterPostUpdate(entity, original)
     }
 
     @Transactional
@@ -304,23 +316,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     }
 
     protected open fun deleteEntityInternal(entity: ENTITY) {
-        if (shouldSoftDelete()) {
-            if (DeletedField::class.java.isAssignableFrom(entityClass)) {
-                (entity as DeletedField).deleted = System.currentTimeMillis()
-
-                if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
-                    (entity as UpdatedTimeField).updatedTime = LocalDateTime.now()
-                    logger.debug("实现了 UpdatedTimeField, 自动维护更新时间")
-                }
-
-                dao.flush()
-            } else {
-                logger.error("配置启用了软删除但未实现软删除字段接口, 需要自行实现, 不做任何处理")
-            }
-        } else {
-            dao.delete(entity)
-            dao.flush()
-        }
+        deleteAllInternal(listOf(entity))
     }
 
     @Transactional
@@ -362,6 +358,17 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
             dao.deleteAll(entityList)
             dao.flush()
         }
+
+        TransactionSynchronizationManager.registerSynchronization(object : TransactionSynchronization {
+
+            override fun afterCommit() {
+                entityList
+                    .forEach {
+                        afterCommitDelete(it)
+                    }
+            }
+
+        })
     }
 
     protected open fun copyProperties(source: Any, dest: Any, filter: (String) -> Boolean = { true }) {

@@ -4,7 +4,7 @@ ksp = "2.0.21-1.0.25"
 org-springframework-boot = { prefer = "3.2.6" }
 io-freefair-lombok = "8.6"
 kotlin-logging-jvm = "6.0.9"
-nxcloud-foundation-core = "0.6.5"
+nxcloud-foundation-core = "0.7.6"
 commons-beanutils = "1.9.4"
 com-squareup-javapoet = "1.13.0"
 com-squareup-kotlinpoet = "2.0.0"
