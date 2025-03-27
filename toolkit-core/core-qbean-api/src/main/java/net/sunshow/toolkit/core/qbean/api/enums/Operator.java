@@ -31,6 +31,9 @@ public enum Operator {
     OR,
     NOT,   // 暂不支持, 预留
 
+    EQUAL_ANY, // 等于任意给定值, 对应搜索条件的MatchAny
+    EQUAL_ANY_OR_NULL, // 等于任意给定值或空值
+
     ;
 
     public static boolean isZero(Operator operator) {
