@@ -34,6 +34,9 @@ public enum Operator {
     EQUAL_ANY, // 等于任意给定值, 对应搜索条件的MatchAny
     EQUAL_ANY_OR_NULL, // 等于任意给定值或空值
 
+    MATCH_TEXT, // 全文检索
+    MATCH_KEYWORD, // 关键词检索
+
     ;
 
     public static boolean isZero(Operator operator) {
