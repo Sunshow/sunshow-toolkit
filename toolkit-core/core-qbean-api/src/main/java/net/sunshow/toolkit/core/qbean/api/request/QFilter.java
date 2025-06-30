@@ -92,6 +92,22 @@ public class QFilter implements Serializable {
         return new QFilter(Operator.NOT_EQUAL, field, value);
     }
 
+    public static QFilter matchText(String field, String value) {
+        return new QFilter(Operator.MATCH_TEXT, field, value);
+    }
+
+    public static QFilter matchKeyword(String field, String value) {
+        return new QFilter(Operator.MATCH_KEYWORD, field, value);
+    }
+
+    public static QFilter or(QFilter... filters) {
+        return or(Arrays.asList(filters));
+    }
+
+    public static QFilter or(List<QFilter> filterList) {
+        return new QFilter(Operator.OR, null, filterList);
+    }
+
     public String getField() {
         return field;
     }
