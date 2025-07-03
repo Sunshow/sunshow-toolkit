@@ -105,7 +105,11 @@ public class QFilter implements Serializable {
     }
 
     public static QFilter or(List<QFilter> filterList) {
-        return new QFilter(Operator.OR, null, filterList);
+        List<Object> list = filterList
+                .stream()
+                .map((it) -> (Object) it)
+                .toList();
+        return new QFilter(Operator.OR, null, list);
     }
 
     public String getField() {
