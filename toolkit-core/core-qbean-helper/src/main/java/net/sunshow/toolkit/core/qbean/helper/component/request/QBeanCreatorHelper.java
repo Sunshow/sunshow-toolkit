@@ -29,7 +29,9 @@ public final class QBeanCreatorHelper {
                     try {
                         Object fieldValue = PropertyUtils.getProperty(creator, fieldName);
 
-                        BeanUtils.setProperty(entity, fieldName, fieldValue);
+                        if (fieldValue != null) {
+                            BeanUtils.setProperty(entity, fieldName, fieldValue);
+                        }
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                         logger.error("类属性拷贝错误, class={}, fieldName={}", creator.getClass(), fieldName);

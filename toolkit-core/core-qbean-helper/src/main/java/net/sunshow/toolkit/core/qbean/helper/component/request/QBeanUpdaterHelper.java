@@ -25,15 +25,17 @@ public final class QBeanUpdaterHelper {
         if (updater != null) {
             Set<String> updateProperties = updater.getUpdateProperties();
             if (updateProperties != null) {
-                try {
-                    for (String fieldName : updateProperties) {
+                for (String fieldName : updateProperties) {
+                    try {
                         Object fieldValue = PropertyUtils.getProperty(updater, fieldName);
 
-                        BeanUtils.setProperty(entity, fieldName, fieldValue);
+                        if (fieldValue != null) {
+                            BeanUtils.setProperty(entity, fieldName, fieldValue);
+                        }
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                        logger.error("类属性拷贝错误, class={}, fieldName={}", updater.getClass(), fieldName);
                     }
-                } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
-                    throw new RuntimeException(String.format("类属性拷贝错误, message=%s, class=%s", e.getMessage(), updater));
                 }
             }
         }
