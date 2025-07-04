@@ -25,16 +25,17 @@ public final class QBeanCreatorHelper {
         if (creator != null) {
             Set<String> createProperties = creator.getCreateProperties();
             if (createProperties != null) {
-                try {
-                    for (String fieldName : createProperties) {
+                for (String fieldName : createProperties) {
+                    try {
                         Object fieldValue = PropertyUtils.getProperty(creator, fieldName);
 
                         BeanUtils.setProperty(entity, fieldName, fieldValue);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                        logger.error("类属性拷贝错误, class={}, fieldName={}", creator.getClass(), fieldName);
                     }
-                } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
-                    throw new RuntimeException(String.format("类属性拷贝错误, message=%s, class=%s", e.getMessage(), creator));
                 }
+
             }
         }
         return entity;
