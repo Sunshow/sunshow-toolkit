@@ -4,7 +4,16 @@ plugins {
 
 dependencies {
     implementation(project(':core-qbean-api'))
+    implementation(project(':core-qbean-helper'))
     annotationProcessor(project(':core-qbean-processor'))
     implementation(project(':core-qbean-processor'))
     ksp(project(':core-qbean-processor-ksp'))
+    
+    // Dependencies for helper testing
+    implementation(libs.commons.beanutils)
+    implementation('org.apache.commons:commons-lang3')
+    
+    // Test dependencies
+    testImplementation('org.junit.jupiter:junit-jupiter-api')
+    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine')
 }

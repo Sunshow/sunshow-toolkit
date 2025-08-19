@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 @QBean(defaultIdPropertyType = Int::class)
 @QBeanCreator
 @QBeanUpdater
-class KtFooBar(
+data class KtFooBar(
     val foo: String,
 
     val bar: Int,
