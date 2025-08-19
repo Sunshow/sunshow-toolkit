@@ -9,6 +9,7 @@ dependencies {
         api project(":core-qbean-api")
         api project(":core-qbean-helper")
         api project(":core-qbean-processor")
+        api project(":core-qbean-processor-ksp")
         api project(":core-qbean-sample")
         api project(":core-base-enums")
         api project(":core-base-enums-converter")
