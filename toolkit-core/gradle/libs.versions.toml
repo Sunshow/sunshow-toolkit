@@ -7,7 +7,7 @@ kotlin-logging-jvm = "6.0.9"
 nxcloud-foundation-core = "0.7.6"
 commons-beanutils = "1.9.4"
 com-squareup-javapoet = "1.13.0"
-com-squareup-kotlinpoet = "2.0.0"
+com-squareup-kotlinpoet = "2.2.0"
 
 [libraries]
 bom-nxcloud-core = { module = "net.sunshow.nxcloud:nxcloud-core-bom", version.ref = "nxcloud-foundation-core" }
@@ -17,6 +17,7 @@ commons-beanutils = { module = "commons-beanutils:commons-beanutils", version.re
 javapoet = { module = "com.squareup:javapoet", version.ref = "com-squareup-javapoet" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "com-squareup-kotlinpoet" }
 kotlinpoet-javapoet = { module = "com.squareup:kotlinpoet-javapoet", version.ref = "com-squareup-kotlinpoet" }
+kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "com-squareup-kotlinpoet" }
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "org-jetbrains-kotlin" }
 ksp-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 

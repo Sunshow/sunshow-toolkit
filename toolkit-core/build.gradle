@@ -35,6 +35,10 @@ allprojects {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 
+    kotlin {
+        jvmToolchain(17)
+    }
+
     compileJava.options.encoding = "UTF-8"
     compileTestJava.options.encoding = "UTF-8"
 
@@ -44,12 +48,17 @@ allprojects {
 
     tasks.withType(Test) {
         systemProperty "file.encoding", "UTF-8"
+        useJUnitPlatform()
     }
 
     dependencies {
         implementation(platform(rootProject.libs.bom.nxcloud.core))
         implementation(platform(rootProject.libs.bom.springboot))
         implementation(rootProject.libs.kotlin.logging.jvm)
+        testImplementation("org.jetbrains.kotlin:kotlin-test")
+        testImplementation("org.junit.jupiter:junit-jupiter-api")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+        testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
     }
 
     publishing {

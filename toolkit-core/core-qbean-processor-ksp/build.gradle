@@ -1,0 +1,6 @@
+dependencies {
+    implementation(project(':core-qbean-api'))
+    implementation(libs.ksp.processing.api)
+    implementation(libs.kotlinpoet)
+    implementation(libs.kotlinpoet.ksp)
+}

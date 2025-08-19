@@ -6,5 +6,5 @@ dependencies {
     implementation(project(':core-qbean-api'))
     annotationProcessor(project(':core-qbean-processor'))
     implementation(project(':core-qbean-processor'))
-    ksp(project(':core-qbean-processor'))
+    ksp(project(':core-qbean-processor-ksp'))
 }
