@@ -20,6 +20,7 @@ import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtil
 import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.hasAnnotation
 import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.shouldIgnoreForCreator
 import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.toCamelCase
+import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.hasCompanionObject
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanCreator
 
 class CreatorGenerator(
@@ -155,8 +156,9 @@ class CreatorGenerator(
                 .build()
         )
 
-        // 为每个属性添加 with 方法
+        // 为每个属性添加 with 方法和属性访问器
         createProperties.forEach { propertyInfo ->
+            // withXxx 方法（保持 Java 兼容）
             builderClassBuilder.addFunction(
                 FunSpec.builder("with${toCamelCase(propertyInfo.name)}")
                     .addParameter(propertyInfo.name, propertyInfo.type)
@@ -164,6 +166,24 @@ class CreatorGenerator(
                     .addStatement("creator.${propertyInfo.name} = ${propertyInfo.name}")
                     .addStatement("(creator.createProperties as MutableSet).add(%S)", propertyInfo.name)
                     .addStatement("return this")
+                    .build()
+            )
+            
+            // Kotlin 属性风格访问器
+            builderClassBuilder.addProperty(
+                PropertySpec.builder(propertyInfo.name, propertyInfo.type.copy(nullable = true))
+                    .mutable(true)
+                    .getter(
+                        FunSpec.getterBuilder()
+                            .addStatement("return creator.${propertyInfo.name}")
+                            .build()
+                    )
+                    .setter(
+                        FunSpec.setterBuilder()
+                            .addParameter("value", propertyInfo.type.copy(nullable = true))
+                            .addStatement("value?.let { with${toCamelCase(propertyInfo.name)}(it) }")
+                            .build()
+                    )
                     .build()
             )
         }
@@ -190,10 +210,47 @@ class CreatorGenerator(
         )
         creatorClassBuilder.addType(companionObjectBuilder.build())
 
-        // 创建文件
-        val file = FileSpec.builder(packageName, creatorClassName)
+        // 创建文件构建器
+        val fileBuilder = FileSpec.builder(packageName, creatorClassName)
             .addType(creatorClassBuilder.build())
-            .build()
+        
+        // 检查原始类是否有 companion object
+        val hasCompanion = classDeclaration.hasCompanionObject()
+        
+        if (hasCompanion) {
+            // 如果有 companion，生成 companion 扩展函数
+            fileBuilder.addFunction(
+                FunSpec.builder("create")
+                    .receiver(ClassName(packageName, className).nestedClass("Companion"))
+                    .addModifiers(KModifier.INLINE)
+                    .addParameter("block", LambdaTypeName.get(
+                        receiver = builderClassName,
+                        returnType = Unit::class.asTypeName()
+                    ))
+                    .returns(ClassName(packageName, creatorClassName))
+                    .addStatement("return %T.builder().apply(block).build()", ClassName(packageName, creatorClassName))
+                    .build()
+            )
+        } else {
+            // 如果没有 companion，使用 QBean 类作为扩展函数的接收者
+            val qBeanClassName = "Q$className"
+            
+            // 生成扩展函数，使用 QBean 类作为接收者
+            fileBuilder.addFunction(
+                FunSpec.builder("create")
+                    .receiver(ClassName(packageName, qBeanClassName))
+                    .addModifiers(KModifier.INLINE)
+                    .addParameter("block", LambdaTypeName.get(
+                        receiver = builderClassName,
+                        returnType = Unit::class.asTypeName()
+                    ))
+                    .returns(ClassName(packageName, creatorClassName))
+                    .addStatement("return %T.builder().apply(block).build()", ClassName(packageName, creatorClassName))
+                    .build()
+            )
+        }
+        
+        val file = fileBuilder.build()
 
         // 写入文件
         codeGenerator.createNewFile(

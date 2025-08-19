@@ -136,4 +136,22 @@ object KspUtils {
     fun KSPLogger.debug(message: String, symbol: KSNode? = null) {
         info(message, symbol)
     }
+    
+    /**
+     * 检查类是否有 companion object
+     */
+    fun KSClassDeclaration.hasCompanionObject(): Boolean {
+        return declarations.any { declaration ->
+            declaration is KSClassDeclaration && declaration.isCompanionObject
+        }
+    }
+    
+    /**
+     * 获取类的 companion object
+     */
+    fun KSClassDeclaration.getCompanionObject(): KSClassDeclaration? {
+        return declarations.firstOrNull { declaration ->
+            declaration is KSClassDeclaration && declaration.isCompanionObject
+        } as? KSClassDeclaration
+    }
 }
