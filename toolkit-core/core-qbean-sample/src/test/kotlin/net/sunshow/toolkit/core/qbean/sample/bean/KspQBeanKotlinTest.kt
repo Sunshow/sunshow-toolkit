@@ -100,15 +100,30 @@ class KspQBeanKotlinTest {
     
     @Test
     fun `test property setter with null value`() {
-        // 测试 null 值处理
+        // 测试 null 值处理 - null 值也应该被标记
         val creator = QKtFooBar.create {
             foo = "test"
-            bar = null  // 应该被忽略
+            bar = null  // 应该被标记
         }
         
         assertEquals("test", creator.getFoo())
         assertNull(creator.getBar())
         assertTrue(creator.getCreateProperties().contains("foo"))
-        assertFalse(creator.getCreateProperties().contains("bar"))
+        assertTrue(creator.getCreateProperties().contains("bar"))  // null 值也应该被标记
+    }
+    
+    @Test
+    fun `test updater property setter with null value`() {
+        // 测试 Updater null 值处理 - null 值也应该被标记
+        val updater = QKtFooBar.update(103) {
+            foo = null  // 显式设置为 null
+            bar = 999
+        }
+        
+        assertEquals(103, updater.getUpdateId())
+        assertNull(updater.getFoo())
+        assertEquals(999, updater.getBar())
+        assertTrue(updater.getUpdateProperties().contains("foo"))  // null 值也应该被标记
+        assertTrue(updater.getUpdateProperties().contains("bar"))
     }
 }

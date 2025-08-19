@@ -223,7 +223,8 @@ class UpdaterGenerator(
                     .setter(
                         FunSpec.setterBuilder()
                             .addParameter("value", propertyInfo.type.copy(nullable = true))
-                            .addStatement("value?.let { with${toCamelCase(propertyInfo.name)}(it) }")
+                            .addStatement("updater.${propertyInfo.name} = value")
+                            .addStatement("(updater.updateProperties as MutableSet).add(%S)", propertyInfo.name)
                             .build()
                     )
                     .build()

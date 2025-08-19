@@ -181,7 +181,8 @@ class CreatorGenerator(
                     .setter(
                         FunSpec.setterBuilder()
                             .addParameter("value", propertyInfo.type.copy(nullable = true))
-                            .addStatement("value?.let { with${toCamelCase(propertyInfo.name)}(it) }")
+                            .addStatement("creator.${propertyInfo.name} = value")
+                            .addStatement("(creator.createProperties as MutableSet).add(%S)", propertyInfo.name)
                             .build()
                     )
                     .build()
