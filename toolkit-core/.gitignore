@@ -11,3 +11,4 @@ build/
 **/build/
 !gradle-wrapper.jar
 .gradletasknamecache
+/.claude/
