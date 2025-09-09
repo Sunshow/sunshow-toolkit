@@ -3,6 +3,7 @@ package net.sunshow.toolkit.core.qbean.helper.component.request;
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBean;
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanCreator;
 import net.sunshow.toolkit.core.qbean.helper.entity.BaseEntity;
+import net.sunshow.toolkit.core.qbean.helper.utils.TypeCompatibilityUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +60,7 @@ public final class QBeanCreatorHelper {
                     if (methodNameListMap.containsKey(methodName)) {
                         Optional<Method> methodOptional = methodNameListMap.get(methodName).stream()
                                 .filter(method -> method.getParameterCount() == 1)
-                                .filter(method -> method.getParameterTypes()[0].isAssignableFrom(fieldValue.getClass()))
+                                .filter(method -> TypeCompatibilityUtils.isAssignableFrom(method.getParameterTypes()[0], fieldValue.getClass()))
                                 .findAny();
                         if (methodOptional.isPresent()) {
                             Method method = methodOptional.get();
