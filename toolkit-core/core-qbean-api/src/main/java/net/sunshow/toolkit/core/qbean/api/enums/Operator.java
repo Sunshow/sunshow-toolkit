@@ -37,6 +37,11 @@ public enum Operator {
     MATCH_TEXT, // 全文检索
     MATCH_KEYWORD, // 关键词检索
 
+    // 对应 Milvus
+    MATCH_PHRASE, // 短语匹配
+    MATCH_VECTOR_SPARSE, // 稀疏向量匹配
+    MATCH_VECTOR_DENSE, // 稠密向量匹配
+
     ;
 
     public static boolean isZero(Operator operator) {
