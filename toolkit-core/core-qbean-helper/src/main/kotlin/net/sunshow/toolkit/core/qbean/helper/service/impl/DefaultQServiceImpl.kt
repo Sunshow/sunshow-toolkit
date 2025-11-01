@@ -38,11 +38,11 @@ import java.util.*
 abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : BaseEntity, DAO : BaseRepository<ENTITY, ID>>
     : AbstractQServiceImpl<Q>(), BaseQService<Q, ID> {
 
-    @Autowired
     protected open lateinit var applicationContext: ApplicationContext
+        @Autowired set
 
-    @Autowired
     protected open lateinit var dao: DAO
+        @Autowired set
 
     @Suppress("UNCHECKED_CAST")
     protected open val idClass: Class<ID>
