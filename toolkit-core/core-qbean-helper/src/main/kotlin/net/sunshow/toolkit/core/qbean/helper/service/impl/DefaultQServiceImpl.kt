@@ -1,5 +1,6 @@
 package net.sunshow.toolkit.core.qbean.helper.service.impl
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBean
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanCreator
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanUpdater
@@ -37,6 +38,9 @@ import java.util.*
  */
 abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : BaseEntity, DAO : BaseRepository<ENTITY, ID>>
     : AbstractQServiceImpl<Q>(), BaseQService<Q, ID> {
+
+    // 使用 kotlin-logging 提供的 logger，遮蔽父类的 SLF4J logger
+    protected open val logger = KotlinLogging.logger {}
 
     protected open lateinit var applicationContext: ApplicationContext
         @Autowired set
@@ -281,7 +285,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     protected open fun updateInternal(entity: ENTITY, original: ENTITY, updater: Any): ENTITY {
         if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
             (entity as UpdatedTimeField).updatedTime = LocalDateTime.now()
-            logger.debug("实现了 UpdatedTimeField, 自动维护更新时间")
+            logger.debug {
+                "实现了 UpdatedTimeField, 自动维护更新时间"
+            }
         }
 
         afterSetUpdateProperties(entity, original, updater)
@@ -342,7 +348,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
                     (po as DeletedField).deleted = timestamp
                 }
 
-                logger.debug("实现了 DeletedField, 自动维护软删除的删除时间标记")
+                logger.debug {
+                    "实现了 DeletedField, 自动维护软删除的删除时间标记"
+                }
                 if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
                     for (po in entityList) {
                         (po as UpdatedTimeField).updatedTime = now
@@ -352,7 +360,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
                 dao.flush()
             } else {
-                logger.error("配置启用了软删除但未实现软删除字段接口, 需要自行实现, 不做任何处理")
+                logger.error {
+                    "配置启用了软删除但未实现软删除字段接口, 需要自行实现, 不做任何处理"
+                }
             }
         } else {
             dao.deleteAll(entityList)
@@ -380,7 +390,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
             val fieldName = field.name
 
             if (!filter(fieldName)) {
-                logger.info("忽略复制属性: $fieldName")
+                logger.info {
+                    "忽略复制属性: $fieldName"
+                }
                 continue
             }
 

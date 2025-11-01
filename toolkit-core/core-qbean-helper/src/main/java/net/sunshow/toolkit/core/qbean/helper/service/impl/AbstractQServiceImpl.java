@@ -168,6 +168,7 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
         return apiResponse;
     }
 
+    @Deprecated
     protected <T> Q convertQBean(T object) {
         if (object == null) {
             return null;
@@ -175,10 +176,12 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
         return beanMapperFacade.map(object, getActualType());
     }
 
+    @Deprecated
     protected <T> List<Q> convertStreamQBeanToList(Stream<T> stream) {
         return stream.map(this::convertQBean).collect(Collectors.toList());
     }
 
+    @Deprecated
     protected <T> List<Q> convertQBeanToList(Iterable<T> iterable) {
         return convertStreamQBeanToList(StreamSupport.stream(iterable.spliterator(), false));
     }
