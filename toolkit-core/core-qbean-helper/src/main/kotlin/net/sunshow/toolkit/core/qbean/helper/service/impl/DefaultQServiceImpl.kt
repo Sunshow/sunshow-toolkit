@@ -162,26 +162,26 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     protected open fun <T : BaseQBeanCreator<Q>> saveInternal(creator: T): ENTITY {
         val po = createNewEntityInstance()
 
-        beforeSetSaveProperties(po)
+        beforeSetSaveProperties(po, creator)
 
         QBeanCreatorHelper.copyCreatorField(po, creator)
 
-        return saveInternal(po)
+        return saveInternal(po, creator)
     }
 
     protected open fun saveAnyInternal(creator: Any): ENTITY {
         val po = createNewEntityInstance()
 
-        beforeSetSaveProperties(po)
+        beforeSetSaveProperties(po, creator)
 
         // 作为通用对象处理复制 private 属性
         copyProperties(creator, po)
 
-        return saveInternal(po)
+        return saveInternal(po, creator)
     }
 
-    protected open fun saveInternal(entity: ENTITY): ENTITY {
-        afterSetSaveProperties(entity)
+    protected open fun saveInternal(entity: ENTITY, creator: Any): ENTITY {
+        afterSetSaveProperties(entity, creator)
 
         val savedPO = dao.saveAndFlush(entity)
 
@@ -191,36 +191,36 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         TransactionSynchronizationManager.registerSynchronization(object : TransactionSynchronization {
 
             override fun afterCommit() {
-                afterCommitSave(entity)
+                afterCommitSave(entity, creator)
             }
 
         })
 
-        return afterPostSave(savedPO)
+        return afterPostSave(savedPO, creator)
     }
 
-    protected open fun beforeSetSaveProperties(po: ENTITY) {
+    protected open fun beforeSetSaveProperties(po: ENTITY, creator: Any) {
         // 默认不处理
     }
 
-    protected open fun afterSetSaveProperties(po: ENTITY) {
+    protected open fun afterSetSaveProperties(po: ENTITY, creator: Any) {
         // 默认不处理
     }
 
-    protected open fun afterPostSave(po: ENTITY): ENTITY {
+    protected open fun afterPostSave(po: ENTITY, creator: Any): ENTITY {
         // 默认不处理
         return po
     }
 
-    protected open fun beforeSetUpdateProperties(po: ENTITY, original: ENTITY) {
+    protected open fun beforeSetUpdateProperties(po: ENTITY, original: ENTITY, updater: Any) {
         // 默认不处理
     }
 
-    protected open fun afterSetUpdateProperties(po: ENTITY, original: ENTITY) {
+    protected open fun afterSetUpdateProperties(po: ENTITY, original: ENTITY, updater: Any) {
         // 默认不处理
     }
 
-    protected open fun afterPostUpdate(po: ENTITY, original: ENTITY): ENTITY {
+    protected open fun afterPostUpdate(po: ENTITY, original: ENTITY, updater: Any): ENTITY {
         // 默认不处理
         return po
     }
@@ -230,14 +230,14 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     /**
      * 新增保存事务提交后的处理
      */
-    protected open fun afterCommitSave(po: ENTITY) {
+    protected open fun afterCommitSave(po: ENTITY, creator: Any) {
         // 默认不处理
     }
 
     /**
      * 更新事务提交后的处理
      */
-    protected open fun afterCommitUpdate(po: ENTITY, original: ENTITY) {
+    protected open fun afterCommitUpdate(po: ENTITY, original: ENTITY, updater: Any) {
         // 默认不处理
     }
 
@@ -257,17 +257,17 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     protected open fun <T : BaseQBeanUpdater<Q>> updateInternal(updater: T): ENTITY {
         val (po, original) = getEntityWithNullCheckForUpdateReturningOriginal(updater.updateId as ID)
 
-        beforeSetUpdateProperties(po, original)
+        beforeSetUpdateProperties(po, original, updater)
 
         QBeanUpdaterHelper.copyUpdaterField(po, updater)
 
-        return updateInternal(po, original)
+        return updateInternal(po, original, updater)
     }
 
     protected open fun updateAnyInternal(id: ID, updater: Any): ENTITY {
         val (po, original) = getEntityWithNullCheckForUpdateReturningOriginal(id)
 
-        beforeSetUpdateProperties(po, original)
+        beforeSetUpdateProperties(po, original, updater)
 
         // 作为通用对象处理复制 private 属性
         // 忽略主键更新
@@ -275,28 +275,28 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
             it != QJpa.getIdProperty(entityClass)
         }
 
-        return updateInternal(po, original)
+        return updateInternal(po, original, updater)
     }
 
-    protected open fun updateInternal(entity: ENTITY, original: ENTITY): ENTITY {
+    protected open fun updateInternal(entity: ENTITY, original: ENTITY, updater: Any): ENTITY {
         if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
             (entity as UpdatedTimeField).updatedTime = LocalDateTime.now()
             logger.debug("实现了 UpdatedTimeField, 自动维护更新时间")
         }
 
-        afterSetUpdateProperties(entity, original)
+        afterSetUpdateProperties(entity, original, updater)
 
         dao.flush()
 
         TransactionSynchronizationManager.registerSynchronization(object : TransactionSynchronization {
 
             override fun afterCommit() {
-                afterCommitUpdate(entity, original)
+                afterCommitUpdate(entity, original, updater)
             }
 
         })
 
-        return afterPostUpdate(entity, original)
+        return afterPostUpdate(entity, original, updater)
     }
 
     @Transactional
