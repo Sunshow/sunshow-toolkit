@@ -1,6 +1,5 @@
 package net.sunshow.toolkit.core.qbean.api.search
 
-import java.util.function.Function
 import kotlin.math.ceil
 
 open class PageData<E> {
@@ -34,11 +33,8 @@ open class PageData<E> {
 
     constructor()
 
-    open fun <T> map(mapper: Function<E, T>): PageData<T> {
-        val mapList = this.data
-            .map {
-                mapper.apply(it)
-            }
+    open fun <T> map(mapper: (E) -> T): PageData<T> {
+        val mapList = this.data.map(mapper)
         return PageData(this.page, this.pageSize, mapList, this.total)
     }
 
