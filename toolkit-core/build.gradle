@@ -10,10 +10,10 @@ plugins {
 
 allprojects {
     group = "net.sunshow.toolkit"
-    version = "2.0-SNAPSHOT"
+    version = "2.6.9-SNAPSHOT"
 
     // 发布 release
-    version = "2.6.8"
+    // version = "2.6.8"
 
     repositories {
         mavenLocal()
