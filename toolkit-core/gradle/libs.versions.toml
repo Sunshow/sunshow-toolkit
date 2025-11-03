@@ -1,10 +1,10 @@
 [versions]
 org-jetbrains-kotlin = "2.0.21"
 ksp = "2.0.21-1.0.25"
-org-springframework-boot = { prefer = "3.2.6" }
+org-springframework-boot = { prefer = "3.3.13" }
 io-freefair-lombok = "8.6"
 kotlin-logging-jvm = "7.0.13"
-nxcloud-foundation-core = "0.8.6"
+nxcloud-foundation-core = "0.8.7"
 commons-beanutils = "1.9.4"
 com-squareup-javapoet = "1.13.0"
 com-squareup-kotlinpoet = "2.2.0"
