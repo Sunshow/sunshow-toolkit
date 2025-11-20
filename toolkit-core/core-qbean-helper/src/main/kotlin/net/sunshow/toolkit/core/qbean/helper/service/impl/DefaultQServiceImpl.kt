@@ -18,6 +18,7 @@ import nxcloud.foundation.core.data.jpa.entity.DeletedField
 import nxcloud.foundation.core.data.jpa.entity.UpdatedTimeField
 import nxcloud.foundation.core.data.support.annotation.EnableSoftDelete
 import org.apache.commons.beanutils.BeanUtils
+import org.apache.commons.beanutils.PropertyUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.core.annotation.AnnotatedElementUtils
@@ -382,28 +383,34 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     }
 
     protected open fun copyProperties(source: Any, dest: Any, filter: (String) -> Boolean = { true }) {
-        val fields = source.javaClass.declaredFields
+        val propertyDescriptors = PropertyUtils.getPropertyDescriptors(source.javaClass)
 
-        for (field in fields) {
-            field.isAccessible = true
+        for (pd in propertyDescriptors) {
+            val propertyName = pd.name
 
-            val fieldName = field.name
+            // 跳过 class 属性
+            if (propertyName == "class") {
+                continue
+            }
 
-            if (!filter(fieldName)) {
-                logger.info {
-                    "忽略复制属性: $fieldName"
+            if (!filter(propertyName)) {
+                logger.debug {
+                    "忽略复制属性: $propertyName"
                 }
                 continue
             }
 
             try {
-                val value = field[source]
+                val value = PropertyUtils.getProperty(source, propertyName)
                     ?: // 默认不处理 null 值
                     continue
 
-                BeanUtils.setProperty(dest, fieldName, value)
+                BeanUtils.setProperty(dest, propertyName, value)
             } catch (e: Exception) {
-                throw RuntimeException("解析并设置 PO 属性出错", e)
+                // throw RuntimeException("解析并设置 PO 属性出错", e)
+                logger.error(e) {
+                    "解析并设置 PO 属性出错, propertyName=$propertyName"
+                }
             }
         }
     }
