@@ -99,6 +99,14 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return dao.findByIdForUpdate(id) to entity
     }
 
+    override fun getQBeanClass(): Class<Q> {
+        return actualType
+    }
+
+    override fun getQBeanIdClass(): Class<ID> {
+        return idClass
+    }
+
     override fun getById(id: ID): Optional<Q> {
         return dao.findById(id)
             .map {

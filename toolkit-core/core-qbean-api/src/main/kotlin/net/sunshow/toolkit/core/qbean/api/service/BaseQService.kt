@@ -12,6 +12,10 @@ import java.util.*
 
 interface BaseQService<Q : BaseQBean, ID : Serializable> {
 
+    fun getQBeanClass(): Class<Q>
+
+    fun getQBeanIdClass(): Class<ID>
+
     fun getById(id: ID): Optional<Q>
 
     fun getByIdOrNull(id: ID): Q?
