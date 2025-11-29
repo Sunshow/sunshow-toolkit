@@ -19,7 +19,9 @@ import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtil
 import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.getSimpleName
 import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.hasAnnotation
 import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.shouldIgnoreForCreator
+import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.shouldFilterForJava
 import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.toCamelCase
+import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.toImmutableCollectionType
 import net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils.KspUtils.hasCompanionObject
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanCreator
 
@@ -69,6 +71,11 @@ class CreatorGenerator(
         val hasClassLevelCreator = classDeclaration.hasAnnotation<QBeanCreator>()
 
         properties.forEach { property ->
+            // 跳过 Java 静态/final 字段
+            if (property.shouldFilterForJava()) {
+                return@forEach
+            }
+
             // 跳过被忽略的属性
             if (shouldIgnoreForCreator(property)) {
                 return@forEach
@@ -77,7 +84,7 @@ class CreatorGenerator(
             // 检查是否是 ID 属性
             if (property.hasAnnotation<QBeanID>()) {
                 hasQBeanId = true
-                return@forEach // ID 属性通常不在 Creator 中
+                // 不再无条件跳过，让 @QBeanCreatorIgnore 检查决定是否跳过
             }
 
             // 如果类级别有 @QBeanCreator 或属性有 @QBeanCreator，则包含该属性
@@ -109,22 +116,14 @@ class CreatorGenerator(
             }
         }
 
-        // 添加属性字段和 getter
+        // 添加属性字段（public getter, internal setter）
         createProperties.forEach { propertyInfo ->
-            // 添加字段 - 使用可空类型
+            val fieldType = propertyInfo.type.toImmutableCollectionType().copy(nullable = true)
             creatorClassBuilder.addProperty(
-                PropertySpec.builder(propertyInfo.name, propertyInfo.type.copy(nullable = true))
-                    .addModifiers(KModifier.PRIVATE)
+                PropertySpec.builder(propertyInfo.name, fieldType)
                     .mutable(true)
                     .initializer("null")
-                    .build()
-            )
-
-            // 添加 getter
-            creatorClassBuilder.addFunction(
-                FunSpec.builder("get${toCamelCase(propertyInfo.name)}")
-                    .returns(propertyInfo.type.copy(nullable = true))
-                    .addStatement("return ${propertyInfo.name}")
+                    .setter(FunSpec.setterBuilder().addModifiers(KModifier.INTERNAL).build())
                     .build()
             )
         }
@@ -161,17 +160,18 @@ class CreatorGenerator(
             // withXxx 方法（保持 Java 兼容）
             builderClassBuilder.addFunction(
                 FunSpec.builder("with${toCamelCase(propertyInfo.name)}")
-                    .addParameter(propertyInfo.name, propertyInfo.type)
+                    .addParameter(propertyInfo.name, propertyInfo.type.toImmutableCollectionType().copy(nullable = true))
                     .returns(builderClassName)
                     .addStatement("creator.${propertyInfo.name} = ${propertyInfo.name}")
                     .addStatement("(creator.createProperties as MutableSet).add(%S)", propertyInfo.name)
                     .addStatement("return this")
                     .build()
             )
-            
+
             // Kotlin 属性风格访问器
+            val builderFieldType = propertyInfo.type.toImmutableCollectionType().copy(nullable = true)
             builderClassBuilder.addProperty(
-                PropertySpec.builder(propertyInfo.name, propertyInfo.type.copy(nullable = true))
+                PropertySpec.builder(propertyInfo.name, builderFieldType)
                     .mutable(true)
                     .getter(
                         FunSpec.getterBuilder()
@@ -180,7 +180,7 @@ class CreatorGenerator(
                     )
                     .setter(
                         FunSpec.setterBuilder()
-                            .addParameter("value", propertyInfo.type.copy(nullable = true))
+                            .addParameter("value", builderFieldType)
                             .addStatement("creator.${propertyInfo.name} = value")
                             .addStatement("(creator.createProperties as MutableSet).add(%S)", propertyInfo.name)
                             .build()

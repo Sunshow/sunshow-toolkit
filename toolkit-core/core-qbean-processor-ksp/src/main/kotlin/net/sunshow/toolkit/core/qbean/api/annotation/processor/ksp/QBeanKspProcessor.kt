@@ -46,14 +46,7 @@ class QBeanKspProcessor(
     
     private fun processQBeanClass(classDeclaration: KSClassDeclaration) {
         logger.info("Processing @QBean class: ${classDeclaration.qualifiedName?.asString()}")
-        
-        // 只处理 Kotlin 类，跳过 Java 类
-        val originFile = classDeclaration.containingFile
-        if (originFile != null && originFile.filePath.endsWith(".java")) {
-            logger.info("Skipping Java class: ${classDeclaration.qualifiedName?.asString()}")
-            return
-        }
-        
+
         // 生成 Q{ClassName} object
         val qBeanGenerator = QBeanGenerator(codeGenerator, logger)
         qBeanGenerator.generate(classDeclaration)

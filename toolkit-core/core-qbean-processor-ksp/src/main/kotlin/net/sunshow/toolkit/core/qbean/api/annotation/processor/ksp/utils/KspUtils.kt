@@ -2,6 +2,9 @@ package net.sunshow.toolkit.core.qbean.api.annotation.processor.ksp.utils
 
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.*
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import net.sunshow.toolkit.core.qbean.api.annotation.QBeanCreatorIgnore
@@ -153,5 +156,44 @@ object KspUtils {
         return declarations.firstOrNull { declaration ->
             declaration is KSClassDeclaration && declaration.isCompanionObject
         } as? KSClassDeclaration
+    }
+
+    /**
+     * 检查类是否来自 Java 源文件
+     */
+    fun KSClassDeclaration.isJavaClass(): Boolean {
+        return containingFile?.filePath?.endsWith(".java") == true
+    }
+
+    /**
+     * 检查属性是否应该被过滤（Java 类的 static/final 字段）
+     */
+    fun KSPropertyDeclaration.shouldFilterForJava(): Boolean {
+        val parentClass = parentDeclaration as? KSClassDeclaration ?: return false
+        if (!parentClass.isJavaClass()) return false
+
+        val modifiers = this.modifiers
+        return modifiers.contains(Modifier.JAVA_STATIC) ||
+               modifiers.contains(Modifier.FINAL)
+    }
+
+    /**
+     * 将 Mutable 集合类型转换为不可变类型
+     * MutableList -> List, MutableSet -> Set, MutableMap -> Map
+     */
+    fun TypeName.toImmutableCollectionType(): TypeName {
+        if (this !is ParameterizedTypeName) return this
+
+        val rawType = this.rawType
+        val newRawType = when (rawType.canonicalName) {
+            "kotlin.collections.MutableList" -> ClassName("kotlin.collections", "List")
+            "kotlin.collections.MutableSet" -> ClassName("kotlin.collections", "Set")
+            "kotlin.collections.MutableMap" -> ClassName("kotlin.collections", "Map")
+            "kotlin.collections.MutableCollection" -> ClassName("kotlin.collections", "Collection")
+            else -> return this
+        }
+
+        return newRawType.parameterizedBy(this.typeArguments)
+            .copy(nullable = this.isNullable)
     }
 }

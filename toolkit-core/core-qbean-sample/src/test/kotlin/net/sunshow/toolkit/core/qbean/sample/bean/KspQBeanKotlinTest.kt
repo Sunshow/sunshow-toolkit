@@ -1,10 +1,10 @@
 package net.sunshow.toolkit.core.qbean.sample.bean
 
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 
 class KspQBeanKotlinTest {
-    
+
     @Test
     fun `test QBean object constants`() {
         // 测试生成的常量
@@ -12,7 +12,7 @@ class KspQBeanKotlinTest {
         assertEquals("bar", QKtFooBar.bar)
         assertEquals("id", QKtFooBar.id)
     }
-    
+
     @Test
     fun `test Creator with DSL style`() {
         // 使用 DSL 风格创建
@@ -20,14 +20,14 @@ class KspQBeanKotlinTest {
             foo = "test"
             bar = 123
         }
-        
+
         assertNotNull(creator)
-        assertEquals("test", creator.getFoo())
-        assertEquals(123, creator.getBar())
+        assertEquals("test", creator.foo)
+        assertEquals(123, creator.bar)
         assertTrue(creator.getCreateProperties().contains("foo"))
         assertTrue(creator.getCreateProperties().contains("bar"))
     }
-    
+
     @Test
     fun `test Creator with builder style`() {
         // 使用传统 Builder 风格（兼容 Java）
@@ -35,11 +35,11 @@ class KspQBeanKotlinTest {
             .withFoo("builder test")
             .withBar(456)
             .build()
-        
-        assertEquals("builder test", creator.getFoo())
-        assertEquals(456, creator.getBar())
+
+        assertEquals("builder test", creator.foo)
+        assertEquals(456, creator.bar)
     }
-    
+
     @Test
     fun `test Creator with mixed style`() {
         // 混合使用 Builder 和 DSL 风格
@@ -49,11 +49,11 @@ class KspQBeanKotlinTest {
                 bar = 789  // 使用属性风格
             }
             .build()
-        
-        assertEquals("mixed", creator.getFoo())
-        assertEquals(789, creator.getBar())
+
+        assertEquals("mixed", creator.foo)
+        assertEquals(789, creator.bar)
     }
-    
+
     @Test
     fun `test Updater with DSL style`() {
         // 使用 DSL 风格更新
@@ -61,15 +61,15 @@ class KspQBeanKotlinTest {
             foo = "updated"
             bar = 200
         }
-        
+
         assertNotNull(updater)
         assertEquals(100, updater.getUpdateId())
-        assertEquals("updated", updater.getFoo())
-        assertEquals(200, updater.getBar())
+        assertEquals("updated", updater.foo)
+        assertEquals(200, updater.bar)
         assertTrue(updater.getUpdateProperties().contains("foo"))
         assertTrue(updater.getUpdateProperties().contains("bar"))
     }
-    
+
     @Test
     fun `test Updater with builder style`() {
         // 使用传统 Builder 风格
@@ -77,12 +77,12 @@ class KspQBeanKotlinTest {
             .withFoo("builder update")
             .withBar(301)
             .build()
-        
+
         assertEquals(101, updater.getUpdateId())
-        assertEquals("builder update", updater.getFoo())
-        assertEquals(301, updater.getBar())
+        assertEquals("builder update", updater.foo)
+        assertEquals(301, updater.bar)
     }
-    
+
     @Test
     fun `test Updater partial update`() {
         // 测试部分更新
@@ -90,14 +90,14 @@ class KspQBeanKotlinTest {
             foo = "only foo"
             // 不更新 bar
         }
-        
+
         assertEquals(102, updater.getUpdateId())
-        assertEquals("only foo", updater.getFoo())
-        assertNull(updater.getBar())
+        assertEquals("only foo", updater.foo)
+        assertNull(updater.bar)
         assertTrue(updater.getUpdateProperties().contains("foo"))
         assertFalse(updater.getUpdateProperties().contains("bar"))
     }
-    
+
     @Test
     fun `test property setter with null value`() {
         // 测试 null 值处理 - null 值也应该被标记
@@ -105,13 +105,13 @@ class KspQBeanKotlinTest {
             foo = "test"
             bar = null  // 应该被标记
         }
-        
-        assertEquals("test", creator.getFoo())
-        assertNull(creator.getBar())
+
+        assertEquals("test", creator.foo)
+        assertNull(creator.bar)
         assertTrue(creator.getCreateProperties().contains("foo"))
         assertTrue(creator.getCreateProperties().contains("bar"))  // null 值也应该被标记
     }
-    
+
     @Test
     fun `test updater property setter with null value`() {
         // 测试 Updater null 值处理 - null 值也应该被标记
@@ -119,10 +119,10 @@ class KspQBeanKotlinTest {
             foo = null  // 显式设置为 null
             bar = 999
         }
-        
+
         assertEquals(103, updater.getUpdateId())
-        assertNull(updater.getFoo())
-        assertEquals(999, updater.getBar())
+        assertNull(updater.foo)
+        assertEquals(999, updater.bar)
         assertTrue(updater.getUpdateProperties().contains("foo"))  // null 值也应该被标记
         assertTrue(updater.getUpdateProperties().contains("bar"))
     }
