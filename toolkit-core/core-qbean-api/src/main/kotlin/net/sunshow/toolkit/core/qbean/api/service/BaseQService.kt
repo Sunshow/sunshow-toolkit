@@ -5,6 +5,7 @@ import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanCreator
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanUpdater
 import net.sunshow.toolkit.core.qbean.api.request.QPage
 import net.sunshow.toolkit.core.qbean.api.request.QRequest
+import net.sunshow.toolkit.core.qbean.api.request.QSort
 import net.sunshow.toolkit.core.qbean.api.response.QResponse
 import net.sunshow.toolkit.core.qbean.api.search.PageSearch
 import java.io.Serializable
@@ -24,9 +25,21 @@ interface BaseQService<Q : BaseQBean, ID : Serializable> {
 
     fun findByIdCollection(idCollection: Collection<ID>): List<Q>
 
+    fun findOne(request: QRequest, sortList: List<QSort>? = null): Q?
+
+    fun findTopLimit(
+        request: QRequest,
+        sortList: List<QSort>? = null,
+        limit: Int
+    ): List<Q>
+
     fun findAll(request: QRequest, requestPage: QPage): QResponse<Q>
 
-    fun findAllTotal(request: QRequest): List<Q>
+    fun findAllTotal(
+        request: QRequest,
+        sortList: List<QSort>? = null,
+        requestPageSize: Int? = null,
+    ): List<Q>
 
     fun countAll(request: QRequest): Long
 
@@ -43,6 +56,11 @@ interface BaseQService<Q : BaseQBean, ID : Serializable> {
     fun update(id: ID, updater: Any): Q
 
     fun deleteById(id: ID)
+
+    /**
+     * 在事务中锁定数据行 (悲观锁, FOR UPDATE, 记录不存在就报错)
+     */
+    fun <T> lockByIdInTransaction(id: ID, action: (Q) -> T): T
 
     fun <T> doInTransaction(action: () -> T): T
 

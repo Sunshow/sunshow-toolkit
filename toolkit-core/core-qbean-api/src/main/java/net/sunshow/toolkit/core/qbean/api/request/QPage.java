@@ -52,6 +52,11 @@ public class QPage implements Serializable {
         return this;
     }
 
+    public QPage pagingWithSize(int pageSize) {
+        this.pageSize = pageSize;
+        return this;
+    }
+
     /**
      * 传入页面为 1-based 内部自动转换为 0-based
      */

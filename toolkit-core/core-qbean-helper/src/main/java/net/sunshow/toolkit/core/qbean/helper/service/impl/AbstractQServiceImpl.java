@@ -106,7 +106,7 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
         return Sort.unsorted();
     }
 
-    private Sort.Order convertSort(QSort requestSort) {
+    protected Sort.Order convertSort(QSort requestSort) {
         Sort.Direction direction;
         if (requestSort.getOrder().equals(QSort.Order.DESC)) {
             direction = Sort.Direction.DESC;

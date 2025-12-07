@@ -6,11 +6,13 @@ import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanCreator
 import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanUpdater
 import net.sunshow.toolkit.core.qbean.api.request.QPage
 import net.sunshow.toolkit.core.qbean.api.request.QRequest
+import net.sunshow.toolkit.core.qbean.api.request.QSort
 import net.sunshow.toolkit.core.qbean.api.response.QResponse
 import net.sunshow.toolkit.core.qbean.api.search.PageSearch
 import net.sunshow.toolkit.core.qbean.api.service.BaseQService
 import net.sunshow.toolkit.core.qbean.helper.component.request.QBeanCreatorHelper
 import net.sunshow.toolkit.core.qbean.helper.component.request.QBeanUpdaterHelper
+import net.sunshow.toolkit.core.qbean.helper.component.request.QPageRequestHelper
 import net.sunshow.toolkit.core.qbean.helper.entity.BaseEntity
 import net.sunshow.toolkit.core.qbean.helper.framework.jpa.QJpa
 import net.sunshow.toolkit.core.qbean.helper.repository.BaseRepository
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionSynchronization
@@ -142,6 +145,18 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return dao.findAll(convertSpecification(request))
     }
 
+    protected open fun findAllTotalSortedInternal(request: QRequest, sortList: List<QSort>): List<ENTITY> {
+        return dao.findAll(
+            convertSpecification(request),
+            Sort.by(
+                sortList
+                    .map {
+                        convertSort(it)
+                    }
+            )
+        )
+    }
+
     protected open fun findAllInternal(request: QRequest): Long {
         return dao.count(convertSpecification(request))
     }
@@ -150,9 +165,78 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return findAllInternal(request)
     }
 
-    override fun findAllTotal(request: QRequest): List<Q> {
-        return convertQBeanToList(findAllTotalInternal(request))
+    override fun findAllTotal(
+        request: QRequest,
+        sortList: List<QSort>?,
+        requestPageSize: Int?
+    ): List<Q> {
+        if (requestPageSize == null) {
+            // 不分页直接查所有
+            return findAllTotalSortedInternal(request, sortList ?: emptyList())
+                .map {
+                    it.toPojo()
+                }
+        } else {
+            return QPageRequestHelper.request(
+                request,
+                QPage.newInstance()
+                    .pagingWithSize(requestPageSize)
+                    .apply {
+                        sortList
+                            ?.onEach {
+                                addOrder(it.field, it.order)
+                            }
+                    },
+                this::findAll,
+            )
+        }
     }
+
+    override fun findOne(
+        request: QRequest,
+        sortList: List<QSort>?
+    ): Q? {
+        return findOneInternal(request, sortList)
+            ?.toPojo()
+    }
+
+    override fun findTopLimit(
+        request: QRequest,
+        sortList: List<QSort>?,
+        limit: Int
+    ): List<Q> {
+        return findTopLimitInternal(request, sortList, limit)
+            .map {
+                it.toPojo()
+            }
+    }
+
+    protected open fun findOneInternal(request: QRequest, sortList: List<QSort>? = null): ENTITY? {
+        return findTopLimitInternal(
+            request = request,
+            sortList = sortList,
+            limit = 1,
+        ).firstOrNull()
+    }
+
+    protected open fun findTopLimitInternal(
+        request: QRequest,
+        sortList: List<QSort>? = null,
+        limit: Int
+    ): List<ENTITY> {
+        return findAllInternal(
+            request = request,
+            requestPage = QPage.newInstance()
+                .pagingWithSize(limit)
+                .apply {
+                    sortList
+                        ?.onEach {
+                            addOrder(it.field, it.order)
+                        }
+                },
+        ).content
+    }
+
 
     override fun searchTotal(search: PageSearch): List<Q> {
         return findAllTotal(search.toQRequest())
@@ -332,6 +416,12 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
 
     protected open fun deleteEntityInternal(entity: ENTITY) {
         deleteAllInternal(listOf(entity))
+    }
+
+    @Transactional
+    override fun <T> lockByIdInTransaction(id: ID, action: (Q) -> T): T {
+        val entity = getEntityWithNullCheckForUpdate(id)
+        return action(entity.toPojo())
     }
 
     @Transactional
