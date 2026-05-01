@@ -118,7 +118,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     }
 
     override fun getByIdEnsure(id: ID): Q {
-        return getById(id).orElseThrow(getExceptionSupplier("指定ID的数据不存在", null))
+        return getById(id).orElseThrow(getExceptionSupplier("指定ID的数据不存在: $id", null))
     }
 
     override fun getByIdOrNull(id: ID): Q? {
