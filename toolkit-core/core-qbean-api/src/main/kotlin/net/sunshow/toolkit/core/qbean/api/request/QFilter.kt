@@ -90,6 +90,11 @@ class QFilter {
         }
 
         @JvmStatic
+        fun ilike(field: String, value: String): QFilter {
+            return QFilter(Operator.ILIKE, field, value)
+        }
+
+        @JvmStatic
         fun notNull(field: String): QFilter {
             return QFilter(Operator.NOT_NULL, field)
         }

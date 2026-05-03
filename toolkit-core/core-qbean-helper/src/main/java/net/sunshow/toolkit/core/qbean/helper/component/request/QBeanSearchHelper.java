@@ -69,7 +69,7 @@ public final class QBeanSearchHelper {
                 }
 
                 // 对 LIKE 进行预处理
-                if (annotation.operator() == Operator.LIKE || annotation.operator() == Operator.LIKE_ESCAPE) {
+                if (annotation.operator() == Operator.LIKE || annotation.operator() == Operator.LIKE_ESCAPE || annotation.operator() == Operator.ILIKE) {
                     // ESCAPE 暂未做完整支持
                     String search = value.toString();
                     switch (annotation.wildcard()) {

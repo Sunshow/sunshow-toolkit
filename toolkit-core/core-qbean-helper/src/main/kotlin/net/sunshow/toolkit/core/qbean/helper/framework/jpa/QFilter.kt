@@ -78,6 +78,10 @@ fun <T> QFilter.toPredicate(root: Root<T>, cb: CriteriaBuilder): Predicate? {
             return cb.like(root.get(field), value.toString())
         }
 
+        Operator.ILIKE -> {
+            return cb.like(cb.lower(root.get(field)), value.toString().lowercase())
+        }
+
         Operator.LIKE_ESCAPE -> {
             return cb.like(
                 root.get(field),

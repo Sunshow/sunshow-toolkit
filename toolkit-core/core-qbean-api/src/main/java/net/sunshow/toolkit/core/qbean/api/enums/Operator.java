@@ -23,6 +23,7 @@ public enum Operator {
 
     LIKE,
     LIKE_ESCAPE,
+    ILIKE,
 
     IS_NULL,
     NOT_NULL,
@@ -49,7 +50,7 @@ public enum Operator {
     }
 
     public static boolean isUnary(Operator operator) {
-        return operator == EQUAL || operator == NOT_EQUAL || operator == LESS_EQUAL || operator == GREATER_EQUAL || operator == LESS_THAN || operator == GREATER_THAN || operator == LIKE;
+        return operator == EQUAL || operator == NOT_EQUAL || operator == LESS_EQUAL || operator == GREATER_EQUAL || operator == LESS_THAN || operator == GREATER_THAN || operator == LIKE || operator == ILIKE;
     }
 
     public static boolean isBinary(Operator operator) {

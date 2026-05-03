@@ -143,6 +143,10 @@ public class QRequest implements Serializable {
         return this.filter(Operator.LIKE_ESCAPE, field, value, escapeChar);
     }
 
+    public QRequest filterILike(String field, String value) {
+        return this.filter(Operator.ILIKE, field, value);
+    }
+
     public QRequest filterNotNull(String field) {
         return this.filter(Operator.NOT_NULL, field);
     }
