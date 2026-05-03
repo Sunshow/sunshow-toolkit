@@ -79,7 +79,12 @@ fun <T> QFilter.toPredicate(root: Root<T>, cb: CriteriaBuilder): Predicate? {
         }
 
         Operator.ILIKE -> {
-            return cb.like(cb.lower(root.get(field)), value.toString().lowercase())
+            val hcb = cb as? org.hibernate.query.criteria.HibernateCriteriaBuilder
+            return if (hcb != null) {
+                hcb.ilike(root.get(field), value.toString())
+            } else {
+                cb.like(cb.lower(root.get(field)), value.toString().lowercase())
+            }
         }
 
         Operator.LIKE_ESCAPE -> {
