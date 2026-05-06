@@ -15,6 +15,8 @@ class QBeanUpdaterHelper private constructor() {
 
         private val logger = KotlinLogging.logger {}
 
+        private val defaultIgnoredProperties = setOf("updateId", "updateProperties")
+
         // ========== copyUpdaterField ==========
 
         /**
@@ -67,7 +69,7 @@ class QBeanUpdaterHelper private constructor() {
             source: PropertiesSource
         ) = copyPropertiesToUpdateBuilder(
             builder, creatorType, source,
-            ignoreProperties = setOf("updateId", "updateProperties")
+            ignoreProperties = emptySet()
         )
 
         /**
@@ -90,7 +92,7 @@ class QBeanUpdaterHelper private constructor() {
             for (pd in propertyDescriptors) {
                 val fieldName = pd.name
 
-                if (fieldName == "class" || fieldName in ignoreProperties) {
+                if (fieldName == "class" || fieldName in ignoreProperties || fieldName in defaultIgnoredProperties) {
                     continue
                 }
 
