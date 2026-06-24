@@ -16,6 +16,7 @@ class QBeanUpdaterHelper private constructor() {
         private val logger = KotlinLogging.logger {}
 
         private val defaultIgnoredProperties = setOf("updateId", "updateProperties")
+        private val defaultForceChangeProperties = setOf("updatedTime")
 
         // ========== copyUpdaterField ==========
 
@@ -53,6 +54,35 @@ class QBeanUpdaterHelper private constructor() {
                 }
             }
             return entity
+        }
+
+        /**
+         * 判断 Updater 中声明的字段是否会对 Entity 产生实际变更。
+         *
+         * 显式更新 updatedTime 始终视为有效变更，即使目标值与当前值相同；这是调用方主动要求刷新
+         * 更新时间的语义，不应被 no-op 优化吞掉。
+         */
+        @JvmStatic
+        fun <Q : BaseQBean, E : BaseEntity, S : BaseQBeanUpdater<Q>> hasActualChange(
+            entity: E,
+            updater: S,
+            forceChangeProperties: Set<String> = defaultForceChangeProperties
+        ): Boolean {
+            val updateProperties = updater.updateProperties ?: return false
+            for (fieldName in updateProperties) {
+                if (fieldName in forceChangeProperties) {
+                    return true
+                }
+                try {
+                    if (PropertyUtils.getProperty(entity, fieldName) != PropertyUtils.getProperty(updater, fieldName)) {
+                        return true
+                    }
+                } catch (e: Exception) {
+                    logger.warn(e) { "类属性变更比较错误, class=${updater.javaClass}, fieldName=$fieldName，保守认为存在变更" }
+                    return true
+                }
+            }
+            return false
         }
 
         // ========== copyPropertiesToUpdateBuilder ==========

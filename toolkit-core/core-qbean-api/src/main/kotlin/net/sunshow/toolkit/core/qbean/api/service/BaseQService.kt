@@ -53,6 +53,13 @@ interface BaseQService<Q : BaseQBean, ID : Serializable> {
 
     fun <T : BaseQBeanUpdater<Q>> update(updater: T): Q
 
+    /**
+     * CAS 更新到期待值
+     */
+    fun <T : BaseQBeanUpdater<Q>> casUpdate(updater: T, expectProperty: String, expectValue: Any?): Boolean
+
+    fun <T : BaseQBeanUpdater<Q>> casUpdate(updater: T, expectProperties: Map<String, Any?>): Boolean
+
     fun update(id: ID, updater: Any): Q
 
     fun deleteById(id: ID)

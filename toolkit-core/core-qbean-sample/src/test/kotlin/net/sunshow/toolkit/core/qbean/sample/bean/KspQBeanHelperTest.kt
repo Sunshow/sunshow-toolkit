@@ -197,6 +197,57 @@ class KspQBeanHelperTest {
     }
 
     @Test
+    fun `test hasActualChange returns false for empty updater`() {
+        val updater = KtFooBarUpdater.builder(103).build()
+        val entity = KtFooBarEntity(
+            id = 103,
+            foo = "existing foo",
+            bar = 444,
+            createdTime = LocalDateTime.now(),
+            updatedTime = LocalDateTime.now()
+        )
+
+        assertFalse(QBeanUpdaterHelper.hasActualChange(entity, updater))
+    }
+
+    @Test
+    fun `test hasActualChange compares updater fields`() {
+        val unchangedUpdater = KtFooBarUpdater.builder(104)
+            .withFoo("existing foo")
+            .build()
+        val changedUpdater = KtFooBarUpdater.builder(104)
+            .withFoo("changed foo")
+            .build()
+        val entity = KtFooBarEntity(
+            id = 104,
+            foo = "existing foo",
+            bar = 444,
+            createdTime = LocalDateTime.now(),
+            updatedTime = LocalDateTime.now()
+        )
+
+        assertFalse(QBeanUpdaterHelper.hasActualChange(entity, unchangedUpdater))
+        assertTrue(QBeanUpdaterHelper.hasActualChange(entity, changedUpdater))
+    }
+
+    @Test
+    fun `test hasActualChange treats explicit updatedTime as change`() {
+        val updatedTime = LocalDateTime.now()
+        val updater = KtFooBarUpdater.builder(105)
+            .withUpdatedTime(updatedTime)
+            .build()
+        val entity = KtFooBarEntity(
+            id = 105,
+            foo = "existing foo",
+            bar = 444,
+            createdTime = LocalDateTime.now(),
+            updatedTime = updatedTime
+        )
+
+        assertTrue(QBeanUpdaterHelper.hasActualChange(entity, updater))
+    }
+
+    @Test
     fun `test copyPropertiesToUpdateBuilder`() {
         // Create a source object with data
         val source = KtFooBarEntity(
