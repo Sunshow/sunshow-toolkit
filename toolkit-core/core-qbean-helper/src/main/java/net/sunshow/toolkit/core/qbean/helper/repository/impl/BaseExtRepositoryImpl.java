@@ -3,6 +3,11 @@ package net.sunshow.toolkit.core.qbean.helper.repository.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import net.sunshow.toolkit.core.qbean.helper.bean.jpa.QPageRequest;
 import net.sunshow.toolkit.core.qbean.helper.repository.BaseExtRepository;
 import nxcloud.foundation.core.data.jpa.repository.support.AdvancedJpaRepository;
@@ -15,6 +20,7 @@ import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author qatang
@@ -86,6 +92,57 @@ public class BaseExtRepositoryImpl<T, ID extends Serializable> extends AdvancedJ
     @Override
     public <S extends T> void refresh(S s) {
         entityManager.refresh(s);
+    }
+
+    @Override
+    public int casUpdate(Map<String, Object> setProperties, Map<String, Object> whereProperties) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaUpdate<T> criteriaUpdate = cb.createCriteriaUpdate(getDomainClass());
+        Root<T> root = criteriaUpdate.from(getDomainClass());
+
+        for (Map.Entry<String, Object> entry : setProperties.entrySet()) {
+            criteriaUpdate.set(root.get(entry.getKey()), entry.getValue());
+        }
+
+        Predicate where = null;
+        for (Map.Entry<String, Object> entry : whereProperties.entrySet()) {
+            Predicate predicate;
+            if (entry.getValue() == null) {
+                predicate = cb.isNull(root.get(entry.getKey()));
+            } else {
+                predicate = cb.equal(root.get(entry.getKey()), entry.getValue());
+            }
+            if (where == null) {
+                where = predicate;
+            } else {
+                where = cb.and(where, predicate);
+            }
+        }
+        criteriaUpdate.where(where);
+
+        return entityManager.createQuery(criteriaUpdate).executeUpdate();
+    }
+
+    @Override
+    public boolean existsByConditions(Map<String, Object> conditions) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<T> root = query.from(getDomainClass());
+        query.select(cb.count(root));
+
+        Predicate where = null;
+        for (Map.Entry<String, Object> entry : conditions.entrySet()) {
+            Predicate predicate;
+            if (entry.getValue() == null) {
+                predicate = cb.isNull(root.get(entry.getKey()));
+            } else {
+                predicate = cb.equal(root.get(entry.getKey()), entry.getValue());
+            }
+            where = (where == null) ? predicate : cb.and(where, predicate);
+        }
+        query.where(where);
+
+        return entityManager.createQuery(query).getSingleResult() > 0;
     }
 
 }

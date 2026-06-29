@@ -8,6 +8,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author qatang
@@ -73,4 +74,22 @@ public interface BaseExtRepository<T, ID extends Serializable> extends PagingAnd
      * @return 找到的实体对象列表
      */
     List<T> findAllByIdIn(Iterable<ID> ids);
+
+    /**
+     * CAS 原子更新，通过一条 CriteriaUpdate 语句完成比较并设置。
+     * WHERE 子句由 whereProperties 中的所有条件 AND 组成。
+     *
+     * @param setProperties   要设置的字段及值
+     * @param whereProperties WHERE 条件字段及值（包含主键）
+     * @return 受影响的行数（1 = 成功，0 = CAS 条件不满足或记录不存在）
+     */
+    int casUpdate(Map<String, Object> setProperties, Map<String, Object> whereProperties);
+
+    /**
+     * 按条件判断记录是否存在（原子 predicate，无锁）。
+     *
+     * @param conditions WHERE 条件字段及值
+     * @return 存在返回 true
+     */
+    boolean existsByConditions(Map<String, Object> conditions);
 }

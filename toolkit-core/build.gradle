@@ -13,7 +13,7 @@ allprojects {
 //    version = "2.7.2-SNAPSHOT"
 
     // 发布 release
-    version = "2.7.6"
+    version = "2.7.7"
 
     repositories {
         mavenLocal()

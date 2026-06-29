@@ -396,6 +396,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return FORCE_CHANGE_PROPERTIES_FOR_UPDATE
     }
 
+    /**
+     * CAS 单条件更新。参见 [BaseQService.casUpdate]。
+     */
     @Transactional
     override fun <T : BaseQBeanUpdater<Q>> casUpdate(
         updater: T,
@@ -405,6 +408,9 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         return casUpdate(updater, mapOf(expectProperty to expectValue))
     }
 
+    /**
+     * CAS 多条件更新。参见 [BaseQService.casUpdate]。
+     */
     @Transactional
     override fun <T : BaseQBeanUpdater<Q>> casUpdate(
         updater: T,
@@ -412,6 +418,25 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
     ): Boolean {
         return casUpdateInternal(updater, expectProperties)
     }
+
+    /**
+     * CAS 更新的内部实现。
+     *
+     * ## 路径
+     * 1. **no-op**：[shouldSkipUnchangedUpdate] 为 true 且 [BaseQBeanUpdater.getUpdateProperties] 为空时，
+     *    通过 [dao.existsByConditions] 做原子 predicate 校验后返回，不写入数据库，不触发任何 hook。
+     * 2. **实际更新**：从 updater 提取 SET 子句，通过 [dao.casUpdate] 执行一条原子 UPDATE，
+     *    成功后加载更新后的实体并注册 [afterCommitUpdate] 回调。
+     *
+     * ## 不支持的 hook
+     * CAS 路径 **不会** 调用以下扩展点（与 [update] 路径不同）：
+     * - [beforeSetUpdateProperties]
+     * - [afterSetUpdateProperties]
+     * - [afterPostUpdate]
+     *
+     * 子类如需在 CAS 中应用这些 hook，请 override 本方法。通常的做法是：对于需要 hook 的场景继续走 [update]，
+     * 对于纯字段赋值场景使用 CAS。
+     */
 
     @Suppress("UNCHECKED_CAST")
     protected open fun <T : BaseQBeanUpdater<Q>> casUpdateInternal(
@@ -423,52 +448,72 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
         }
 
         val id = updater.updateId as ID
+        val idProperty = QJpa.getIdProperty(entityClass)
+            ?: throw IllegalStateException("无法获取实体主键属性名: ${entityClass.name}")
+
+        // 构建 WHERE 条件：主键 + CAS 预期值
+        val whereProperties = mutableMapOf<String, Any?>()
+        whereProperties.putAll(expectProperties)
+        whereProperties[idProperty] = id
+
+        val skipUnchangedUpdate = shouldSkipUnchangedUpdate(updater)
+
+        // no-op：updateProperties 为空，原子 predicate 校验后直接返回
+        if (skipUnchangedUpdate && updater.updateProperties.isNullOrEmpty()) {
+            return dao.existsByConditions(whereProperties)
+        }
+
         val original = dao.findByIdOrNull(id) ?: return false
         dao.detach(original)
 
-        val po = dao.findByIdForUpdate(id) ?: return false
-        if (!casExpectMatches(po, expectProperties)) {
+        // 有实际变更：从 updater 提取 SET 子句，执行原子 CAS 更新
+        val setProperties = extractCasSetProperties(updater)
+        if (UpdatedTimeField::class.java.isAssignableFrom(entityClass)) {
+            setProperties["updatedTime"] = LocalDateTime.now()
+        }
+        // 防御：如果 SET 仍为空（shouldSkipUnchangedUpdate=false 且无 UpdatedTimeField），
+        // 取主键自赋值保证 UPDATE 语法合法
+        if (setProperties.isEmpty()) {
+            setProperties[idProperty] = id
+        }
+
+        // 执行原子 CAS 更新
+        val affectedRows = dao.casUpdate(setProperties, whereProperties)
+        if (affectedRows == 0) {
             return false
         }
 
-        return applyCasMatchedUpdate(po, original, updater)
-    }
-
-    protected open fun <T : BaseQBeanUpdater<Q>> applyCasMatchedUpdate(
-        po: ENTITY,
-        original: ENTITY,
-        updater: T
-    ): Boolean {
-        val skipUnchangedUpdate = shouldSkipUnchangedUpdate(updater)
-        if (skipUnchangedUpdate && updater.updateProperties.isNullOrEmpty()) {
-            return true
-        }
-        if (skipUnchangedUpdate
-            && !QBeanUpdaterHelper.hasActualChange(po, updater, forceChangePropertiesForUpdate(updater))
-        ) {
-            return true
+        // 加载更新后的实体，注册事务提交回调
+        val updatedEntity = dao.findByIdOrNull(id)
+        if (updatedEntity != null) {
+            TransactionSynchronizationManager.registerSynchronization(object : TransactionSynchronization {
+                override fun afterCommit() {
+                    afterCommitUpdate(updatedEntity, original, updater)
+                }
+            })
         }
 
-        beforeSetUpdateProperties(po, original, updater)
-
-        QBeanUpdaterHelper.copyUpdaterField(po, updater)
-
-        updateInternal(po, original, updater)
         return true
     }
 
-    protected open fun casExpectMatches(entity: ENTITY, expectProperties: Map<String, Any?>): Boolean {
-        for ((propertyName, expectValue) in expectProperties) {
-            val actualValue = try {
-                PropertyUtils.getProperty(entity, propertyName)
+    /**
+     * 从 Updater 的 [BaseQBeanUpdater.getUpdateProperties] 中提取要 SET 的字段和值。
+     *
+     * 注意：CAS 路径不支持 beforeSetUpdateProperties / afterSetUpdateProperties / afterPostUpdate hook，
+     * 子类如需在 CAS 中应用 hook，请 override [casUpdateInternal]。
+     */
+    protected open fun <T : BaseQBeanUpdater<Q>> extractCasSetProperties(updater: T): MutableMap<String, Any?> {
+        val setProperties = mutableMapOf<String, Any?>()
+        val updateProperties = updater.updateProperties ?: return setProperties
+        for (fieldName in updateProperties) {
+            try {
+                val fieldValue = PropertyUtils.getProperty(updater, fieldName)
+                setProperties[fieldName] = fieldValue
             } catch (e: Exception) {
-                throw IllegalArgumentException("CAS 条件字段不存在或不可读取: $propertyName", e)
-            }
-            if (actualValue != expectValue) {
-                return false
+                logger.error(e) { "CAS 提取 Updater 属性出错, fieldName=$fieldName" }
             }
         }
-        return true
+        return setProperties
     }
 
     protected open fun updateAnyInternal(id: ID, updater: Any): ENTITY {
