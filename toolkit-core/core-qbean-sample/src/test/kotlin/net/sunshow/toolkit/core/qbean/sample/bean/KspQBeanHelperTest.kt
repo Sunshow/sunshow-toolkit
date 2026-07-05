@@ -2,8 +2,11 @@ package net.sunshow.toolkit.core.qbean.sample.bean
 
 import net.sunshow.toolkit.core.qbean.helper.component.request.QBeanCreatorHelper
 import net.sunshow.toolkit.core.qbean.helper.component.request.QBeanUpdaterHelper
+import net.sunshow.toolkit.core.qbean.api.bean.BaseQBeanUpdater
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import java.io.Serializable
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 /**
@@ -197,6 +200,20 @@ class KspQBeanHelperTest {
     }
 
     @Test
+    fun `test copyUpdaterField clears nullable BigDecimal values`() {
+        val updater = NullableBigDecimalUpdater(
+            updateId = 106,
+            amount = null,
+            updateProperties = setOf("amount"),
+        )
+        val entity = NullableBigDecimalEntity(amount = BigDecimal("12.34"))
+
+        QBeanUpdaterHelper.copyUpdaterField(entity, updater)
+
+        assertNull(entity.amount)
+    }
+
+    @Test
     fun `test hasActualChange returns false for empty updater`() {
         val updater = KtFooBarUpdater.builder(103).build()
         val entity = KtFooBarEntity(
@@ -327,5 +344,19 @@ class KspQBeanHelperTest {
 
         assertEquals("dsl updated", entity.foo)
         assertEquals(777, entity.bar)
+    }
+
+    data class NullableBigDecimalEntity(
+        var amount: BigDecimal? = null,
+    ) : net.sunshow.toolkit.core.qbean.helper.entity.BaseEntity
+
+    class NullableBigDecimalUpdater(
+        private val updateId: Int,
+        val amount: BigDecimal?,
+        private val updateProperties: Set<String>,
+    ) : BaseQBeanUpdater<KtFooBar> {
+        override fun getUpdateId(): Serializable = updateId
+
+        override fun getUpdateProperties(): Set<String> = updateProperties
     }
 }

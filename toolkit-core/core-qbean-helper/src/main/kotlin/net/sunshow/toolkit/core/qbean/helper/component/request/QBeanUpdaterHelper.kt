@@ -48,12 +48,27 @@ class QBeanUpdaterHelper private constructor() {
                 }
                 try {
                     val fieldValue = PropertyUtils.getProperty(updater, fieldName)
-                    BeanUtils.setProperty(entity, fieldName, fieldValue)
+                    setProperty(entity, fieldName, fieldValue)
                 } catch (e: Exception) {
                     logger.error(e) { "类属性拷贝错误, class=${updater.javaClass}, fieldName=$fieldName" }
                 }
             }
             return entity
+        }
+
+        private fun setProperty(entity: Any, fieldName: String, fieldValue: Any?) {
+            if (fieldValue != null) {
+                BeanUtils.setProperty(entity, fieldName, fieldValue)
+                return
+            }
+
+            val propertyDescriptor = PropertyUtils.getPropertyDescriptor(entity, fieldName)
+            val writeType = propertyDescriptor?.writeMethod?.parameterTypes?.firstOrNull()
+            if (writeType?.isPrimitive == true) {
+                BeanUtils.setProperty(entity, fieldName, null)
+            } else {
+                PropertyUtils.setProperty(entity, fieldName, null)
+            }
         }
 
         /**
