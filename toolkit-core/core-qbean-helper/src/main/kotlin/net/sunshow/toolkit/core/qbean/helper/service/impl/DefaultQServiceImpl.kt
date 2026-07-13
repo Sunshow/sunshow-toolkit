@@ -184,7 +184,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
                     .apply {
                         sortList
                             ?.onEach {
-                                addOrder(it.field, it.order)
+                                addOrder(it)
                             }
                     },
                 this::findAll,
@@ -231,7 +231,7 @@ abstract class DefaultQServiceImpl<Q : BaseQBean, ID : Serializable, ENTITY : Ba
                 .apply {
                     sortList
                         ?.onEach {
-                            addOrder(it.field, it.order)
+                            addOrder(it)
                         }
                 },
         ).content

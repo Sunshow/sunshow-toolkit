@@ -113,7 +113,14 @@ public abstract class AbstractQServiceImpl<Q extends BaseQBean> {
         } else {
             direction = Sort.Direction.ASC;
         }
-        return new Sort.Order(direction, requestSort.getField());
+        Sort.Order order = new Sort.Order(direction, requestSort.getField());
+        if (requestSort.getNullHandling() == QSort.NullHandling.NULLS_FIRST) {
+            return order.nullsFirst();
+        }
+        if (requestSort.getNullHandling() == QSort.NullHandling.NULLS_LAST) {
+            return order.nullsLast();
+        }
+        return order;
     }
 
     protected Pageable convertPageable(QPage requestPage) {

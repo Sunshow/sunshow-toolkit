@@ -8,6 +8,8 @@ public class FieldSort {
 
     private QSort.Order direction;
 
+    private QSort.NullHandling nullHandling = QSort.NullHandling.NATIVE;
+
     public String getField() {
         return field;
     }
@@ -22,6 +24,14 @@ public class FieldSort {
 
     public void setDirection(QSort.Order direction) {
         this.direction = direction;
+    }
+
+    public QSort.NullHandling getNullHandling() {
+        return nullHandling;
+    }
+
+    public void setNullHandling(QSort.NullHandling nullHandling) {
+        this.nullHandling = nullHandling != null ? nullHandling : QSort.NullHandling.NATIVE;
     }
 
 }

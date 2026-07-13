@@ -39,10 +39,18 @@ public class QPage implements Serializable {
     }
 
     public QPage addOrder(String field, QSort.Order order) {
+        return this.addOrder(field, order, QSort.NullHandling.NATIVE);
+    }
+
+    public QPage addOrder(String field, QSort.Order order, QSort.NullHandling nullHandling) {
+        return this.addOrder(new QSort(field, order, nullHandling));
+    }
+
+    public QPage addOrder(QSort sort) {
         if (sortList == null) {
             sortList = new ArrayList<>();
         }
-        this.sortList.add(new QSort(field, order));
+        this.sortList.add(sort);
         return this;
     }
 

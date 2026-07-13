@@ -65,7 +65,7 @@ public class PageSearch {
 
         if (sorts != null) {
             for (FieldSort sort : sorts) {
-                result.addOrder(sort.getField(), sort.getDirection());
+                result.addOrder(sort.getField(), sort.getDirection(), sort.getNullHandling());
             }
         }
 
