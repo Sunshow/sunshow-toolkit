@@ -10,10 +10,12 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import net.sunshow.toolkit.core.qbean.helper.bean.jpa.QPageRequest;
 import net.sunshow.toolkit.core.qbean.helper.repository.BaseExtRepository;
+import net.sunshow.toolkit.core.qbean.helper.repository.support.NullAwareSortOrders;
 import nxcloud.foundation.core.data.jpa.repository.support.AdvancedJpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.lang.Nullable;
@@ -65,6 +67,20 @@ public class BaseExtRepositoryImpl<T, ID extends Serializable> extends AdvancedJ
     public Page<T> findAll(Specification<T> spec, Pageable pageable) {
         TypedQuery<T> query = getQuery(spec, pageable);
         return readPage(query, getDomainClass(), pageable, spec);
+    }
+
+    /**
+     * Spring Data JPA 的 QueryUtils 对 Criteria 查询不支持 NullHandling（NULLS FIRST/LAST），
+     * 在此拦截后改由 Hibernate CriteriaBuilder / CASE 表达式自行 orderBy。
+     */
+    @Override
+    protected <S extends T> TypedQuery<S> getQuery(@Nullable Specification<S> spec, Class<S> domainClass, Sort sort) {
+        if (!NullAwareSortOrders.requiresNullAwareOrdering(sort)) {
+            return super.getQuery(spec, domainClass, sort);
+        }
+        Specification<S> withOrders = Specification.where(spec)
+                .and(NullAwareSortOrders.asOrderSpecification(sort));
+        return super.getQuery(withOrders, domainClass, Sort.unsorted());
     }
 
     @Override
